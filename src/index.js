@@ -1,4 +1,5 @@
 import React from "react";
+import LocationsPage from "./pages/LocationsPage";
 import UserHealthFacilityLoader from "./components/UserHealthFacilityLoader";
 import UserDistrictsLoader from "./components/UserDistrictsLoader";
 import HealthFacilityFullPath from "./components/HealthFacilityFullPath";
@@ -8,6 +9,8 @@ import RegionPicker from "./pickers/RegionPicker";
 import DistrictPicker from "./pickers/DistrictPicker";
 import messages_en from "./translations/en.json";
 import reducer from "./reducer";
+
+const ROUTE_LOCATIONS = "location/locations";
 
 const DEFAULT_CONFIG = {
   "translations": [{ key: 'en', messages: messages_en }],
@@ -22,6 +25,10 @@ const DEFAULT_CONFIG = {
     { key: "location.DistrictPicker", ref: DistrictPicker },
     { key: "location.HealthFacilityGQLType", ref: "HealthFacilityGQLType"},
     { key: "location.LocationGQLType", ref: "LocationGQLType"},
+    { key: "location.LocationsPage", ref: LocationsPage}
+  ],
+  "core.Router": [
+    { path: ROUTE_LOCATIONS, component: LocationsPage },
   ],
   "core.Boot": [UserHealthFacilityLoader, UserDistrictsLoader],
 }

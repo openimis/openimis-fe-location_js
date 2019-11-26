@@ -1,4 +1,4 @@
-import { graphql, formatQuery, formatPageQuery } from "@openimis/fe-core";
+import { graphql, formatQuery, formatPageQuery, decodeId } from "@openimis/fe-core";
 
 export function fetchUserDistricts() {
   let payload = formatQuery("userDistricts",
@@ -35,4 +35,22 @@ export function fetchHealthFacilities(mm, region, district, str) {
     mm.getRef("location.HealthFacilityPicker.projection")
   );
   return graphql(payload, 'LOCATION_HEALTH_FACILITIES');
+}
+
+export function fetchLocations(type, parent) {
+  let filters = [`type: "${type}"`];
+  if (!!parent) {
+    filters.push(`parent_Uuid: "${parent.uuid}"`)
+  }
+  let payload = formatPageQuery("locations",
+    filters,
+    ["id", "uuid", "type", "code", "name"]
+  );
+  return graphql(payload, `LOCATION_LOCATIONS_${type}`);
+}
+
+export function clearLocations(type) {
+  return dispatch => {
+    dispatch({type: `LOCATION_LOCATIONS_${type}_CLEAR`})
+  }
 }

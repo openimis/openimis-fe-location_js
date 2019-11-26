@@ -9,5 +9,9 @@
     "location.healthFacilityLevel.null": "Any",
     "location.healthFacilityLevel.C": "Health Center",
     "location.healthFacilityLevel.D": "Dispensary",
-    "location.healthFacilityLevel.H": "Hospital"
+    "location.healthFacilityLevel.H": "Hospital",
+    "location.locations.searcher.title.R": "Regions",
+    "location.locations.searcher.title.D": "Districts",
+    "location.locations.searcher.title.M": "Municipalities",
+    "location.locations.searcher.title.W": "Villages"
 }
