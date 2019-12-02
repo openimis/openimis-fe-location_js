@@ -25,7 +25,7 @@ const DEFAULT_CONFIG = {
     { key: "location.DistrictPicker", ref: DistrictPicker },
     { key: "location.HealthFacilityGQLType", ref: "HealthFacilityGQLType"},
     { key: "location.LocationGQLType", ref: "LocationGQLType"},
-    { key: "location.LocationsPage", ref: LocationsPage}
+    { key: "location.LocationsPage", ref: LocationsPage},
   ],
   "core.Router": [
     { path: ROUTE_LOCATIONS, component: LocationsPage },

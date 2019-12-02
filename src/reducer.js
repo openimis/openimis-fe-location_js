@@ -1,5 +1,7 @@
-import { formatServerError, formatGraphQLError, parseData } from '@openimis/fe-core';
-import { healthFacilityLabel, locationLabel } from "./utils";
+import {
+    formatServerError, formatGraphQLError, parseData,
+    dispatchMutationReq, dispatchMutationResp, dispatchMutationErr
+} from '@openimis/fe-core';
 
 function reducer(
     state = {
@@ -11,38 +13,40 @@ function reducer(
         fetchedHealthFacilities: false,
         healthFacilities: null,
         errorHealthFacilities: null,
-        fetchingRegions: false,
-        fetchedRegions: false,
-        regions: [],
-        errorRegions: null,
-        fetchingDistricts: false,
-        fetchedDistricts: false,
-        districts: [],
-        errorDistricts: null,
-        fetchingMunicipalities: false,
-        fetchedMunicipalities: false,
-        municipalities: [],
-        errorMunicipalities: null,
-        fetchingWards: false,
-        fetchedWards: false,
-        wards: [],
-        errorWards: null,
+        fetchingL0s: false,
+        fetchedL0s: false,
+        l0s: [],
+        errorL0s: null,
+        fetchingL1s: false,
+        fetchedL1s: false,
+        l1s: [],
+        errorL1s: null,
+        fetchingL2s: false,
+        fetchedL2s: false,
+        l2s: [],
+        errorL2s: null,
+        fetchingL3s: false,
+        fetchedL3s: false,
+        l3s: [],
+        errorL3s: null,
+        submittingMutation: false,
+        mutation: {},
     },
     action,
 ) {
     switch (action.type) {
         case 'LOCATION_USER_DISTRICTS_RESP':
-            let userDistricts = action.payload.data.userDistricts || [];
-            let userRegions = userDistricts.reduce(
+            let userL1s = action.payload.data.userL1s || [];
+            let userL0s = userL1s.reduce(
                 (res, d) => {
-                    res[d.regionUuid] = { id: d.regionId, uuid: d.regionUuid, code: d.regionCode, name: d.regionName };
+                    res[d.l0Uuid] = { id: d.l0Id, uuid: d.l0Uuid, code: d.l0Code, name: d.l0Name };
                     return res;
                 }
                 , {})
             return {
                 ...state,
-                userRegions: Object.values(userRegions),
-                userDistricts,
+                userL0s: Object.values(userL0s),
+                userL1s,
             }
         case 'LOCATION_USER_HEALTH_FACILITY_FULL_PATH_RESP':
             let hfFullPath = parseData(action.payload.data.healthFacilities)[0];
@@ -94,112 +98,130 @@ function reducer(
                 fetchingHealthFacilities: false,
                 errorHealthFacilities: formatServerError(action.payload)
             };
-        case 'LOCATION_LOCATIONS_R_REQ':
+        case 'LOCATION_LOCATIONS_0_REQ':
             return {
                 ...state,
-                fetchingRegions: true,
-                fetchedRegions: false,
-                regions: [],
-                errorRegions: null,
+                fetchingL0s: true,
+                fetchedL0s: false,
+                l0s: [],
+                l1s: [],
+                l2s: [],
+                l3s: [],
+                errorL0s: null,
             };
-        case 'LOCATION_LOCATIONS_R_RESP':
+        case 'LOCATION_LOCATIONS_0_RESP':
             return {
                 ...state,
-                fetchingRegions: false,
-                fetchedRegions: true,
-                regions: parseData(action.payload.data.locations),
-                errorRegions: formatGraphQLError(action.payload)
+                fetchingL0s: false,
+                fetchedL0s: true,
+                l0s: parseData(action.payload.data.locations),
+                errorL0s: formatGraphQLError(action.payload)
             };
-        case 'LOCATION_LOCATIONS_R_ERR':
+        case 'LOCATION_LOCATIONS_0_ERR':
             return {
                 ...state,
-                fetchingRegions: false,
-                errorRegions: formatServerError(action.payload)
+                fetchingL0s: false,
+                errorL0s: formatServerError(action.payload)
             };
-        case 'LOCATION_LOCATIONS_D_REQ':
+        case 'LOCATION_LOCATIONS_1_REQ':
             return {
                 ...state,
-                fetchingDistricts: true,
-                fetchedDistricts: false,
-                districts: [],
-                errorDistricts: null,
+                fetchingL1s: true,
+                fetchedL1s: false,
+                l1s: [],
+                l2s: [],
+                l3s: [],
+                errorL1s: null,
             };
-        case 'LOCATION_LOCATIONS_D_RESP':
+        case 'LOCATION_LOCATIONS_1_RESP':
             return {
                 ...state,
-                fetchingDistricts: false,
-                fetchedDistricts: true,
-                districts: parseData(action.payload.data.locations),
-                errorDistricts: formatGraphQLError(action.payload)
+                fetchingL1s: false,
+                fetchedL1s: true,
+                l1s: parseData(action.payload.data.locations),
+                errorL1s: formatGraphQLError(action.payload)
             };
-        case 'LOCATION_LOCATIONS_D_ERR':
+        case 'LOCATION_LOCATIONS_1_ERR':
             return {
                 ...state,
-                fetchingDistricts: false,
-                errorDistricts: formatServerError(action.payload)
+                fetchingL1s: false,
+                errorL1s: formatServerError(action.payload)
             };
-        case 'LOCATION_LOCATIONS_D_CLEAR':
+        case 'LOCATION_LOCATIONS_1_CLEAR':
             return {
                 ...state,
-                districts: [],
-                municipalities: [],
-                wards: [],
+                l1s: [],
+                l2s: [],
+                l3s: [],
             };
-        case 'LOCATION_LOCATIONS_M_REQ':
+        case 'LOCATION_LOCATIONS_2_REQ':
             return {
                 ...state,
-                fetchingMunicipalities: true,
-                fetchedMunicipalities: false,
-                municipalities: [],
-                errorMunicipalities: null,
+                fetchingL2s: true,
+                fetchedL2s: false,
+                l2s: [],
+                l3s: [],
+                errorL2s: null,
             };
-        case 'LOCATION_LOCATIONS_M_RESP':
+        case 'LOCATION_LOCATIONS_2_RESP':
             return {
                 ...state,
-                fetchingMunicipalities: false,
-                fetchedMunicipalities: true,
-                municipalities: parseData(action.payload.data.locations),
-                errorMunicipalities: formatGraphQLError(action.payload)
+                fetchingL2s: false,
+                fetchedL2s: true,
+                l2s: parseData(action.payload.data.locations),
+                errorL2s: formatGraphQLError(action.payload)
             };
-        case 'LOCATION_LOCATIONS_M_ERR':
+        case 'LOCATION_LOCATIONS_2_ERR':
             return {
                 ...state,
-                fetchingMunicipalities: false,
-                errorMunicipalities: formatServerError(action.payload)
+                fetchingL2s: false,
+                errorL2s: formatServerError(action.payload)
             };
-        case 'LOCATION_LOCATIONS_M_CLEAR':
+        case 'LOCATION_LOCATIONS_2_CLEAR':
             return {
                 ...state,
-                municipalities: [],
-                wards: [],
+                l2s: [],
+                l3s: [],
             };
-        case 'LOCATION_LOCATIONS_W_REQ':
+        case 'LOCATION_LOCATIONS_3_REQ':
             return {
                 ...state,
-                fetchingWards: true,
-                fetchedWards: false,
-                wards: [],
-                errorWards: null,
+                fetchingL3s: true,
+                fetchedL3s: false,
+                l3s: [],
+                errorL3s: null,
             };
-        case 'LOCATION_LOCATIONS_W_RESP':
+        case 'LOCATION_LOCATIONS_3_RESP':
             return {
                 ...state,
-                fetchingWards: false,
-                fetchedWards: true,
-                wards: parseData(action.payload.data.locations),
-                errorWards: formatGraphQLError(action.payload)
+                fetchingL3s: false,
+                fetchedL3s: true,
+                l3s: parseData(action.payload.data.locations),
+                errorL3s: formatGraphQLError(action.payload)
             };
-        case 'LOCATION_LOCATIONS_W_ERR':
+        case 'LOCATION_LOCATIONS_3_ERR':
             return {
                 ...state,
-                fetchingWards: false,
-                errorWards: formatServerError(action.payload)
+                fetchingL3s: false,
+                errorL3s: formatServerError(action.payload)
             };
-        case 'LOCATION_LOCATIONS_W_CLEAR':
+        case 'LOCATION_LOCATIONS_3_CLEAR':
             return {
                 ...state,
-                wards: [],
+                l3s: [],
             };
+        case 'LOCATION_MUTATION_REQ':
+            return dispatchMutationReq(state, action)
+        case 'LOCATION_MUTATION_ERR':
+            return dispatchMutationErr(state, action);
+        case 'LOCATION_CREATE_LOCATION_RESP':
+            return dispatchMutationResp(state, "createLocation", action);
+        case 'LOCATION_UPDATE_LOCATION_RESP':
+            return dispatchMutationResp(state, "updateLocation", action);
+        case 'LOCATION_DELETE_LOCATION_RESP':
+            return dispatchMutationResp(state, "deleteLocation", action);
+        case 'LOCATION_MOVE_LOCATION_RESP':
+            return dispatchMutationResp(state, "moveLocation", action);
         default:
             return state;
     }
