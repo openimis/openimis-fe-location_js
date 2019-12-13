@@ -127,7 +127,6 @@ class LocationsPage extends Component {
     }
 
     onEdit = (l, level) => {
-        console.log("onEdit " + JSON.stringify(l));
         let currentParents = [];
         for (let i = 0; i < level; i++) {
             currentParents.push(this.state[`l${i}`])

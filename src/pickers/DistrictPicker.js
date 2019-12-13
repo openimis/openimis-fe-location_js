@@ -43,7 +43,7 @@ class DistrictPicker extends Component {
 }
 
 const mapStateToProps = state => ({
-    districts: state.loc.userDistricts,
+    districts: state.loc.userL1s,
 });
 
 export default withModulesManager(connect(mapStateToProps)(injectIntl(withTheme(withStyles(styles)(DistrictPicker)))));

@@ -1,4 +1,8 @@
-import { graphql, formatQuery, formatPageQuery, formatMutation } from "@openimis/fe-core";
+import {
+  graphql, decodeId,
+  formatQuery, formatPageQuery, formatPageQueryWithCount,
+  formatMutation
+} from "@openimis/fe-core";
 
 export function fetchUserDistricts() {
   let payload = formatQuery("userDistricts",
@@ -25,6 +29,27 @@ export function fetchHealthFacilityFullPath(mm, id) {
   return healthFacilityFullPath('LOCATION_HEALTH_FACILITY_FULL_PATH', mm, id);
 }
 
+export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) {
+  let filters = [
+    !!healthFacilityUuid ? `uuid: "${healthFacilityUuid}"` : `code: "${healthFacilityCode}"`,
+    'showHistory: true'
+  ]
+  let projections = [
+    "id", "uuid", "code", "name", "careType",
+    "address", "phone", "fax", "email",
+    "legalForm{code}", "level", "subLevel{code}",
+    "location{id, uuid, code, name, parent{id, uuid, code, name}}",
+    "servicesPricelist{id, uuid, name}", "itemsPricelist{id, uuid, name}",
+    "catchments{id, location{id, uuid, code, name}, catchment}",
+    "validityFrom", "validityTo"
+  ]
+  const payload = formatPageQuery("healthFacilities",
+    filters,
+    projections
+  );
+  return graphql(payload, 'LOCATION_HEALTH_FACILITY');
+}
+
 export function fetchHealthFacilities(mm, region, district, str) {
   let filters = [];
   if (!!str && str.length) filters.push([`str:"${str}"`]);
@@ -35,6 +60,21 @@ export function fetchHealthFacilities(mm, region, district, str) {
     mm.getRef("location.HealthFacilityPicker.projection")
   );
   return graphql(payload, 'LOCATION_HEALTH_FACILITIES');
+}
+
+export function fetchHealthFacilitySummaries(filters) {
+  var projections = [
+    "id", "uuid", "code", "name", "careType",
+    "phone", "fax", "email",
+    "level", "legalForm{code}",
+    "location{code,name, parent{code, name}}",
+    "validityFrom", "validityTo"
+  ]
+  const payload = formatPageQueryWithCount("healthFacilities",
+    filters,
+    projections
+  );
+  return graphql(payload, 'LOCATION_HEALTH_FACILITY_SEARCHER');
 }
 
 export function fetchLocations(levels, type, parent) {
@@ -55,7 +95,7 @@ export function clearLocations(type) {
   }
 }
 
-export function formatLocationGQL(location) {
+function formatLocationGQL(location) {
   return `
     ${location.uuid !== undefined && location.uuid !== null ? `uuid: "${location.uuid}"` : ''}
     code: "${location.code}"
@@ -113,6 +153,77 @@ export function moveLocation(location, newParent, clientMutationLabel) {
   return graphql(
     mutation.payload,
     ['LOCATION_MUTATION_REQ', 'LOCATION_MOVE_LOCATION_RESP', 'LOCATION_MUTATION_ERR'],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime
+    }
+  )
+}
+
+function formatCatchment(catchment) {
+  return `{
+    ${!!catchment.id ? `id: ${catchment.id}`:""}
+    locationId: ${decodeId(catchment.location.id)}
+    catchment: ${catchment.catchment}    
+  }`
+}
+
+function formatCatchments(catchments) {
+  if (!catchments || !catchments.length) return "";
+  return `catchments: [
+    ${catchments.map(c => formatCatchment(c)).join('\n')}
+  ]`
+}
+
+function formatHealthFacilityGQL(hf) {
+  return `
+    ${hf.uuid !== undefined && hf.uuid !== null ? `uuid: "${hf.uuid}"` : ''}
+    code: "${hf.code}"
+    name: "${hf.name}"
+    locationId: ${decodeId(hf.location.id)}
+    level: "${hf.level}"
+    legalFormId: "${hf.legalForm.code}"
+    careType: "${hf.careType}"
+    ${!!hf.subLevel ? `subLevelId: "${hf.subLevel.code}"` : ""}
+    ${!!hf.address ? `address: ${JSON.stringify(hf.address)}` : ""}
+    ${!!hf.phone ? `phone: "${hf.phone}"` : ""}
+    ${!!hf.fax ? `fax: "${hf.fax}"` : ""}
+    ${!!hf.email ? `email: "${hf.email}"` : ""}
+    ${!!hf.servicesPricelist ? `servicesPricelistId: ${decodeId(hf.servicesPricelist.id)}` : ""}
+    ${!!hf.itemsPricelist ? `itemsPricelistId: ${decodeId(hf.itemsPricelist.id)}` : ""}
+    ${formatCatchments(hf.catchments)}
+  `
+}
+
+
+export function createOrUpdateHealthFacility(hf, clientMutationLabel) {
+  let action = hf.uuid !== undefined && hf.uuid !== null ? "update" : "create";
+  let mutation = formatMutation(`${action}HealthFacility`, formatHealthFacilityGQL(hf), clientMutationLabel);
+  var requestedDateTime = new Date();
+  return graphql(
+    mutation.payload,
+    ['LOCATION_MUTATION_REQ', `LOCATION_${action.toUpperCase()}_HEALTH_FACILITY_RESP`, 'LOCATION_MUTATION_ERR'],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime
+    }
+  )
+}
+
+
+export function deleteHealthFacility(hf, clientMutationLabel) {
+  let payload = `
+    uuid: "${hf.uuid}"
+    code: "${hf.code}"
+  `
+  let mutation = formatMutation("deleteHealthFacility", payload, clientMutationLabel);
+  var requestedDateTime = new Date();
+  hf.clientMutationId = mutation.clientMutationId;
+  return graphql(
+    mutation.payload,
+    ['LOCATION_MUTATION_REQ', 'LOCATION_DELETE_HEALTH_FACILITY_RESP', 'LOCATION_MUTATION_ERR'],
     {
       clientMutationId: mutation.clientMutationId,
       clientMutationLabel,

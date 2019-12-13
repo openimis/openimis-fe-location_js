@@ -76,7 +76,7 @@ class EditLocationDialog extends Component {
                         <TextInput
                             module="location"
                             label="EditDialog.code"
-                            autofocus={true}
+                            autoFocus={true}
                             value={!!this.state.data ? this.state.data.code : null}
                             onChange={v => this.changeData('code', v)}
                             inputProps={{

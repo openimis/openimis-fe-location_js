@@ -42,7 +42,7 @@ class RegionPicker extends Component {
 }
 
 const mapStateToProps = state => ({
-    regions: state.loc.userRegions || [],
+    regions: state.loc.userL0s || [],
 });
 
 export default withModulesManager(connect(mapStateToProps)(injectIntl(withTheme(withStyles(styles)(RegionPicker)))));

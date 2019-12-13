@@ -5,7 +5,7 @@ import { fetchUserDistricts } from "../actions";
 
 class UserDistrictsLoader extends Component {
     componentDidMount() {
-        if (!this.props.userDistricts) {
+        if (!this.props.userL0s) {
             this.props.fetchUserDistricts();
         }
     }
@@ -15,7 +15,7 @@ class UserDistrictsLoader extends Component {
 }
 
 const mapStateToProps = state => ({
-    userDistricts: !!state.loc && state.loc.userDistricts,
+    userL0s: !!state.loc && state.loc.userL0s,
 });
 
 const mapDispatchToProps = dispatch => {
