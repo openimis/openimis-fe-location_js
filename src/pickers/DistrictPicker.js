@@ -32,7 +32,7 @@ class DistrictPicker extends Component {
                 return d.parent.uuid === region.uuid
             });
         }
-        if (items.length < this.selectThreshold) {
+        if (!value && items.length < this.selectThreshold) {
             var options = [...items.map(r => ({ value: r, label: locationLabel(r)}))];
             if (withNull) {
                 options.unshift({ value: null, label: nullLabel || formatMessage(intl, "location", "location.DistrictPicker.null")})

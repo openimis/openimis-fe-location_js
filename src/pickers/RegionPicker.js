@@ -28,7 +28,7 @@ class RegionPicker extends Component {
             withPlaceholder, placeholder = null,
             readOnly = false, required = false
         } = this.props;
-        if (regions.length < this.selectThreshold) {
+        if (!value && regions.length < this.selectThreshold) {
             var options = [...preValues, ...regions].map(r => ({ value: r, label: locationLabel(r)}));
             if (withNull) {
                 options.unshift({ value: null, label: nullLabel || formatMessage(intl, "location", "location.RegionPicker.null")})

@@ -7,6 +7,7 @@
     "location.DistrictPicker.label": "District",
     "location.DistrictPicker.null": "Any",
     "location.HealthFacilityPicker.label": "Health Facility",
+    "location.HealthFacilityPicker.null": "Any",
     "location.healthFacilityLevel": "Health Facility Level",
     "location.healthFacilityLevel.null": "Any",
     "location.healthFacilityLevel.C": "Health Center",
