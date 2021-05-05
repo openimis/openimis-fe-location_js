@@ -21,6 +21,7 @@ class HealthFacilityForm extends Component {
         update: 0,
         healthFacility_uuid: null,
         healthFacility: this._newHealthFacility(),
+        newHealthFacility: true,
     }
 
     constructor(props) {
@@ -44,11 +45,14 @@ class HealthFacilityForm extends Component {
         if (prevState.healthFacility.code !== this.state.healthFacility.code) {
             document.title = formatMessageWithValues(this.props.intl, "location", "healthFacility.edit.page.title", { code: this.state.healthFacility.code })
         }
-        if (prevProps.fetchedHealthFacility !== this.props.fetchedHealthFacility && !!this.props.fetchedHealthFacility) {
+        if (prevProps.fetchedHealthFacility !== this.props.fetchedHealthFacility
+            && !!this.props.fetchedHealthFacility
+            && !!this.props.healthFacility) {
             this.setState((state, props) => ({
-                healthFacility: { ...props.healthFacility, parentLocation: props.healthFacility.location.parent },
+                healthFacility: { ...props.healthFacility , parentLocation: props.healthFacility.location.parent },
                 healthFacility_uuid: props.healthFacility.uuid,
-                lockNew: false
+                lockNew: false,
+                newHealthFacility: false,
             }));
         } else if (prevState.healthFacility_uuid !== this.state.healthFacility_uuid) {
             this.props.fetchHealthFacility(
@@ -68,6 +72,7 @@ class HealthFacilityForm extends Component {
         this.setState((state) => ({
                 healthFacility: this._newHealthFacility(),
                 lockNew: false,
+                newHealthFacility: true,
                 reset: state.reset + 1,
             }),
             e => {
@@ -78,7 +83,7 @@ class HealthFacilityForm extends Component {
     }
 
     onEditedChanged = healthFacility => {
-        this.setState({ healthFacility })
+        this.setState({ healthFacility, newHealthFacility: false })
     }
 
     canSave = () => {
@@ -113,13 +118,25 @@ class HealthFacilityForm extends Component {
             errorHealthFacility,
             add, save, back,
         } = this.props
-        const { healthFacility_uuid, lockNew } = this.state;
-        let readOnly = lockNew || !!this.state.healthFacility.validityTo;
-        var actions = [{
-            doIt: e => this.reload(healthFacility_uuid),
-            icon: <ReplayIcon />,
-            onlyIfDirty: !readOnly
-        }]
+        const {
+            healthFacility_uuid,
+            lockNew,
+            healthFacility,
+            newHealthFacility,
+            reset,
+            update,
+        } = this.state;
+        console.log('healthFacility', healthFacility);
+        let readOnly = lockNew || !!healthFacility.validityTo;
+        let actions = [];
+
+        if (healthFacility_uuid) {
+            actions.push({
+                doIt: e => this.reload(healthFacility_uuid),
+                icon: <ReplayIcon />,
+                onlyIfDirty: !readOnly
+            });
+        }
         return (
             <Fragment>
                 <ProgressOrError progress={fetchingHealthFacility} error={errorHealthFacility} />
@@ -128,13 +145,13 @@ class HealthFacilityForm extends Component {
                         <Form
                             module="location"
                             edited_id={healthFacility_uuid}
-                            edited={this.state.healthFacility}
-                            reset={this.state.reset}
-                            update={this.state.update}
+                            edited={healthFacility}
+                            reset={reset}
+                            update={update}
                             title="healthFacility.edit.title"
-                            titleParams={{ code: this.state.healthFacility.code }}
+                            titleParams={{ code: healthFacility.code }}
                             back={back}
-                            add={!!add ? this._add : null}
+                            add={!!add && !newHealthFacility ? this._add : null}
                             save={!!save ? this._save : null}
                             canSave={this.canSave}
                             reload={(healthFacility_uuid || readOnly) && this.reload}
