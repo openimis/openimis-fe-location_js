@@ -8,7 +8,7 @@ import {
     fetchLocations, clearLocations,
 } from "../actions";
 import {
-    withModulesManager, decodeId,
+    withModulesManager,
     FormPanel, NumberInput
 } from "@openimis/fe-core";
 import { withTheme, withStyles } from "@material-ui/core/styles";

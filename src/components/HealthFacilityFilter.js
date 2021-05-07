@@ -33,7 +33,7 @@ class HealthFacilityFilter extends Component {
             !!this.props.filters['showHistory'] &&
             this.state.showHistory !== this.props.filters['showHistory']['value']
         ) {
-            this.setState({ showHistory: this.props.filters['showHistory']['value'] })
+            this.setState((sate, props) => ({ showHistory: props.filters['showHistory']['value'] }))
         }
     }
 
@@ -46,7 +46,7 @@ class HealthFacilityFilter extends Component {
         return {
             id: 'region',
             value: v,
-            filter: `location_Parent_Uuid: "${!!v && v.uuid}"`
+            filter: !!v ? `location_Parent_Uuid: "${v.uuid}"` : null
         }
     }
 
@@ -54,7 +54,7 @@ class HealthFacilityFilter extends Component {
         return {
             id: 'district',
             value: v,
-            filter: `location_Uuid: "${!!v && v.uuid}"`
+            filter: !!v ? `location_Uuid: "${v.uuid}"` : null
         }
     }
 
@@ -66,9 +66,9 @@ class HealthFacilityFilter extends Component {
                 value: null
             },
         ]);
-        this.setState({
-            reset: this.state.reset + 1,
-        });
+        this.setState((state) => ({
+            reset: state.reset + 1,
+        }));
     }
 
     _onChangeDistrict = (v, s) => {
@@ -79,23 +79,9 @@ class HealthFacilityFilter extends Component {
             filters.push(this._regionFilter(v.parent))
         }
         this.props.onChangeFilters(filters);
-        this.setState({
-            reset: this.state.reset + 1,
-        });
-    }
-
-    _onChangeLegalForm = (v, s) => {
-        let filters = [
-            {
-                id: 'legalForm',
-                value: v,
-                filter: `legalForm_Code: "${!!v && v.code}"`
-            }
-        ];
-        this.props.onChangeFilters(filters);
-        this.setState({
-            reset: this.state.reset + 1,
-        });
+        this.setState((state) => ({
+            reset: state.reset + 1,
+        }));
     }
 
     _onChangeShowHistory = () => {
@@ -107,10 +93,10 @@ class HealthFacilityFilter extends Component {
             }
         ];
         this.props.onChangeFilters(filters);
-        this.setState({
-            showHistory: !this.state.showHistory,
-            reset: this.state.reset + 1,
-        });
+        this.setState((state) => ({
+            showHistory: !state.showHistory,
+            reset: state.reset + 1,
+        }));
     }
 
     _onChange = (k, v, s) => {
@@ -122,9 +108,9 @@ class HealthFacilityFilter extends Component {
             }
         ];
         this.props.onChangeFilters(filters);
-        this.setState({
-            reset: this.state.reset + 1,
-        });
+        this.setState((state) => ({
+            reset: state.reset + 1,
+        }));
     }
 
     render() {
@@ -134,7 +120,7 @@ class HealthFacilityFilter extends Component {
 
                 <Grid item xs={2} className={classes.item}>
                     <PublishedComponent
-                        id="location.RegionPicker"
+                        pubRef="location.RegionPicker"
                         value={(filters['region'] && filters['region']['value'])}
                         reset={this.state.reset}
                         withNull={true}
@@ -143,7 +129,7 @@ class HealthFacilityFilter extends Component {
                 </Grid>
                 <Grid item xs={2} className={classes.item}>
                     <PublishedComponent
-                        id="location.DistrictPicker"
+                        pubRef="location.DistrictPicker"
                         value={(filters['district'] && filters['district']['value'])}
                         region={(filters['region'] && filters['region']['value'])}
                         reset={this.state.reset}
@@ -153,22 +139,22 @@ class HealthFacilityFilter extends Component {
                 </Grid>
                 <Grid item xs={2} className={classes.item}>
                     <PublishedComponent
-                        id="location.HealthFacilityLegalFormPicker"
-                        value={this.state.legalForm}
+                        pubRef="location.HealthFacilityLegalFormPicker"
+                        value={(filters['legalForm_Code'] && filters['legalForm_Code']['value'])}
                         onChange={(v, s) => this._onChange('legalForm_Code', v, s)}
                     />
                 </Grid>
                 <Grid item xs={2} className={classes.item}>
                     <PublishedComponent
-                        id="location.HealthFacilityLevelPicker"
-                        value={this.state.healthFacilityLevel}
+                        pubRef="location.HealthFacilityLevelPicker"
+                        value={(filters['level'] && filters['level']['value'])}
                         onChange={(v, s) => this._onChange('level', v, s)}
                     />
                 </Grid>
                 <Grid item xs={2} className={classes.item}>
                     <PublishedComponent
-                        id="medical.CareTypePicker"
-                        value={this.state.careType}
+                        pubRef="medical.CareTypePicker"
+                        value={(filters['careType'] && filters['careType']['value'])}
                         onChange={(v, s) => this._onChange('careType', v, s)}
                     />
                 </Grid>
@@ -193,7 +179,7 @@ class HealthFacilityFilter extends Component {
                             {
                                 id: 'code',
                                 value: v,
-                                filter: `code_Icontains: "${v}"`
+                                filter: !!v ? `code_Icontains: "${v}"` : null
                             }
                         ])}
                     />
@@ -207,7 +193,7 @@ class HealthFacilityFilter extends Component {
                             {
                                 id: 'name',
                                 value: v,
-                                filter: `name_Icontains: "${v}"`
+                                filter: !!v ? `name_Icontains: "${v}"` : null
                             }
                         ])}
                     />
@@ -221,7 +207,7 @@ class HealthFacilityFilter extends Component {
                             {
                                 id: 'phone',
                                 value: v,
-                                filter: `phone_Icontains: "${v}"`
+                                filter: !!v ? `phone_Icontains: "${v}"` : null
                             }
                         ])}
                     />
@@ -235,7 +221,7 @@ class HealthFacilityFilter extends Component {
                             {
                                 id: 'fax',
                                 value: v,
-                                filter: `fax_Icontains: "${v}"`
+                                filter: !!v ? `fax_Icontains: "${v}"` : null
                             }
                         ])}
                     />
@@ -249,7 +235,7 @@ class HealthFacilityFilter extends Component {
                             {
                                 id: 'email',
                                 value: v,
-                                filter: `email_Icontains: "${v}"`
+                                filter: !!v ? `email_Icontains: "${v}"` : null
                             }
                         ])}
                     />

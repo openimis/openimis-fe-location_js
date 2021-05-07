@@ -1,6 +1,6 @@
 {
   "name": "@openimis/fe-location",
-  "version": "1.2.0-rc1",
+  "version": "1.2.1-rc6",
   "license": "AGPL-3.0-only",
   "description": "openIMIS Frontend Location reference module",
   "repository": "openimis/openimis-fe-location_js",
@@ -15,7 +15,10 @@
     "prepare": "yarn run build",
     "start": "rollup -c -w"
   },
-  "devDependencies": {
+  "peerDependency": {
+    "react-intl": "^5.8.1"
+  },
+    "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
@@ -28,6 +31,12 @@
     "@rollup/plugin-json": "^4.0.3",
     "@rollup/plugin-node-resolve": "^7.1.3",
     "@rollup/plugin-url": "^5.0.0",
+    "moment": "^2.25.3",
+    "prop-types": "^15.7.2",
+    "react-autosuggest": "^10.0.2",
+    "react-router-dom": "^5.2.0",
+    "redux": "^4.0.5",
+    "redux-api-middleware": "^3.2.1",
     "rollup": "^2.10.0"
   },
   "files": [

@@ -1,3 +1,4 @@
+export const DEFAULT_LOCATION_TYPES = ["R", "D", "W", "V"] //overwrittn by props.modulesManager.getConf("fe-location", "Location.types", DEFAULT_LOCATION_TYPES)
 export const HEALTH_FACILITY_LEVELS = ["C", "D", "H"]
 export const HEALTH_FACILITY_LEGAL_FORMS = ["C", "D", "G", "P"]
 export const HEALTH_FACILITY_SUB_LEVELS = ["I", "N", "R"]

@@ -1,5 +1,5 @@
 import {
-    formatServerError, formatGraphQLError, parseData, pageInfo, decodeId,
+    formatServerError, formatGraphQLError, parseData, pageInfo,
     dispatchMutationReq, dispatchMutationResp, dispatchMutationErr
 } from '@openimis/fe-core';
 
@@ -84,7 +84,7 @@ function reducer(
                 fetchingHealthFacilityFullPath: false,
                 errorHealthFacilityFullPath: formatServerError(action.payload)
             };
-        case 'LOCATION_HEALTH_FACILITIES_REQ':
+        case 'LOCATION_HEALTH_FACILITIES_STR_REQ':
             return {
                 ...state,
                 fetchingHealthFacilities: true,
@@ -92,7 +92,7 @@ function reducer(
                 healthFacilities: null,
                 errorHealthFacilities: null,
             };
-        case 'LOCATION_HEALTH_FACILITIES_RESP':
+        case 'LOCATION_HEALTH_FACILITIES_STR_RESP':
             return {
                 ...state,
                 fetchingHealthFacilities: false,
@@ -100,7 +100,7 @@ function reducer(
                 healthFacilities: parseData(action.payload.data.healthFacilitiesStr),
                 errorHealthFacilities: formatGraphQLError(action.payload)
             };
-        case 'LOCATION_HEALTH_FACILITIES_ERR':
+        case 'LOCATION_HEALTH_FACILITIES_STR_ERR':
             return {
                 ...state,
                 fetchingHealthFacilities: false,
@@ -169,7 +169,7 @@ function reducer(
                 ...state,
                 fetchingL0s: false,
                 fetchedL0s: true,
-                l0s: parseData(action.payload.data.locations),
+                l0s: parseData(action.payload.data.locations || action.payload.data.locationsStr),
                 errorL0s: formatGraphQLError(action.payload)
             };
         case 'LOCATION_LOCATIONS_0_ERR':
@@ -193,7 +193,7 @@ function reducer(
                 ...state,
                 fetchingL1s: false,
                 fetchedL1s: true,
-                l1s: parseData(action.payload.data.locations),
+                l1s: parseData(action.payload.data.locations || action.payload.data.locationsStr),
                 errorL1s: formatGraphQLError(action.payload)
             };
         case 'LOCATION_LOCATIONS_1_ERR':
@@ -223,7 +223,7 @@ function reducer(
                 ...state,
                 fetchingL2s: false,
                 fetchedL2s: true,
-                l2s: parseData(action.payload.data.locations),
+                l2s: parseData(action.payload.data.locations || action.payload.data.locationsStr),
                 errorL2s: formatGraphQLError(action.payload)
             };
         case 'LOCATION_LOCATIONS_2_ERR':
@@ -251,7 +251,7 @@ function reducer(
                 ...state,
                 fetchingL3s: false,
                 fetchedL3s: true,
-                l3s: parseData(action.payload.data.locations),
+                l3s: parseData(action.payload.data.locations || action.payload.data.locationsStr),
                 errorL3s: formatGraphQLError(action.payload)
             };
         case 'LOCATION_LOCATIONS_3_ERR':
@@ -265,6 +265,12 @@ function reducer(
                 ...state,
                 l3s: [],
             };
+        case 'LOCATION_FILTER_SELECTED':
+            let newState = { ...state }
+            for (var i = action.payload.level + 1; i < action.payload.maxLevels; i++) {
+                newState[`l${i}s`] = []
+            }
+            return newState;
         case 'LOCATION_MUTATION_REQ':
             return dispatchMutationReq(state, action)
         case 'LOCATION_MUTATION_ERR':
@@ -282,7 +288,7 @@ function reducer(
         case 'LOCATION_UPDATE_HEALTH_FACILITY_RESP':
             return dispatchMutationResp(state, "updateHealthFacility", action);
         case 'LOCATION_DELETE_HEALTH_FACILITY_RESP':
-            return dispatchMutationResp(state, "deleteHealthFacility", action);            
+            return dispatchMutationResp(state, "deleteHealthFacility", action);
         default:
             return state;
     }

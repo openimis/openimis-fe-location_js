@@ -18,12 +18,6 @@ import {
 import { IconButton } from "@material-ui/core";
 import { RIGHT_HEALTH_FACILITY_DELETE } from "../constants";
 
-const styles = theme => ({
-    root: {
-        width: "100%"
-    },
-});
-
 class HealthFacilitiesSearcher extends Component {
 
     constructor(props) {
@@ -54,43 +48,29 @@ class HealthFacilitiesSearcher extends Component {
             "healthFacilitySummaries.email",
             "healthFacilitySummaries.region",
             "healthFacilitySummaries.district",
-        ];
-        if (filters.showHistory && !!filters.showHistory.value) {
-            headers.push(
-                "healthFacilitySummaries.id",
-                "healthFacilitySummaries.validityFrom",
-                "healthFacilitySummaries.validityTo",
-            )
-        }
+            "healthFacilitySummaries.validityFrom",
+            "healthFacilitySummaries.validityTo",
+        ]
         if (this.props.rights.includes(RIGHT_HEALTH_FACILITY_DELETE)) {
             headers.push(null);
         }
         return headers;
     }
 
-    sorts = (filters) => {
-        var results = [
-            ['code', true],
-            ['name', true],
-            ['legalForm', true],
-            ['level', true],
-            ['careType', true],
-            null,
-            null,
-            null,
-            null,
-            null,
-        ]
-
-        if (filters.showHistory && !!filters.showHistory.value) {
-            results.push(
-                null,
-                ['validityFrom', false],
-                ['validityTo', false]
-            );
-        }
-        return results;
-    }
+    sorts = (filters) => [
+        ['code', true],
+        ['name', true],
+        ['legalForm', true],
+        ['level', true],
+        ['careType', true],
+        null,
+        null,
+        null,
+        null,
+        null,
+        ['validityFrom', false],
+        ['validityTo', false]
+    ]
 
     itemFormatters = (filters) => {
         let formatters = [
@@ -105,7 +85,7 @@ class HealthFacilitiesSearcher extends Component {
             hf => <PublishedComponent
                 readOnly={true}
                 nullLabel="empty"
-                id="medical.CareTypePicker" withLabel={false} value={hf.careType}
+                pubRef="medical.CareTypePicker" withLabel={false} value={hf.careType}
             />,
             hf => hf.phone,
             hf => hf.fax,
@@ -116,20 +96,17 @@ class HealthFacilitiesSearcher extends Component {
             hf => hf.location ?
                 `${hf.location.code} - ${hf.location.name}` :
                 null,
-        ];
-        if (filters.showHistory && !!filters.showHistory.value) {
-            formatters.push(
-                hf => decodeId(hf.id),
-                hf => formatDateFromISO(
-                    this.props.modulesManager,
-                    this.props.intl,
-                    hf.validityFrom),
-                hf => formatDateFromISO(
-                    this.props.modulesManager,
-                    this.props.intl,
-                    hf.validityTo),
-            )
-        }
+
+            hf => formatDateFromISO(
+                this.props.modulesManager,
+                this.props.intl,
+                hf.validityFrom),
+            hf => formatDateFromISO(
+                this.props.modulesManager,
+                this.props.intl,
+                hf.validityTo),
+
+        ]
         if (this.props.rights.includes(RIGHT_HEALTH_FACILITY_DELETE)) {
             formatters.push(hf => !!hf.validityTo ? null : <IconButton
                 onClick={e => this.onDelete(hf)}>

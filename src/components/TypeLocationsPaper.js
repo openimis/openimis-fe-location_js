@@ -107,6 +107,7 @@ class ActionDialogs extends Component {
 const StyledActionDialogs = injectIntl(ActionDialogs)
 
 class ResultPane extends Component {
+
     render() {
         const { classes, rights, type, fetching, fetched, error,
             locations, location, onSelect, onEdit, onDelete, onMove,
@@ -124,7 +125,7 @@ class ResultPane extends Component {
                                 selected={location && location.id === l.id}
                                 onClick={e => !!l.uuid && !!onSelect && onSelect(l)}
                                 onDoubleClick={e => !!l.uuid && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
-                                className={!l.uuid ? classes.lockedRow : null}
+                                className={!l.uuid || !!l.clientMutationId ? classes.lockedRow : null}
                             >
                                 <ListItemText>{l.code} - {l.name}</ListItemText>
                                 {!!l.uuid &&

@@ -1,8 +1,10 @@
 import {
   graphql, decodeId,
-  formatQuery, formatPageQuery, formatPageQueryWithCount,
+  formatQuery, formatPageQuery, formatPageQueryWithCount, formatGQLString,
   formatMutation
 } from "@openimis/fe-core";
+
+import { nestParentsProjections } from "./utils";
 
 export function fetchUserDistricts() {
   let payload = formatQuery("userDistricts",
@@ -15,7 +17,7 @@ export function fetchUserDistricts() {
 
 function healthFacilityFullPath(key, mm, id) {
   let payload = formatPageQuery("healthFacilities",
-    [`id: "${btoa(`HealthFacilityGQLType:${id}`)}"`],
+    [`id: "${`HealthFacilityGQLType:${id}`}"`],
     mm.getRef("location.HealthFacilityPicker.projection")
   );
   return graphql(payload, key);
@@ -26,7 +28,7 @@ export function fetchUserHealthFacilityFullPath(mm, id) {
 }
 
 export function fetchHealthFacilityFullPath(mm, id) {
-  return healthFacilityFullPath('LOCATION_HEALTH_FACILITY_FULL_PATH', mm, id);
+  return healthFacilityFullPath('LOCATION_HEALTH_FACILITY_FULL_PATH', mm, decodeId(id));
 }
 
 export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) {
@@ -50,16 +52,17 @@ export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) 
   return graphql(payload, 'LOCATION_HEALTH_FACILITY');
 }
 
-export function fetchHealthFacilities(mm, region, district, str) {
+export function fetchHealthFacilitiesStr(mm, region, district, str, level) {
   let filters = [];
   if (!!str && str.length) filters.push([`str:"${str}"`]);
+  if (!!level && level.length) filters.push([`level:"${level}"`]);
   if (!!region) filters.push([`regionUuid: "${region.uuid}"`])
   if (!!district) filters.push([`districtUuid:"${district.uuid}"`])
   let payload = formatPageQuery("healthFacilitiesStr",
     filters,
     mm.getRef("location.HealthFacilityPicker.projection")
   );
-  return graphql(payload, 'LOCATION_HEALTH_FACILITIES');
+  return graphql(payload, 'LOCATION_HEALTH_FACILITIES_STR');
 }
 
 export function fetchHealthFacilitySummaries(filters) {
@@ -68,7 +71,8 @@ export function fetchHealthFacilitySummaries(filters) {
     "phone", "fax", "email",
     "level", "legalForm{code}",
     "location{code,name, parent{code, name}}",
-    "validityFrom", "validityTo"
+    "validityFrom", "validityTo",
+    "clientMutationId"
   ]
   const payload = formatPageQueryWithCount("healthFacilities",
     filters,
@@ -84,7 +88,20 @@ export function fetchLocations(levels, type, parent) {
   }
   let payload = formatPageQuery("locations",
     filters,
-    ["id", "uuid", "type", "code", "name", "malePopulation", "femalePopulation", "otherPopulation", "families"]
+    ["id", "uuid", "type", "code", "name", "malePopulation", "femalePopulation", "otherPopulation", "families", "clientMutationId"]
+  );
+  return graphql(payload, `LOCATION_LOCATIONS_${type}`);
+}
+
+export function fetchLocationsStr(levels, type, parent, str) {
+  let filters = [`type: "${levels[type]}"`, `str: "${str}"`];
+  if (!!parent) {
+    filters.push(`parent_Uuid: "${parent.uuid}"`)
+  }
+  let projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(type)]
+  let payload = formatPageQuery("locationsStr",
+    filters,
+    projections
   );
   return graphql(payload, `LOCATION_LOCATIONS_${type}`);
 }
@@ -98,8 +115,8 @@ export function clearLocations(type) {
 function formatLocationGQL(location) {
   return `
     ${location.uuid !== undefined && location.uuid !== null ? `uuid: "${location.uuid}"` : ''}
-    code: "${location.code}"
-    name: "${location.name}"
+    code: "${formatGQLString(location.code)}"
+    name: "${formatGQLString(location.name)}"
     ${!!location.parentUuid ? `parentUuid: "${location.parentUuid}"` : ""}
     ${!!location.malePopulation ? `malePopulation: ${location.malePopulation}` : ""}
     ${!!location.femalePopulation ? `femalePopulation: ${location.femalePopulation}` : ""}
@@ -163,7 +180,7 @@ export function moveLocation(location, newParent, clientMutationLabel) {
 
 function formatCatchment(catchment) {
   return `{
-    ${!!catchment.id ? `id: ${catchment.id}`:""}
+    ${!!catchment.id ? `id: ${catchment.id}` : ""}
     locationId: ${decodeId(catchment.location.id)}
     catchment: ${catchment.catchment}    
   }`
@@ -179,18 +196,18 @@ function formatCatchments(catchments) {
 function formatHealthFacilityGQL(hf) {
   return `
     ${hf.uuid !== undefined && hf.uuid !== null ? `uuid: "${hf.uuid}"` : ''}
-    code: "${hf.code}"
-    accCode: "${hf.accCode}"
-    name: "${hf.name}"
+    code: "${formatGQLString(hf.code)}"
+    accCode: "${formatGQLString(hf.accCode)}"
+    name: "${formatGQLString(hf.name)}"
     locationId: ${decodeId(hf.location.id)}
     level: "${hf.level}"
     legalFormId: "${hf.legalForm.code}"
     careType: "${hf.careType}"
     ${!!hf.subLevel ? `subLevelId: "${hf.subLevel.code}"` : ""}
-    ${!!hf.address ? `address: ${JSON.stringify(hf.address)}` : ""}
-    ${!!hf.phone ? `phone: "${hf.phone}"` : ""}
-    ${!!hf.fax ? `fax: "${hf.fax}"` : ""}
-    ${!!hf.email ? `email: "${hf.email}"` : ""}
+    ${!!hf.address ? `address: "${formatGQLString(hf.address)}"` : ""}
+    ${!!hf.phone ? `phone: "${formatGQLString(hf.phone)}"` : ""}
+    ${!!hf.fax ? `fax: "${formatGQLString(hf.fax)}"` : ""}
+    ${!!hf.email ? `email: "${formatGQLString(hf.email)}"` : ""}
     ${!!hf.servicesPricelist ? `servicesPricelistId: ${decodeId(hf.servicesPricelist.id)}` : ""}
     ${!!hf.itemsPricelist ? `itemsPricelistId: ${decodeId(hf.itemsPricelist.id)}` : ""}
     ${formatCatchments(hf.catchments)}
@@ -231,4 +248,10 @@ export function deleteHealthFacility(hf, clientMutationLabel) {
       requestedDateTime
     }
   )
+}
+
+export function selectLocation(location, level, maxLevels) {
+  return dispatch => {
+    dispatch({ type: `LOCATION_FILTER_SELECTED`, payload: { location, level, maxLevels } })
+  }
 }

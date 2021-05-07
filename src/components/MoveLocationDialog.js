@@ -65,16 +65,16 @@ class MoveLocationDialog extends Component {
                 l2: !!parents && parents.length > 2 ? parents[2] : null,
             })
         } else if (!_.isEqual(prevProps.l1s, this.props.l1s)) {
-            this.setState({
+            this.setState((state, props) => ({
                 l1: null,
-                l1s: this.props.l1s,
-                l2s: this.props.l2s,
-            })
+                l1s: props.l1s,
+                l2s: props.l2s,
+            }))
         } else if (!_.isEqual(prevProps.l2s, this.props.l2s)) {
-            this.setState({
+            this.setState((state, props) => ({
                 l2: null,
-                l2s: this.props.l2s,
-            })
+                l2s: props.l2s,
+            }))
         }
     }
 

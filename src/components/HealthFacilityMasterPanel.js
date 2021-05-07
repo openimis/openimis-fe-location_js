@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React from "react";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import {
     ControlledField, PublishedComponent, FormPanel,
@@ -40,13 +40,12 @@ class HealthFacilityMasterPanel extends FormPanel {
 
     render() {
         const { classes, edited, reset, readOnly = false } = this.props;
-        console.log(JSON.stringify(edited));
         return (
             <Grid container>
                 <ControlledField module="location" id="HealthFacility.region" field={
                     <Grid item xs={2} className={classes.item}>
                         <PublishedComponent
-                            id="location.RegionPicker"
+                            pubRef="location.RegionPicker"
                             value={edited.parentLocation}
                             withNull={true}
                             readOnly={readOnly}
@@ -57,7 +56,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 <ControlledField module="location" id="HealthFacility.district" field={
                     <Grid item xs={2} className={classes.item}>
                         <PublishedComponent
-                            id="location.DistrictPicker"
+                            pubRef="location.DistrictPicker"
                             value={edited.location}
                             readOnly={readOnly}
                             region={this.state.parentLocation}
@@ -69,7 +68,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 <ControlledField module="location" id="HealthFacility.legalForm" field={
                     <Grid item xs={2} className={classes.item}>
                         <PublishedComponent
-                            id="location.HealthFacilityLegalFormPicker"
+                            pubRef="location.HealthFacilityLegalFormPicker"
                             value={!!edited.legalForm ? edited.legalForm.code : null}
                             nullLabel="empty"
                             reset={reset}
@@ -82,7 +81,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 <ControlledField module="location" id="HealthFacility.level" field={
                     <Grid item xs={2} className={classes.item}>
                         <PublishedComponent
-                            id="location.HealthFacilityLevelPicker"
+                            pubRef="location.HealthFacilityLevelPicker"
                             value={edited.level}
                             nullLabel="empty"
                             reset={reset}
@@ -95,7 +94,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 <ControlledField module="location" id="HealthFacility.subLevel" field={
                     <Grid item xs={2} className={classes.item}>
                         <PublishedComponent
-                            id="location.HealthFacilitySubLevelPicker"
+                            pubRef="location.HealthFacilitySubLevelPicker"
                             value={!!edited.subLevel ? edited.subLevel.code : null}
                             nullLabel="empty"
                             reset={reset}
@@ -107,7 +106,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 <ControlledField module="location" id="HealthFacility.careType" field={
                     <Grid item xs={2} className={classes.item}>
                         <PublishedComponent
-                            id="medical.CareTypePicker"
+                            pubRef="medical.CareTypePicker"
                             value={edited.careType}
                             nullLabel="empty"
                             reset={reset}

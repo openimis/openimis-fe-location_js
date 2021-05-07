@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { injectIntl } from 'react-intl';
-import { fetchHealthFacilities } from "../actions";
-import { formatMessage, AutoSuggestion, SelectInput, withModulesManager } from "@openimis/fe-core";
+import { fetchHealthFacilitiesStr } from "../actions";
+import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
 import { healthFacilityLabel } from "../utils";
 import _ from "lodash";
 import { TextField } from "@material-ui/core";
@@ -17,25 +17,35 @@ const styles = theme => ({
 
 class HealthFacilityPicker extends Component {
 
+    state = {
+        healthFacilities: []
+    }
+
     constructor(props) {
         super(props);
         this.selectThreshold = props.modulesManager.getConf("fe-location", "HealthFacilityPicker.selectThreshold", 10);
     }
 
+    componentDidMount() {
+        this.setState({ healthFacilities: this.props.healthFacilities });
+    }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (!this.props.userHealthFacilityFullPath) {
-            if (!_.isEqual(prevProps.region, this.props.region)) {
-                this.props.fetchHealthFacilities(this.props.modulesManager, this.props.region, this.props.district, this.props.value);
-            }
-            if (!_.isEqual(prevProps.district, this.props.district)) {
-                this.props.fetchHealthFacilities(this.props.modulesManager, this.props.region, this.props.district, this.props.value);
+        if (!_.isEqual(prevProps.healthFacilities, this.props.healthFacilities)) {
+            this.setState({ healthFacilities: this.props.healthFacilities })
+        } else if (!this.props.userHealthFacilityFullPath) {
+            if (!_.isEqual(prevProps.region, this.props.region) ||
+                !_.isEqual(prevProps.district, this.props.district) ||
+                !_.isEqual(prevProps.level, this.props.level)
+            ) {
+                this.props.fetchHealthFacilitiesStr(this.props.modulesManager, this.props.region, this.props.district, this.props.value, this.props.level);
             }
         }
     }
 
     getSuggestions = str => !!str &&
         str.length >= this.props.modulesManager.getConf("fe-location", "healthFacilitiesMinCharLookup", 2) &&
-        this.props.fetchHealthFacilities(this.props.modulesManager, this.props.region, this.props.district, str);
+        this.props.fetchHealthFacilitiesStr(this.props.modulesManager, this.props.region, this.props.district, str, this.props.level);
 
     debouncedGetSuggestion = _.debounce(
         this.getSuggestions,
@@ -44,9 +54,17 @@ class HealthFacilityPicker extends Component {
 
     onSuggestionSelected = v => this.props.onChange(v, healthFacilityLabel(v));
 
+    onClear = () => {
+        this.setState(
+            { healthFacilities: [] },
+            e => this.onSuggestionSelected(null)
+        );
+    }
+
     render() {
-        const { intl, classes, value, reset, userHealthFacilityFullPath, healthFacilities, withLabel = true, label,
+        const { intl, classes, value, reset, userHealthFacilityFullPath, withLabel = true, label,
             readOnly = false, required = false, withNull = true, nullLabel = null } = this.props;
+        const { healthFacilities } = this.state;
 
         if (!!userHealthFacilityFullPath) {
             return <TextField
@@ -61,6 +79,7 @@ class HealthFacilityPicker extends Component {
             items={healthFacilities}
             label={!!withLabel && (label || formatMessage(intl, "location", "HealthFacilityPicker.label"))}
             lookup={healthFacilityLabel}
+            onClear={this.onClear}
             getSuggestions={this.debouncedGetSuggestion}
             renderSuggestion={a => <span>{healthFacilityLabel(a)}</span>}
             getSuggestionValue={healthFacilityLabel}
@@ -82,7 +101,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetchHealthFacilities }, dispatch);
+    return bindActionCreators({ fetchHealthFacilitiesStr }, dispatch);
 };
 
 export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(HealthFacilityPicker)))));

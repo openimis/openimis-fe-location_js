@@ -52,13 +52,13 @@ class LocationsPage extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!_.isEqual(prevProps.l0s, this.props.l0s)) {
-            this.setState({
-                l0: this.props.l0s[0],
-                l0s: this.props.l0s,
-                l1s: this.props.l1s,
-                l2s: this.props.l2s,
-                l3s: this.props.l3s,
-            })
+            this.setState((state, props) => ({
+                l0: props.l0s[0],
+                l0s: props.l0s,
+                l1s: props.l1s,
+                l2s: props.l2s,
+                l3s: props.l3s,
+            }))
         } else if (prevState.l0 !== this.state.l0) {
             if (!this.state.l0) {
                 this.props.clearLocations(1)
@@ -66,12 +66,12 @@ class LocationsPage extends Component {
                 this.props.fetchLocations(this.locationTypes, 1, this.state.l0)
             }
         } else if (!_.isEqual(prevProps.l1s, this.props.l1s)) {
-            this.setState({
-                l1: !!this.props.l1s ? this.props.l1s[0] : null,
-                l1s: this.props.l1s,
-                l2s: this.props.l2s,
-                l3s: this.props.l3s,
-            })
+            this.setState((state, props) => ({
+                l1: !!props.l1s ? props.l1s[0] : null,
+                l1s: props.l1s,
+                l2s: props.l2s,
+                l3s: props.l3s,
+            }))
         } else if (prevState.l1 !== this.state.l1) {
             if (!this.state.l1) {
                 this.props.clearLocations(2)
@@ -79,11 +79,11 @@ class LocationsPage extends Component {
                 this.props.fetchLocations(this.locationTypes, 2, this.state.l1)
             }
         } else if (!_.isEqual(prevProps.l2s, this.props.l2s)) {
-            this.setState({
-                l2: !!this.props.l2s ? this.props.l2s[0] : null,
-                l2s: this.props.l2s,
-                l3s: this.props.l3s,
-            })
+            this.setState((state, props) => ({
+                l2: !!props.l2s ? props.l2s[0] : null,
+                l2s: props.l2s,
+                l3s: props.l3s,
+            }))
         } else if (prevState.l2 !== this.state.l2) {
             if (!this.state.l2) {
                 this.props.clearLocations(3)
@@ -91,10 +91,10 @@ class LocationsPage extends Component {
                 this.props.fetchLocations(this.locationTypes, 3, this.state.l2)
             }
         } else if (!_.isEqual(prevProps.l3s, this.props.l3s)) {
-            this.setState({
-                l3: !!this.props.l3s ? this.props.l3s[0] : null,
-                l3s: this.props.l3s,
-            })
+            this.setState((state, props) => ({
+                l3: !!props.l3s ? props.l3s[0] : null,
+                l3s: props.l3s,
+            }))
         } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
             this.props.journalize(this.props.mutation);
             let state = { ... this.state }
