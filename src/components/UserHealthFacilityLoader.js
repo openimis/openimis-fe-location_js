@@ -19,7 +19,7 @@ class UserHealthFacilityLoader extends Component {
 }
 
 const mapStateToProps = state => ({
-    user: state.core.user.i_user,
+    user: !!state.core.user && state.core.user.i_user,
     userHealthFacilityFullPath: state.loc.userHealthFacilityFullPath,
 });
 
