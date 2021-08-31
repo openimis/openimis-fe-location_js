@@ -62,7 +62,7 @@ class HealthFacilityPicker extends Component {
 
   debouncedGetSuggestion = _.debounce(
     this.getSuggestions,
-    this.props.modulesManager.getConf("fe-location", "debounceTime", 800),
+    this.props.modulesManager.getConf("fe-location", "debounceTime", 400),
   );
 
   onSuggestionSelected = (v) => this.props.onChange(v, healthFacilityLabel(v));
