@@ -1,118 +1,113 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Autocomplete } from "@material-ui/lab";
+import { TextField } from "@material-ui/core";
 import { withTheme, withStyles } from "@material-ui/core/styles";
-import { injectIntl } from "react-intl";
-import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
+import { withModulesManager, combine, useTranslations, useDebounceCb } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
 import { locationLabel } from "../utils";
-import { fetchLocationsStr } from "../actions";
+import { fetchLocationsStr, clearLocations } from "../actions";
+import _ from "lodash";
 
-const styles = (theme) => ({
+const styles = () => ({
   textField: {
     width: "100%",
   },
 });
 
-class LocationPicker extends Component {
-  state = {
-    locations: [],
+const LocationPicker = (props) => {
+  const {
+    modulesManager,
+    multiple,
+    readOnly,
+    locationLevel = 0,
+    value,
+    withLabel = true,
+    onChange,
+    label,
+    placeholder,
+    filterOptions,
+    parentLocation,
+    required,
+    filterSelectedOptions = true,
+    withPlaceholder,
+  } = props;
+  const [open, setOpen] = useState(false);
+  const { formatMessage } = useTranslations("location", modulesManager);
+  const [searchString, setSearchString] = useState("");
+  const onInputChange = useDebounceCb(setSearchString, modulesManager.getConf("fe-location", "debounceTime", 400));
+
+  const isLoading = useSelector((state) => state.loc[`fetchingL${locationLevel}s`]);
+  const options = useSelector((state) => state.loc[`l${locationLevel}s`] ?? []);
+
+  const dispatch = useDispatch();
+  const handleChange = (__, value) => {
+    onChange(value, locationLabel(value));
+    if (!multiple) setOpen(false);
   };
 
-  constructor(props) {
-    super(props);
-    this.locationTypes = props.modulesManager.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
-    this.selectThreshold = props.modulesManager.getConf("fe-location", "LocationPicker.selectThreshold", 10);
-  }
+  // Clear locations on unmount to avoid conflicts with RegionPicker & DistrictPicker
+  useEffect(() => {
+    return () => {
+      dispatch(clearLocations(locationLevel));
+    };
+  }, []);
 
-  componentDidMount() {
-    this.setState({ locations: this.props.locations });
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (!_.isEqual(prevProps.locations, this.props.locations)) {
-      this.setState({ locations: this.props.locations });
+  useEffect(() => {
+    if (
+      open &&
+      !isLoading &&
+      searchString.length >= modulesManager.getConf("fe-location", "locationMinCharLookup", 2)
+    ) {
+      dispatch(fetchLocationsStr(modulesManager, locationLevel, parentLocation, searchString));
     }
-  }
+  }, [searchString, parentLocation]);
 
-  getSuggestions = (str) =>
-    !!str &&
-    str.length >= this.props.modulesManager.getConf("fe-location", "locationMinCharLookup", 2) &&
-    this.props.fetchLocationsStr(this.locationTypes, this.props.locationLevel, this.props.parentLocation, str);
+  useEffect(() => {
+    if (open) {
+      dispatch(fetchLocationsStr(modulesManager, locationLevel, parentLocation, searchString, 20));
+    } else {
+      setSearchString("");
+    }
+  }, [open]);
 
-  debouncedGetSuggestion = _debounce(
-    this.getSuggestions,
-    this.props.modulesManager.getConf("fe-location", "debounceTime", 800),
+  return (
+    <Autocomplete
+      loadingText={formatMessage("LocationPicker.loadingText")}
+      openText={formatMessage("LocationPicker.openText")}
+      closeText={formatMessage("LocationPicker.closeText")}
+      clearText={formatMessage("LocationPicker.clearText")}
+      openOnFocus
+      multiple={multiple}
+      disabled={readOnly}
+      options={options}
+      loading={isLoading}
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
+      autoComplete
+      value={value}
+      getOptionLabel={(option) => locationLabel(option)}
+      getOptionSelected={(option, value) => option.id === value.id}
+      onChange={handleChange}
+      filterOptions={filterOptions}
+      filterSelectedOptions={filterSelectedOptions}
+      onInputChange={(__, searchString) => onInputChange(searchString)}
+      renderInput={(inputProps) => (
+        <TextField
+          {...inputProps}
+          variant="standard"
+          required={required}
+          label={withLabel && (label || formatMessage(`Location${locationLevel}Picker.label`))}
+          placeholder={
+            withPlaceholder ? placeholder || formatMessage(`Location${locationLevel}Picker.placehoder`) : null
+          }
+        />
+      )}
+    />
   );
-
-  onSuggestionSelected = (v) => {
-    this.props.onChange(v, locationLabel(v));
-  };
-
-  onClear = () => {
-    this.setState({ locations: [] }, (e) => this.onSuggestionSelected(null));
-  };
-
-  render() {
-    const {
-      intl,
-      locationLevel,
-      value,
-      reset,
-      withLabel = true,
-      label = null,
-      withNull = false,
-      nullLabel = null,
-      filterLabels = true,
-      preValues = [],
-      withPlaceholder,
-      placeholder = null,
-      readOnly = false,
-      required = false,
-    } = this.props;
-    const { locations } = this.state;
-
-    return (
-      <AutoSuggestion
-        module="location"
-        items={locations}
-        preValues={preValues}
-        label={!!withLabel && (label || formatMessage(intl, "location", `Location${locationLevel}Picker.label`))}
-        placeholder={
-          !!withPlaceholder
-            ? placeholder || formatMessage(intl, "location", `Location${locationLevel}Picker.placehoder`)
-            : null
-        }
-        lookup={locationLabel}
-        renderSuggestion={(a) => <span>{locationLabel(a)}</span>}
-        getSuggestions={this.getSuggestions}
-        getSuggestionValue={locationLabel}
-        onClear={this.onClear}
-        onSuggestionSelected={this.onSuggestionSelected}
-        value={value}
-        reset={reset}
-        readOnly={readOnly}
-        required={required}
-        selectThreshold={this.selectThreshold}
-        withNull={withNull}
-        nullLabel={
-          nullLabel || filterLabels
-            ? formatMessage(intl, "location", `location.Location${locationLevel}Picker.null`)
-            : formatMessage(intl, "location", `location.Location${locationLevel}Picker.none`)
-        }
-      />
-    );
-  }
-}
-
-const mapStateToProps = (state, props) => ({
-  locations: state.loc[`l${props.locationLevel}s`] || [],
-});
-
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ fetchLocationsStr }, dispatch);
 };
 
-export default withModulesManager(
-  connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(LocationPicker)))),
-);
+const enhance = combine(withModulesManager, withTheme, withStyles(styles));
+
+export default enhance(LocationPicker);

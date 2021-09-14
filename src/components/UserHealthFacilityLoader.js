@@ -6,7 +6,7 @@ import { withModulesManager } from "@openimis/fe-core";
 
 class UserHealthFacilityLoader extends Component {
   componentDidMount() {
-    if (!!this.props.user.health_facility_id && !this.props.userHealthFacilityFullPath) {
+    if (this.props.user.health_facility_id && !this.props.userHealthFacilityFullPath) {
       this.props.fetchUserHealthFacilityFullPath(this.props.modulesManager, this.props.user.health_facility_id);
     }
   }

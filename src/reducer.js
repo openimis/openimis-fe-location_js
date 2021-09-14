@@ -7,7 +7,7 @@ import {
   dispatchMutationResp,
   dispatchMutationErr,
 } from "@openimis/fe-core";
-
+import _ from "lodash";
 import { locationLabel } from "./utils";
 
 function reducer(
@@ -48,14 +48,11 @@ function reducer(
 ) {
   switch (action.type) {
     case "LOCATION_USER_DISTRICTS_RESP":
-      let userL1s = action.payload.data.userDistricts || [];
-      let userL0s = userL1s.reduce((res, d) => {
-        res[d.parent.uuid] = d.parent;
-        return res;
-      }, {});
+      const userL1s = action.payload.data.userDistricts || [];
+
       return {
         ...state,
-        userL0s: Object.values(userL0s),
+        userL0s: _.uniqBy(_.map(userL1s, "parent"), "uuid"),
         userL1s,
       };
     case "LOCATION_USER_HEALTH_FACILITY_FULL_PATH_RESP":
@@ -63,7 +60,7 @@ function reducer(
       return {
         ...state,
         userHealthFacilityFullPath,
-        userHealthFacilityLocationStr: !!userHealthFacilityFullPath.location
+        userHealthFacilityLocationStr: userHealthFacilityFullPath?.location
           ? locationLabel(userHealthFacilityFullPath.location)
           : null,
       };
