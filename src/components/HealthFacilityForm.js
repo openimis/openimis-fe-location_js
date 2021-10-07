@@ -110,7 +110,6 @@ class HealthFacilityForm extends Component {
   render() {
     const { fetchingHealthFacility, fetchedHealthFacility, errorHealthFacility, add, save, back } = this.props;
     const { healthFacility_uuid, lockNew, healthFacility, newHealthFacility, reset, update } = this.state;
-    console.log("healthFacility", healthFacility);
     let readOnly = lockNew || !!healthFacility.validityTo;
     let actions = [];
 
