@@ -3,7 +3,14 @@ import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import ReplayIcon from "@material-ui/icons/Replay";
-import { ProgressOrError, Form, withModulesManager, journalize, formatMessageWithValues } from "@openimis/fe-core";
+import {
+  ProgressOrError,
+  Form,
+  withModulesManager,
+  journalize,
+  formatMessageWithValues,
+  Helmet,
+} from "@openimis/fe-core";
 import HealthFacilityMasterPanel from "../components/HealthFacilityMasterPanel";
 import HealthFacilityCatchmentPanel from "../components/HealthFacilityCatchmentPanel";
 import { fetchHealthFacility } from "../actions";
@@ -36,11 +43,6 @@ class HealthFacilityForm extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevState.healthFacility.code !== this.state.healthFacility.code) {
-      document.title = formatMessageWithValues(this.props.intl, "location", "healthFacility.edit.page.title", {
-        code: this.state.healthFacility.code,
-      });
-    }
     if (
       prevProps.fetchedHealthFacility !== this.props.fetchedHealthFacility &&
       !!this.props.fetchedHealthFacility &&
@@ -115,13 +117,18 @@ class HealthFacilityForm extends Component {
 
     if (healthFacility_uuid) {
       actions.push({
-        doIt: (e) => this.reload(healthFacility_uuid),
+        doIt: this.reload,
         icon: <ReplayIcon />,
         onlyIfDirty: !readOnly,
       });
     }
     return (
       <Fragment>
+        <Helmet
+          title={formatMessageWithValues(this.props.intl, "location", "healthFacility.edit.page.title", {
+            code: this.state.healthFacility.code,
+          })}
+        />
         <ProgressOrError progress={fetchingHealthFacility} error={errorHealthFacility} />
         {(!!fetchedHealthFacility || !healthFacility_uuid) && (
           <Fragment>
