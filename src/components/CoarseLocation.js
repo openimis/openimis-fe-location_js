@@ -36,7 +36,7 @@ class CoarseLocation extends Component {
     this.computeState();
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps) {
     if (!_.isEqual(prevProps.region, this.props.region) || !_.isEqual(prevProps.district, this.props.district)) {
       this.computeState();
     }
@@ -60,7 +60,7 @@ class CoarseLocation extends Component {
   };
 
   render() {
-    const { classes, id, readOnly, required = false, onChange, filterLabels = true } = this.props;
+    const { classes, readOnly, required = false, filterLabels = true } = this.props;
     const { region, district } = this.state;
     return (
       <Grid container className={classes.form}>
