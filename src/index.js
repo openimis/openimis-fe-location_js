@@ -1,4 +1,3 @@
-import LocationAlertForwarder from "./components/LocationAlertForwarder";
 import LocationsPage from "./pages/LocationsPage";
 import HealthFacilitiesPage from "./pages/HealthFacilitiesPage";
 import HealthFacilityEditPage from "./pages/HealthFacilityEditPage";
@@ -78,7 +77,7 @@ const DEFAULT_CONFIG = {
     { path: ROUTE_HEALTH_FACILITY_EDIT, component: HealthFacilityEditPage },
     { path: ROUTE_HEALTH_FACILITY_EDIT + "/:healthFacility_uuid?", component: HealthFacilityEditPage },
   ],
-  "core.Boot": [LocationAlertForwarder, UserHealthFacilityLoader, UserDistrictsLoader],
+  "core.Boot": [UserHealthFacilityLoader, UserDistrictsLoader],
 };
 
 export const LocationModule = (cfg) => {
