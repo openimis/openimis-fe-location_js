@@ -1,4 +1,3 @@
-import LocationAlertForwarder from "./components/LocationAlertForwarder";
 import LocationsPage from "./pages/LocationsPage";
 import HealthFacilitiesPage from "./pages/HealthFacilitiesPage";
 import HealthFacilityEditPage from "./pages/HealthFacilityEditPage";
@@ -28,10 +27,9 @@ const ROUTE_LOCATIONS = "location/locations";
 const ROUTE_HEALTH_FACILITIES = "location/healthFacilities";
 const ROUTE_HEALTH_FACILITY_EDIT = "location/healthFacility";
 
-
 const DEFAULT_CONFIG = {
-  "translations": [{ key: 'en', messages: messages_en }],
-  "reducers": [{ key: 'loc', reducer: reducer }], // location is the default used by syncHistoryWithStore...
+  "translations": [{ key: "en", messages: messages_en }],
+  "reducers": [{ key: "loc", reducer: reducer }], // location is the default used by syncHistoryWithStore...
   "refs": [
     { key: "location.route.healthFacilities", ref: ROUTE_HEALTH_FACILITIES },
     { key: "location.route.healthFacilityEdit", ref: ROUTE_HEALTH_FACILITY_EDIT },
@@ -40,13 +38,17 @@ const DEFAULT_CONFIG = {
     {
       key: "location.HealthFacilityPicker.projection",
       ref: [
-        "id", "uuid", "code", "name", "level",
+        "id",
+        "uuid",
+        "code",
+        "name",
+        "level",
         "servicesPricelist{id, uuid}",
         "itemsPricelist{id, uuid}",
-        `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`
-      ]
+        `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`,
+      ],
     },
-    { key: "location.HealthFacilityPicker.sort", ref: 'healthFacility__code' },
+    { key: "location.HealthFacilityPicker.sort", ref: "healthFacility__code" },
     { key: "location.HealthFacilityLevelPicker", ref: HealthFacilityLevelPicker },
     { key: "location.HealthFacilityLevelPicker.projection", ref: null },
     { key: "location.HealthFacilitySubLevelPicker", ref: HealthFacilitySubLevelPicker },
@@ -75,12 +77,15 @@ const DEFAULT_CONFIG = {
     { path: ROUTE_HEALTH_FACILITY_EDIT, component: HealthFacilityEditPage },
     { path: ROUTE_HEALTH_FACILITY_EDIT + "/:healthFacility_uuid?", component: HealthFacilityEditPage },
   ],
-  "core.Boot": [LocationAlertForwarder, UserHealthFacilityLoader, UserDistrictsLoader],
-}
+  "core.Boot": [UserHealthFacilityLoader, UserDistrictsLoader],
+};
 
 export const LocationModule = (cfg) => {
   let config = { ...DEFAULT_CONFIG, ...cfg };
-  var levels = config.refs.filter(c => c.key === "location.Location.MaxLevels")[0].ref;
-  config.refs.push({ key: "location.Location.FlatProjection", ref: [...LOCATION_SUMMARY_PROJECTION, nestParentsProjections(levels - 2)] })
+  var levels = config.refs.filter((c) => c.key === "location.Location.MaxLevels")[0].ref;
+  config.refs.push({
+    key: "location.Location.FlatProjection",
+    ref: [...LOCATION_SUMMARY_PROJECTION, nestParentsProjections(levels - 2)],
+  });
   return config;
-}
+};
