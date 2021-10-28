@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import { Grid } from "@material-ui/core";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
 import { fetchLocations, clearLocations, createOrUpdateLocation, deleteLocation, moveLocation } from "../actions";
-import { withModulesManager, formatMessageWithValues, journalize, formatMessage } from "@openimis/fe-core";
+import { Helmet, withModulesManager, formatMessageWithValues, journalize, formatMessage } from "@openimis/fe-core";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import _ from "lodash";
 
@@ -42,7 +42,6 @@ class LocationsPage extends Component {
   }
 
   componentDidMount() {
-    document.title = formatMessage(this.props.intl, "location", "location.locations.page.title");
     this.props.fetchLocations(this.locationTypes, 0, null);
   }
 
@@ -232,6 +231,7 @@ class LocationsPage extends Component {
     const { l0s, l1s, l2s, l3s } = this.state;
     return (
       <div className={classes.page}>
+        <Helmet title={formatMessage(this.props.intl, "location", "location.locations.page.title")} />
         <Grid container spacing={1}>
           <Grid item xs={8}>
             <Grid container spacing={1}>
