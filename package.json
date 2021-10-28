@@ -12,8 +12,7 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "start": "rollup -c -w",
-    "format": "prettier src -w"
+    "format": "prettier src -w",
     "start": "rollup -c -w"
   },
   "peerDependency": {
