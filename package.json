@@ -12,8 +12,8 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "format": "prettier src -w",
-    "start": "rollup -c -w"
+    "start": "rollup -c -w",
+    "format": "prettier src -w"
   },
   "peerDependency": {
     "react-intl": "^5.8.1"
