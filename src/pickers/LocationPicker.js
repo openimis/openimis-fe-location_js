@@ -33,6 +33,7 @@ const LocationPicker = (props) => {
     withPlaceholder,
   } = props;
   const [open, setOpen] = useState(false);
+  const [resetKey, setResetKey] = useState();
   const { formatMessage } = useTranslations("location", modulesManager);
   const [searchString, setSearchString] = useState("");
   const onInputChange = useDebounceCb(setSearchString, modulesManager.getConf("fe-location", "debounceTime", 400));
@@ -71,8 +72,13 @@ const LocationPicker = (props) => {
     }
   }, [open]);
 
+  useEffect(() => {
+    setResetKey(Date.now());
+  }, [value]);
+
   return (
     <Autocomplete
+      key={resetKey}
       loadingText={formatMessage("LocationPicker.loadingText")}
       openText={formatMessage("LocationPicker.openText")}
       closeText={formatMessage("LocationPicker.closeText")}
