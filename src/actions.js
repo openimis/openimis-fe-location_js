@@ -62,16 +62,6 @@ export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) 
   return graphql(payload, "LOCATION_HEALTH_FACILITY");
 }
 
-export function fetchHealthFacilitiesStr(mm, region, district, str, level) {
-  let filters = [];
-  if (!!str && str.length) filters.push([`str:"${str}"`]);
-  if (!!level && level.length) filters.push([`level:"${level}"`]);
-  if (!!region) filters.push([`regionUuid: "${region.uuid}"`]);
-  if (!!district) filters.push([`districtUuid:"${district.uuid}"`]);
-  let payload = formatPageQuery("healthFacilitiesStr", filters, mm.getRef("location.HealthFacilityPicker.projection"));
-  return graphql(payload, "LOCATION_HEALTH_FACILITIES_STR");
-}
-
 export function fetchHealthFacilitySummaries(filters) {
   var projections = [
     "id",
