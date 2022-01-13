@@ -86,28 +86,6 @@ function reducer(
         fetchingHealthFacilityFullPath: false,
         errorHealthFacilityFullPath: formatServerError(action.payload),
       };
-    case "LOCATION_HEALTH_FACILITIES_STR_REQ":
-      return {
-        ...state,
-        fetchingHealthFacilities: true,
-        fetchedHealthFacilities: false,
-        healthFacilities: null,
-        errorHealthFacilities: null,
-      };
-    case "LOCATION_HEALTH_FACILITIES_STR_RESP":
-      return {
-        ...state,
-        fetchingHealthFacilities: false,
-        fetchedHealthFacilities: true,
-        healthFacilities: parseData(action.payload.data.healthFacilitiesStr),
-        errorHealthFacilities: formatGraphQLError(action.payload),
-      };
-    case "LOCATION_HEALTH_FACILITIES_STR_ERR":
-      return {
-        ...state,
-        fetchingHealthFacilities: false,
-        errorHealthFacilities: formatServerError(action.payload),
-      };
     case "LOCATION_HEALTH_FACILITY_SEARCHER_REQ":
       return {
         ...state,
