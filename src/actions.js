@@ -8,12 +8,23 @@ import {
   formatMutation,
 } from "@openimis/fe-core";
 
-import { nestParentsProjections } from "./utils";
+import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
 
 export function fetchUserDistricts() {
   let payload = formatQuery("userDistricts", null, ["id", "uuid", "code", "name", "parent{id, uuid, code, name}"]);
   return graphql(payload, "LOCATION_USER_DISTRICTS");
 }
+
+export const HEALTH_FACILITY_PICKER_PROJECTION = [
+  "id",
+  "uuid",
+  "code",
+  "name",
+  "level",
+  "servicesPricelist{id, uuid}",
+  "itemsPricelist{id, uuid}",
+  `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`
+];
 
 function healthFacilityFullPath(key, mm, id) {
   let payload = formatPageQuery(
