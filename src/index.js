@@ -22,6 +22,7 @@ import messages_en from "./translations/en.json";
 import reducer from "./reducer";
 
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
+import {HEALTH_FACILITY_PICKER_PROJECTION} from "./actions";
 
 const ROUTE_LOCATIONS = "location/locations";
 const ROUTE_HEALTH_FACILITIES = "location/healthFacilities";
@@ -35,19 +36,7 @@ const DEFAULT_CONFIG = {
     { key: "location.route.healthFacilityEdit", ref: ROUTE_HEALTH_FACILITY_EDIT },
     { key: "location.HealthFacilityFullPath", ref: HealthFacilityFullPath },
     { key: "location.HealthFacilityPicker", ref: HealthFacilityPicker },
-    {
-      key: "location.HealthFacilityPicker.projection",
-      ref: [
-        "id",
-        "uuid",
-        "code",
-        "name",
-        "level",
-        "servicesPricelist{id, uuid}",
-        "itemsPricelist{id, uuid}",
-        `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`,
-      ],
-    },
+    { key: "location.HealthFacilityPicker.projection", ref: HEALTH_FACILITY_PICKER_PROJECTION },
     { key: "location.HealthFacilityPicker.sort", ref: "healthFacility__code" },
     { key: "location.HealthFacilityLevelPicker", ref: HealthFacilityLevelPicker },
     { key: "location.HealthFacilityLevelPicker.projection", ref: null },
@@ -78,6 +67,13 @@ const DEFAULT_CONFIG = {
     { path: ROUTE_HEALTH_FACILITY_EDIT + "/:healthFacility_uuid?", component: HealthFacilityEditPage },
   ],
   "core.Boot": [UserHealthFacilityLoader, UserDistrictsLoader],
+  "invoice.SubjectAndThirdpartyPicker": [
+    {
+      type: "health facility",
+      picker: HealthFacilityPicker,
+      pickerProjection: HEALTH_FACILITY_PICKER_PROJECTION,
+    }
+  ],
 };
 
 export const LocationModule = (cfg) => {
