@@ -1,134 +1,74 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { withTheme, withStyles } from "@material-ui/core/styles";
-import { injectIntl } from "react-intl";
-import { fetchHealthFacilitiesStr } from "../actions";
-import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
-import { healthFacilityLabel } from "../utils";
-import _ from "lodash";
-import { TextField } from "@material-ui/core";
+import { healthFacilityLabel, LOCATION_SUMMARY_PROJECTION } from "../utils";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { useModulesManager, useTranslations, Autocomplete, useGraphqlQuery } from "@openimis/fe-core";
+import _debounce from "lodash/debounce";
 
-const styles = (theme) => ({
-  textField: {
-    width: "100%",
-  },
-});
+const HealthFacilityPicker = (props) => {
+  const {
+    onChange,
+    readOnly,
+    required,
+    withLabel = true,
+    withPlaceholder,
+    value,
+    label,
+    filterOptions,
+    filterSelectedOptions,
+    placeholder,
+    multiple,
+    region,
+    district,
+    level,
+  } = props;
 
-class HealthFacilityPicker extends Component {
-  state = {
-    healthFacilities: [],
-  };
-
-  constructor(props) {
-    super(props);
-    this.selectThreshold = props.modulesManager.getConf("fe-location", "HealthFacilityPicker.selectThreshold", 10);
-  }
-
-  componentDidMount() {
-    this.setState({ healthFacilities: this.props.healthFacilities });
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (!_.isEqual(prevProps.healthFacilities, this.props.healthFacilities)) {
-      this.setState({ healthFacilities: this.props.healthFacilities });
-    } else if (!this.props.userHealthFacilityFullPath) {
-      if (
-        !_.isEqual(prevProps.region, this.props.region) ||
-        !_.isEqual(prevProps.district, this.props.district) ||
-        !_.isEqual(prevProps.level, this.props.level)
-      ) {
-        this.props.fetchHealthFacilitiesStr(
-          this.props.modulesManager,
-          this.props.region,
-          this.props.district,
-          this.props.value,
-          this.props.level,
-        );
+  const modulesManager = useModulesManager();
+  const userHealthFacility = useSelector((state) => state.loc.userHealthFacilityFullPath);
+  const { formatMessage } = useTranslations("location", modulesManager);
+  const [searchString, setSearchString] = useState("");
+  const { data, isLoading, error } = useGraphqlQuery(
+    `
+    query HealthFacilityPicker ($str: String, $region: String, $district: String, $level: String) {
+      healthFacilities: healthFacilitiesStr(first: 20, str: $str, regionUuid: $region, districtUuid: $district, level: $level) {
+        edges {
+          node {
+            id
+            uuid
+            code
+            name
+            level
+            servicesPricelist{id, uuid}
+            itemsPricelist{id, uuid}
+            location {${LOCATION_SUMMARY_PROJECTION.join(",")} parent { ${LOCATION_SUMMARY_PROJECTION.join(",")} }}
+          }
+        }
       }
     }
-  }
-
-  getSuggestions = (str) =>
-    !!str &&
-    str.length >= this.props.modulesManager.getConf("fe-location", "healthFacilitiesMinCharLookup", 2) &&
-    this.props.fetchHealthFacilitiesStr(
-      this.props.modulesManager,
-      this.props.region,
-      this.props.district,
-      str,
-      this.props.level,
-    );
-
-  debouncedGetSuggestion = _.debounce(
-    this.getSuggestions,
-    this.props.modulesManager.getConf("fe-location", "debounceTime", 400),
+  `,
+    { level, region: region?.uuid, district: district?.uuid, str: searchString },
+    { skip: true },
   );
 
-  onSuggestionSelected = (v) => this.props.onChange(v, healthFacilityLabel(v));
-
-  onClear = () => {
-    this.setState({ healthFacilities: [] }, (e) => this.onSuggestionSelected(null));
-  };
-
-  render() {
-    const {
-      intl,
-      classes,
-      value,
-      reset,
-      userHealthFacilityFullPath,
-      withLabel = true,
-      label,
-      readOnly = false,
-      required = false,
-      withNull = true,
-      nullLabel = null,
-    } = this.props;
-    const { healthFacilities } = this.state;
-
-    if (!!userHealthFacilityFullPath) {
-      return (
-        <TextField
-          label={!!withLabel && (label || formatMessage(intl, "location", "HealthFacilityPicker.label"))}
-          className={classes.textField}
-          disabled
-          value={healthFacilityLabel(userHealthFacilityFullPath)}
-        />
-      );
-    }
-    return (
-      <AutoSuggestion
-        module="location"
-        items={healthFacilities}
-        label={!!withLabel && (label || formatMessage(intl, "location", "HealthFacilityPicker.label"))}
-        lookup={healthFacilityLabel}
-        onClear={this.onClear}
-        getSuggestions={this.debouncedGetSuggestion}
-        renderSuggestion={(a) => <span>{healthFacilityLabel(a)}</span>}
-        getSuggestionValue={healthFacilityLabel}
-        onSuggestionSelected={this.onSuggestionSelected}
-        value={value}
-        reset={reset}
-        readOnly={readOnly}
-        required={required}
-        selectThreshold={this.selectThreshold}
-        withNull={withNull}
-        nullLabel={nullLabel || formatMessage(intl, "location", "location.HealthFacilityPicker.null")}
-      />
-    );
-  }
-}
-
-const mapStateToProps = (state) => ({
-  userHealthFacilityFullPath: state.loc.userHealthFacilityFullPath,
-  healthFacilities: state.loc.healthFacilities,
-});
-
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ fetchHealthFacilitiesStr }, dispatch);
+  return (
+    <Autocomplete
+      multiple={multiple}
+      required={required}
+      placeholder={placeholder ?? formatMessage("HealthFacilityPicker.placeholder")}
+      label={label ?? formatMessage("HealthFacilityPicker.label")}
+      error={error}
+      withLabel={withLabel}
+      withPlaceholder={withPlaceholder}
+      readOnly={Boolean(userHealthFacility) || readOnly}
+      options={data?.healthFacilities?.edges.map((edge) => edge.node) ?? []}
+      isLoading={isLoading}
+      value={userHealthFacility ?? value}
+      getOptionLabel={healthFacilityLabel}
+      onChange={(option) => onChange(option, healthFacilityLabel(option))}
+      filterOptions={filterOptions}
+      filterSelectedOptions={filterSelectedOptions}
+      onInputChange={setSearchString}
+    />
+  );
 };
 
-export default withModulesManager(
-  connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(HealthFacilityPicker)))),
-);
+export default HealthFacilityPicker;

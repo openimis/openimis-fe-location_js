@@ -21,6 +21,7 @@
   "location.Location3Picker.label": "Village",
   "location.Location3Picker.null": "Any",
   "location.Location3Picker.none": "None",
+  "location.HealthFacilityPicker.placeholder": "Search a Health Facility...",
   "location.HealthFacilityPicker.label": "Health Facility",
   "location.HealthFacilityPicker.null": "Any",
   "location.healthFacilityLevel": "Health Facility Level",

@@ -8,12 +8,23 @@ import {
   formatMutation,
 } from "@openimis/fe-core";
 
-import { nestParentsProjections } from "./utils";
+import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
 
 export function fetchUserDistricts() {
   let payload = formatQuery("userDistricts", null, ["id", "uuid", "code", "name", "parent{id, uuid, code, name}"]);
   return graphql(payload, "LOCATION_USER_DISTRICTS");
 }
+
+export const HEALTH_FACILITY_PICKER_PROJECTION = [
+  "id",
+  "uuid",
+  "code",
+  "name",
+  "level",
+  "servicesPricelist{id, uuid}",
+  "itemsPricelist{id, uuid}",
+  `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`
+];
 
 function healthFacilityFullPath(key, mm, id) {
   let payload = formatPageQuery(
@@ -60,16 +71,6 @@ export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) 
   ];
   const payload = formatPageQuery("healthFacilities", filters, projections);
   return graphql(payload, "LOCATION_HEALTH_FACILITY");
-}
-
-export function fetchHealthFacilitiesStr(mm, region, district, str, level) {
-  let filters = [];
-  if (!!str && str.length) filters.push([`str:"${str}"`]);
-  if (!!level && level.length) filters.push([`level:"${level}"`]);
-  if (!!region) filters.push([`regionUuid: "${region.uuid}"`]);
-  if (!!district) filters.push([`districtUuid:"${district.uuid}"`]);
-  let payload = formatPageQuery("healthFacilitiesStr", filters, mm.getRef("location.HealthFacilityPicker.projection"));
-  return graphql(payload, "LOCATION_HEALTH_FACILITIES_STR");
 }
 
 export function fetchHealthFacilitySummaries(filters) {
