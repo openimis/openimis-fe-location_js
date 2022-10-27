@@ -6,6 +6,7 @@ import {
   formatPageQueryWithCount,
   formatGQLString,
   formatMutation,
+  formatJsonField
 } from "@openimis/fe-core";
 
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
@@ -226,6 +227,7 @@ function formatHealthFacilityGQL(hf) {
     ${!!hf.email ? `email: "${formatGQLString(hf.email)}"` : ""}
     ${!!hf.servicesPricelist ? `servicesPricelistId: ${decodeId(hf.servicesPricelist.id)}` : ""}
     ${!!hf.itemsPricelist ? `itemsPricelistId: ${decodeId(hf.itemsPricelist.id)}` : ""}
+    ${!!hf.mutationExtensions ? `mutationExtensions: ${formatJsonField(hf.mutationExtensions)}` : ""}
     ${formatCatchments(hf.catchments)}
   `;
 }
