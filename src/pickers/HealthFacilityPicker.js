@@ -1,4 +1,4 @@
-import { healthFacilityLabel } from "../utils";
+import { healthFacilityLabel, LOCATION_SUMMARY_PROJECTION } from "../utils";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useModulesManager, useTranslations, Autocomplete, useGraphqlQuery } from "@openimis/fe-core";
@@ -40,7 +40,7 @@ const HealthFacilityPicker = (props) => {
             level
             servicesPricelist{id, uuid}
             itemsPricelist{id, uuid}
-            location {id,uuid,code,name,type parent { id,uuid,code,name,type }}
+            location {${LOCATION_SUMMARY_PROJECTION.join(",")} parent { ${LOCATION_SUMMARY_PROJECTION.join(",")} }}
           }
         }
       }
