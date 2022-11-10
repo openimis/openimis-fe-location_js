@@ -15,6 +15,8 @@ import HealthFacilityMasterPanel from "../components/HealthFacilityMasterPanel";
 import HealthFacilityCatchmentPanel from "../components/HealthFacilityCatchmentPanel";
 import { fetchHealthFacility } from "../actions";
 
+const HF_FORM_CONTRIBUTION_KEY = "location.HealthFacility";
+
 class HealthFacilityForm extends Component {
   state = {
     lockNew: false,
@@ -150,6 +152,7 @@ class HealthFacilityForm extends Component {
               Panels={[this.HealthFacilityPriceListsPanel, HealthFacilityCatchmentPanel]}
               onEditedChanged={this.onEditedChanged}
               actions={actions}
+              contributedPanelsKey={HF_FORM_CONTRIBUTION_KEY}
             />
           </Fragment>
         )}
