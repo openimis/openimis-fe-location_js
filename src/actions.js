@@ -199,7 +199,7 @@ function formatCatchment(catchment) {
   return `{
     ${!!catchment.id ? `id: ${catchment.id}` : ""}
     locationId: ${decodeId(catchment.location.id)}
-    catchment: ${catchment.catchment}    
+    catchment: ${catchment.catchment}
   }`;
 }
 
@@ -214,12 +214,12 @@ function formatHealthFacilityGQL(hf) {
   return `
     ${hf.uuid !== undefined && hf.uuid !== null ? `uuid: "${hf.uuid}"` : ""}
     code: "${formatGQLString(hf.code)}"
-    accCode: "${formatGQLString(hf.accCode)}"
     name: "${formatGQLString(hf.name)}"
     locationId: ${decodeId(hf.location.id)}
     level: "${hf.level}"
     legalFormId: "${hf.legalForm.code}"
     careType: "${hf.careType}"
+    ${!!hf.accCode ? `accCode: "${hf.accCode}"` : ""}
     ${!!hf.subLevel ? `subLevelId: "${hf.subLevel.code}"` : ""}
     ${!!hf.address ? `address: "${formatGQLString(hf.address)}"` : ""}
     ${!!hf.phone ? `phone: "${formatGQLString(hf.phone)}"` : ""}
