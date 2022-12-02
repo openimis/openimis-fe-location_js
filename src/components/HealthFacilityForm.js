@@ -30,7 +30,7 @@ class HealthFacilityForm extends Component {
   constructor(props) {
     super(props);
     this.HealthFacilityPriceListsPanel = props.modulesManager.getRef("location.HealthFacilityPriceListsPanel");
-    this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", true);
+    this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
   }
 
   _newHealthFacility() {
