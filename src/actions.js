@@ -6,7 +6,7 @@ import {
   formatPageQueryWithCount,
   formatGQLString,
   formatMutation,
-  formatJsonField
+  formatJsonField,
 } from "@openimis/fe-core";
 
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
@@ -24,7 +24,7 @@ export const HEALTH_FACILITY_PICKER_PROJECTION = [
   "level",
   "servicesPricelist{id, uuid}",
   "itemsPricelist{id, uuid}",
-  `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`
+  `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`,
 ];
 
 function healthFacilityFullPath(key, mm, id) {
@@ -121,6 +121,17 @@ export function fetchLocationsStr(mm, level, parent, str, first) {
   let filters = [`type: "${types[level]}"`, `str: "${str}"`, first && `first: ${first}`].filter(Boolean);
   if (!!parent) {
     filters.push(`parent_Uuid: "${parent.uuid}"`);
+  }
+  let projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
+  let payload = formatPageQuery("locationsStr", filters, projections);
+  return graphql(payload, `LOCATION_LOCATIONS_${level}`);
+}
+
+export function fetchParentLocationsStr(mm, level, parentUuids, str, first) {
+  const types = mm.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
+  let filters = [`type: "${types[level]}"`, `str: "${str}"`, first && `first: ${first}`].filter(Boolean);
+  if (parentUuids) {
+    filters.push(`parent_Uuid_In: ["${parentUuids.join('", "')}"]`);
   }
   let projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
   let payload = formatPageQuery("locationsStr", filters, projections);

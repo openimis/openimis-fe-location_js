@@ -6,7 +6,7 @@ import { withTheme, withStyles } from "@material-ui/core/styles";
 import { withModulesManager, combine, useTranslations, useDebounceCb } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
 import { locationLabel } from "../utils";
-import { fetchLocationsStr, clearLocations } from "../actions";
+import { fetchLocationsStr, clearLocations, fetchParentLocationsStr } from "../actions";
 import _ from "lodash";
 
 const styles = () => ({
@@ -28,6 +28,7 @@ const LocationPicker = (props) => {
     placeholder,
     filterOptions,
     parentLocation,
+    parentLocations,
     required,
     filterSelectedOptions = true,
     withPlaceholder,
@@ -47,7 +48,6 @@ const LocationPicker = (props) => {
     if (!multiple) setOpen(false);
   };
 
-  // Clear locations on unmount to avoid conflicts with RegionPicker & DistrictPicker
   useEffect(() => {
     return () => {
       dispatch(clearLocations(locationLevel));
@@ -60,13 +60,21 @@ const LocationPicker = (props) => {
       !isLoading &&
       searchString.length >= modulesManager.getConf("fe-location", "locationMinCharLookup", 2)
     ) {
-      dispatch(fetchLocationsStr(modulesManager, locationLevel, parentLocation, searchString));
+      if (parentLocations) {
+        dispatch(fetchParentLocationsStr(modulesManager, locationLevel, parentLocations, searchString, 20));
+      } else {
+        dispatch(fetchLocationsStr(modulesManager, locationLevel, parentLocation, searchString));
+      }
     }
-  }, [searchString, parentLocation]);
+  }, [searchString, parentLocation, parentLocations]);
 
   useEffect(() => {
     if (open) {
-      dispatch(fetchLocationsStr(modulesManager, locationLevel, parentLocation, searchString, 20));
+      if (parentLocations) {
+        dispatch(fetchParentLocationsStr(modulesManager, locationLevel, parentLocations, searchString, 20));
+      } else {
+        dispatch(fetchLocationsStr(modulesManager, locationLevel, parentLocation, searchString));
+      }
     } else {
       setSearchString("");
     }
