@@ -127,14 +127,14 @@ export function fetchLocationsStr(mm, level, parent, str, first) {
   return graphql(payload, `LOCATION_LOCATIONS_${level}`);
 }
 
-export function fetchParentLocationsStr(mm, level, parentUuids, str, first) {
-  const types = mm.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
-  let filters = [`type: "${types[level]}"`, `str: "${str}"`, first && `first: ${first}`].filter(Boolean);
+export function fetchParentLocationsStr(modulesManager, level, parentUuids, searchString, first) {
+  const types = modulesManager.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
+  const filters = [`type: "${types[level]}"`, `str: "${searchString}"`, first && `first: ${first}`].filter(Boolean);
   if (parentUuids) {
     filters.push(`parent_Uuid_In: ["${parentUuids.join('", "')}"]`);
   }
-  let projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
-  let payload = formatPageQuery("locationsStr", filters, projections);
+  const projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
+  const payload = formatPageQuery("locationsStr", filters, projections);
   return graphql(payload, `LOCATION_LOCATIONS_${level}`);
 }
 
