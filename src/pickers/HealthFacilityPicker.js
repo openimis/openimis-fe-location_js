@@ -26,7 +26,8 @@ const HealthFacilityPicker = (props) => {
   const userHealthFacility = useSelector((state) => state.loc.userHealthFacilityFullPath);
   const { formatMessage } = useTranslations("location", modulesManager);
   const [searchString, setSearchString] = useState("");
-  const pickedDistrictsUuids = district && district.map((district) => district.uuid);
+  let pickedDistrictsUuids = [];
+  Array.isArray(district) ? pickedDistrictsUuids = district?.map((district) => district?.uuid) : pickedDistrictsUuids.push(district?.uuid);
   const { data, isLoading, error } = useGraphqlQuery(
     `
     query HealthFacilityPicker ($str: String, $region: String, $district: [String], $level: String) {
