@@ -1,13 +1,14 @@
 import { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { fetchUserDistricts } from "../actions";
+import { fetchUserDistricts, clearUserDistricts } from "../actions";
 
 class UserDistrictsLoader extends Component {
   componentDidMount() {
-    if (!this.props.userL0s) {
-      this.props.fetchUserDistricts();
-    }
+    this.props.fetchUserDistricts();
+  }
+  componentWillUnmount() {
+    this.props.clearUserDistricts();
   }
   render() {
     return null;
@@ -19,7 +20,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ fetchUserDistricts }, dispatch);
+  return bindActionCreators({ fetchUserDistricts, clearUserDistricts }, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserDistrictsLoader);

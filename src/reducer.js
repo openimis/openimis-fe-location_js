@@ -55,6 +55,12 @@ function reducer(
         userL0s: _.uniqBy(_.map(userL1s, "parent"), "uuid"),
         userL1s,
       };
+    case "LOCATION_USER_DISTRICTS_CLEAR":
+      return {
+        ...state,
+        userL0s: [],
+        userL1s: [],
+      }
     case "LOCATION_USER_HEALTH_FACILITY_FULL_PATH_RESP":
       var userHealthFacilityFullPath = parseData(action.payload.data.healthFacilities)[0];
       return {

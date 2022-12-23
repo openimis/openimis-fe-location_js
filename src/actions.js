@@ -16,6 +16,12 @@ export function fetchUserDistricts() {
   return graphql(payload, "LOCATION_USER_DISTRICTS");
 }
 
+export function clearUserDistricts() {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_USER_DISTRICTS_CLEAR` });
+  };
+}
+
 export const HEALTH_FACILITY_PICKER_PROJECTION = [
   "id",
   "uuid",
