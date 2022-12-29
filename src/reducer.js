@@ -43,10 +43,24 @@ function reducer(
     errorL3s: null,
     submittingMutation: false,
     mutation: {},
+    userL0s: [],
+    userL1s: [],
+    fetchingUserLocation: false,
+    fetchedUserLocation: false,
+    errorUserLocation: null,
   },
   action,
 ) {
   switch (action.type) {
+    case "LOCATION_USER_DISTRICTS_REQ":
+      return {
+        ...state,
+        userL0s: [],
+        userL1s: [],
+        errorUserLocation: null,
+        fetchingUserLocation: true,
+        fetchedUserLocation: false,
+      };
     case "LOCATION_USER_DISTRICTS_RESP":
       const userL1s = action.payload.data.userDistricts || [];
 
@@ -54,12 +68,24 @@ function reducer(
         ...state,
         userL0s: _.uniqBy(_.map(userL1s, "parent"), "uuid"),
         userL1s,
+        errorUserLocation: formatGraphQLError(action.payload),
+        fetchingUserLocation: false,
+        fetchedUserLocation: true,
       };
+      case "LOCATION_USER_DISTRICTS_ERR":
+        return {
+          ...state,
+          errorUserLocation: formatServerError(action.payload),
+          fetchingUserLocation: false,
+        };
     case "LOCATION_USER_DISTRICTS_CLEAR":
       return {
         ...state,
         userL0s: [],
         userL1s: [],
+        fetchingUserLocation: false,
+        fetchedUserLocation: false,
+        errorUserLocation: null,
       }
     case "LOCATION_USER_HEALTH_FACILITY_FULL_PATH_RESP":
       var userHealthFacilityFullPath = parseData(action.payload.data.healthFacilities)[0];
