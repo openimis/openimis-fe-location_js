@@ -59,6 +59,7 @@
   "location.EditDialog.cancel": "Cancel",
   "location.EditDialog.code": "Code",
   "location.EditDialog.name": "Name",
+  "location.EditDialog.codeTaken": "Location code already taken.",
   "location.CreateLocation.mutationLabel": "Create location {code} - {name}",
   "location.UpdateLocation.mutationLabel": "Update location {code} - {name}",
   "location.MoveLocation.mutationLabel": "Move location {code} - {name} to {newParentCode} - {newParentName}",

@@ -57,7 +57,7 @@ const UniqueCodeInput = (props) => {
       required={required}
       label={label}
       placeholder={placeholder}
-      error={graphqlError || isInvalid ? formatMessage("Location code already taken.") : null}
+      error={graphqlError || isInvalid ? formatMessage("location.EditDialog.codeTaken") : null}
       value={value}
       new_location={new_location}
       inputProps={{ maxLength: modulesManager.getConf("fe-location", "locationForm.CodeMaxLength", inputProps.maxLength) }}
