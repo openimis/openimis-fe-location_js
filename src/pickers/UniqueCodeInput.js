@@ -41,9 +41,7 @@ const UniqueCodeInput = (props) => {
     }
   }, modulesManager.getConf("fe-location", "debounceTime", 400));
 
-
   const isValid = !isLoading && data?.isValid;
-  const isInvalid = !isLoading && data && !data.isValid;
 
   useEffect(() => {
     onChange({"code": internalValue, "isValid": isValid});
@@ -57,20 +55,20 @@ const UniqueCodeInput = (props) => {
       required={required}
       label={label}
       placeholder={placeholder}
-      error={graphqlError || isInvalid ? formatMessage("location.EditDialog.codeTaken") : null}
+      error={graphqlError || (!isValid && value)? formatMessage("location.EditDialog.codeTaken") : null}
       value={value}
       new_location={new_location}
       inputProps={{ maxLength: modulesManager.getConf("fe-location", "locationForm.CodeMaxLength", inputProps.maxLength) }}
       endAdornment={
-        <InputAdornment position="end" className={clsx(isValid && classes.validIcon, isInvalid && classes.invalidIcon)}>
+        <InputAdornment position="end" className={clsx((isValid && value) && classes.validIcon, (!isValid && value)&& classes.invalidIcon)}>
           <>
             {isLoading && (
               <Box mr={1}>
                 <CircularProgress size={20} />
               </Box>
             )}
-            {isValid && <CheckOutlinedIcon size={20} />}
-            {isInvalid && <ErrorOutlineOutlinedIcon size={20} />}
+            {(isValid && value) && <CheckOutlinedIcon size={20} />}
+            {(!isValid && value) && <ErrorOutlineOutlinedIcon size={20} />}
           </>
         </InputAdornment>
       }
