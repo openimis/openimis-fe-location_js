@@ -16,7 +16,7 @@ const styles = (theme) => ({
 });
 
 const DetailedHealthFacility = (props) => {
-  const { onChange, classes, value, readOnly = true } = props;
+  const { onChange, classes, value, readOnly = true, allRegions } = props;
   const [district, setDistrict] = useState(value?.location);
   const [level, setLevel] = useState(value?.level);
 
@@ -28,7 +28,13 @@ const DetailedHealthFacility = (props) => {
   return (
     <Grid container className={classes.form}>
       <Box flexGrow={2}>
-        <CoarseLocation region={district?.parent} district={district} readOnly={readOnly} onChange={setDistrict} />
+        <CoarseLocation
+          region={district?.parent}
+          district={district}
+          readOnly={readOnly}
+          onChange={setDistrict}
+          allRegions={allRegions}
+        />
       </Box>
       <ControlledField
         module="location"

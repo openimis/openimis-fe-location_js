@@ -119,6 +119,7 @@ export function fetchLocations(levels, type, parent) {
     "families",
     "clientMutationId",
   ]);
+
   return graphql(payload, `LOCATION_LOCATIONS_${type}`);
 }
 
@@ -287,4 +288,12 @@ export function selectLocation(location, level, maxLevels) {
   return (dispatch) => {
     dispatch({ type: `LOCATION_FILTER_SELECTED`, payload: { location, level, maxLevels } });
   };
+}
+
+export function fetchAllRegions() {
+  let filters = [`type: "R"`];
+
+  let payload = formatPageQuery("locations", filters, ["id", "uuid", "code", "name"]);
+
+  return graphql(payload, `LOCATION_REGIONS`);
 }

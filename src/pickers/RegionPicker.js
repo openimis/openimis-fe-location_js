@@ -6,12 +6,16 @@ import { TextField } from "@material-ui/core";
 import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
 import { locationLabel } from "../utils";
+import { fetchAllRegions } from "../actions.js";
+import { bindActionCreators } from "redux";
 
 const styles = (theme) => ({
   textField: {
     width: "100%",
   },
 });
+
+let allRegionsFlag = false;
 
 class RegionPicker extends Component {
   constructor(props) {
@@ -20,6 +24,10 @@ class RegionPicker extends Component {
   }
 
   onSuggestionSelected = (v) => this.props.onChange(v, locationLabel(v));
+
+  componentDidMount() {
+    if (allRegionsFlag) this.props.fetchAllRegions();
+  }
 
   render() {
     const {
@@ -39,7 +47,10 @@ class RegionPicker extends Component {
       placeholder = null,
       readOnly = false,
       required = false,
+      allRegions,
     } = this.props;
+
+    allRegionsFlag = allRegions;
 
     if (!!userHealthFacilityFullPath) {
       return (
@@ -82,8 +93,18 @@ class RegionPicker extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  regions: state.loc.userL0s || [],
+  regions: allRegionsFlag ? state.loc.allRegions : state.loc.userL0s || [],
   userHealthFacilityFullPath: state.loc.userHealthFacilityFullPath,
 });
 
-export default withModulesManager(connect(mapStateToProps)(injectIntl(withTheme(withStyles(styles)(RegionPicker)))));
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      fetchAllRegions,
+    },
+    dispatch,
+  );
+
+export default withModulesManager(
+  connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(RegionPicker)))),
+);

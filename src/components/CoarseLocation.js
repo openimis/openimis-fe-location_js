@@ -60,7 +60,7 @@ class CoarseLocation extends Component {
   };
 
   render() {
-    const { classes, readOnly, required = false, filterLabels = true } = this.props;
+    const { classes, readOnly, required = false, filterLabels = true, allRegions } = this.props;
     const { region, district } = this.state;
     return (
       <Grid container className={classes.form}>
@@ -77,6 +77,7 @@ class CoarseLocation extends Component {
                 withNull={true}
                 filterLabels={filterLabels}
                 onChange={this.onChangeRegion}
+                allRegions={allRegions}
               />
             </Grid>
           }

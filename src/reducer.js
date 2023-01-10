@@ -72,12 +72,12 @@ function reducer(
         fetchingUserLocation: false,
         fetchedUserLocation: true,
       };
-      case "LOCATION_USER_DISTRICTS_ERR":
-        return {
-          ...state,
-          errorUserLocation: formatServerError(action.payload),
-          fetchingUserLocation: false,
-        };
+    case "LOCATION_USER_DISTRICTS_ERR":
+      return {
+        ...state,
+        errorUserLocation: formatServerError(action.payload),
+        fetchingUserLocation: false,
+      };
     case "LOCATION_USER_DISTRICTS_CLEAR":
       return {
         ...state,
@@ -86,7 +86,7 @@ function reducer(
         fetchingUserLocation: false,
         fetchedUserLocation: false,
         errorUserLocation: null,
-      }
+      };
     case "LOCATION_USER_HEALTH_FACILITY_FULL_PATH_RESP":
       var userHealthFacilityFullPath = parseData(action.payload.data.healthFacilities)[0];
       return {
@@ -283,6 +283,28 @@ function reducer(
         newState[`l${i}s`] = [];
       }
       return newState;
+    case "LOCATION_REGIONS_REQ":
+      return {
+        ...state,
+        allRegions: [],
+        fetchingAllRegions: true,
+        fetchedAllRegions: false,
+        errorAllRegions: null,
+      };
+    case "LOCATION_REGIONS_RESP":
+      return {
+        ...state,
+        allRegions: parseData(action.payload.data.locations || action.payload.data.locationsStr),
+        fetchingAllRegions: false,
+        fetchedAllRegions: true,
+        errorAllRegions: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_REGIONS_ERR":
+      return {
+        ...state,
+        fetchingAllRegions: false,
+        errorAllRegions: formatServerError(action.payload),
+      };
     case "LOCATION_MUTATION_REQ":
       return dispatchMutationReq(state, action);
     case "LOCATION_MUTATION_ERR":
