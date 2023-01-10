@@ -11,6 +11,7 @@ import {
 } from "@material-ui/core";
 import { injectIntl } from "react-intl";
 import { withModulesManager, formatMessage, TextInput, NumberInput } from "@openimis/fe-core";
+import UniqueCodeInput from "../pickers/UniqueCodeInput";
 import _ from "lodash";
 
 class EditLocationDialog extends Component {
@@ -55,10 +56,91 @@ class EditLocationDialog extends Component {
     this.setState({ data });
   };
 
-  canSave = () => !!this.state.data && !!this.state.data.code && !!this.state.data.name;
+  changeMultipleData = (dataUpdate) =>{
+    let data = { ...this.state.data };
+    Object.keys(dataUpdate).map(key => {
+      data[key] = dataUpdate[key];
+    });
+    this.setState({ data });
+  }
+
+  canSave = () => !!this.state.data && !!this.state.data.code && !!this.state.data.isValid && !!this.state.data.name;
 
   render() {
     const { intl, open, title, onSave, onCancel, withCaptation = false } = this.props;
+    if (this.props.open === true && !this.props.location){
+      return (
+        <Dialog open={open} onClose={onCancel}>
+          <DialogTitle>{title}</DialogTitle>
+          <Divider />
+          <DialogContent>
+            <DialogContentText>
+              <UniqueCodeInput
+                module="location"
+                label="EditDialog.code"
+                autoFocus={true}
+                value={!!this.state.data ? this.state.data.code : null}
+                onChange={(dataUpdate) => this.changeMultipleData(dataUpdate)
+                         }
+                inputProps={{
+                "maxLength": this.codeMaxLength,
+                }}
+              />
+              <TextInput
+                module="location"
+                label="EditDialog.name"
+                value={!!this.state.data ? this.state.data.name : null}
+                onChange={(v) => this.changeData("name", v)}
+              />
+              {withCaptation && (
+                <Grid container>
+                  <Grid item xs={6}>
+                    <NumberInput
+                      module="location"
+                      label="EditDialog.male"
+                      value={!!this.state.data ? this.state.data.malePopulation : null}
+                      onChange={(v) => this.changeData("malePopulation", v)}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <NumberInput
+                      module="location"
+                      label="EditDialog.female"
+                      value={!!this.state.data ? this.state.data.femalePopulation : null}
+                      onChange={(v) => this.changeData("femalePopulation", v)}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <NumberInput
+                      module="location"
+                      label="EditDialog.other"
+                      value={!!this.state.data ? this.state.data.otherPopulation : null}
+                      onChange={(v) => this.changeData("otherPopulation", v)}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <NumberInput
+                      module="location"
+                      label="EditDialog.family"
+                      value={!!this.state.data ? this.state.data.families : null}
+                      onChange={(v) => this.changeData("families", v)}
+                    />
+                  </Grid>
+                </Grid>
+              )}
+            </DialogContentText>
+          </DialogContent>
+          <Divider />
+          <DialogActions>
+            <Button onClick={onCancel}>{formatMessage(intl, "location", "EditDialog.cancel")}</Button>
+            <Button onClick={(e) => onSave(this.state.data)} color="primary" autoFocus disabled={!this.canSave()}>
+              {formatMessage(intl, "location", "EditDialog.save")}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      );
+    }
+    else{
     return (
       <Dialog open={open} onClose={onCancel}>
         <DialogTitle>{title}</DialogTitle>
@@ -128,6 +210,7 @@ class EditLocationDialog extends Component {
         </DialogActions>
       </Dialog>
     );
+    }
   }
 }
 
