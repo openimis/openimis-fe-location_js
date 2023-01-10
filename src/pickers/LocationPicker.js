@@ -32,6 +32,7 @@ const LocationPicker = (props) => {
     required,
     filterSelectedOptions = true,
     withPlaceholder,
+    restrictedOptions,
   } = props;
   const [open, setOpen] = useState(false);
   const [resetKey, setResetKey] = useState();
@@ -41,6 +42,8 @@ const LocationPicker = (props) => {
 
   const isLoading = useSelector((state) => state.loc[`fetchingL${locationLevel}s`]);
   const options = useSelector((state) => state.loc[`l${locationLevel}s`] ?? []);
+
+  const restricted = useSelector((state) => state.loc[`userL${locationLevel}s`]);
 
   const dispatch = useDispatch();
   const handleChange = (__, value) => {
@@ -94,7 +97,7 @@ const LocationPicker = (props) => {
       openOnFocus
       multiple={multiple}
       disabled={readOnly}
-      options={options}
+      options={restrictedOptions ? restricted : options}
       loading={isLoading}
       open={open}
       onOpen={() => setOpen(true)}
