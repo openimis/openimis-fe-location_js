@@ -9,6 +9,7 @@ import {
   withModulesManager,
 } from "@openimis/fe-core";
 import { Grid } from "@material-ui/core";
+import UniqueValueValidation from "../pickers/UniqueValueValidation";
 
 const styles = (theme) => ({
   item: theme.paper.item,
@@ -42,6 +43,7 @@ class HealthFacilityMasterPanel extends FormPanel {
 
   render() {
     const { classes, edited, reset, readOnly = false } = this.props;
+    console.log(edited);
     return (
       <Grid container>
         <ControlledField
@@ -147,14 +149,14 @@ class HealthFacilityMasterPanel extends FormPanel {
           id="HealthFacility.code"
           field={
             <Grid item xs={2} className={classes.item}>
-              <TextInput
+              <UniqueValueValidation
                 module="location"
                 label="HealthFacilityForm.code"
                 name="code"
                 value={edited.code}
                 readOnly={readOnly}
                 required={true}
-                onChange={(v, s) => this.updateAttribute("code", v)}
+                onChange={(code, s) => this.updateAttribute("code", code)}
                 inputProps={{
                   "maxLength": this.codeMaxLength,
                 }}

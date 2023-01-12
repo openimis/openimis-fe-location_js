@@ -87,6 +87,7 @@ class HealthFacilityForm extends Component {
 
   canSave = () => {
     if (!this.state.healthFacility.code) return false;
+    if (!this.props.isCodeValid) return false;
     if (!this.state.healthFacility.name) return false;
     if (!this.state.healthFacility.location) return false;
     if (!this.state.healthFacility.legalForm) return false;
@@ -170,6 +171,7 @@ const mapStateToProps = (state, props) => ({
   errorHealthFacility: state.loc.errorHealthFacility,
   submittingMutation: state.loc.submittingMutation,
   mutation: state.loc.mutation,
+  isCodeValid: state.loc.validationFields?.HFCode?.isValid,
 });
 
 const mapDispatchToProps = (dispatch) => {

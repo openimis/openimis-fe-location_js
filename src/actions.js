@@ -7,6 +7,7 @@ import {
   formatGQLString,
   formatMutation,
   formatJsonField,
+  graphqlWithVariables,
 } from "@openimis/fe-core";
 
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
@@ -296,4 +297,16 @@ export function fetchAllRegions() {
   let payload = formatPageQuery("locations", filters, ["id", "uuid", "code", "name"]);
 
   return graphql(payload, `LOCATION_REGIONS`);
+}
+
+export function HFCodeValidationCheck(mm, variables) {
+  return graphqlWithVariables(
+    `
+      query ($healthFacilityCode: String!) {
+        isValid: validateHealthFacilityCode(healthFacilityCode: $healthFacilityCode)
+      }
+    `,
+    variables,
+    `LOCATION_VALIDATION_FIELDS`,
+  );
 }
