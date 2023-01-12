@@ -10,6 +10,7 @@ import {
 } from "@openimis/fe-core";
 import { Grid } from "@material-ui/core";
 import UniqueValueValidation from "../pickers/UniqueValueValidation";
+import { HFCodeValidationCheck, HFCodeValidationClear } from "../actions";
 
 const styles = (theme) => ({
   item: theme.paper.item,
@@ -156,6 +157,8 @@ class HealthFacilityMasterPanel extends FormPanel {
                 value={edited.code}
                 readOnly={readOnly}
                 required={true}
+                action={HFCodeValidationCheck}
+                clearAction={HFCodeValidationClear}
                 onChange={(code, s) => this.updateAttribute("code", code)}
                 inputProps={{
                   "maxLength": this.codeMaxLength,

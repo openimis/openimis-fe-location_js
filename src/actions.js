@@ -310,3 +310,9 @@ export function HFCodeValidationCheck(mm, variables) {
     `LOCATION_VALIDATION_FIELDS`,
   );
 }
+
+export function HFCodeValidationClear() {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_VALIDATION_FIELDS_CLEAR` });
+  };
+}

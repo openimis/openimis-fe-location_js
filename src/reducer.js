@@ -337,6 +337,17 @@ function reducer(
           },
         },
       };
+      case "LOCATION_VALIDATION_FIELDS_CLEAR":
+        return {
+          ...state,
+          validationFields: {
+            HFCode: {
+              isValidating: false,
+              isValid: null,
+              validationError: null,
+            },
+          },
+        };
     case "LOCATION_MUTATION_REQ":
       return dispatchMutationReq(state, action);
     case "LOCATION_MUTATION_ERR":
