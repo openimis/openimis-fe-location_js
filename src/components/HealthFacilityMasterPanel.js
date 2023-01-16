@@ -7,9 +7,10 @@ import {
   TextInput,
   TextAreaInput,
   withModulesManager,
+  ValidatedTextInput,
 } from "@openimis/fe-core";
 import { Grid } from "@material-ui/core";
-import UniqueValueValidation from "../pickers/UniqueValueValidation";
+import { connect } from "react-redux";
 import { HFCodeValidationCheck, HFCodeValidationClear } from "../actions";
 
 const styles = (theme) => ({
@@ -43,8 +44,7 @@ class HealthFacilityMasterPanel extends FormPanel {
   };
 
   render() {
-    const { classes, edited, reset, readOnly = false } = this.props;
-    console.log(edited);
+    const { classes, edited, reset, readOnly = false, isHFCodeValid, isHFCodeValidating, HFCodeValidationError } = this.props;
     return (
       <Grid container>
         <ControlledField
@@ -150,15 +150,21 @@ class HealthFacilityMasterPanel extends FormPanel {
           id="HealthFacility.code"
           field={
             <Grid item xs={2} className={classes.item}>
-              <UniqueValueValidation
+              <ValidatedTextInput
+                isValid={isHFCodeValid}
+                isValidating={isHFCodeValidating}
+                validationError={HFCodeValidationError}
+                action={HFCodeValidationCheck}
+                clearAction={HFCodeValidationClear}
+                feModule="fe-location"
                 module="location"
-                label="HealthFacilityForm.code"
+                label="location.HealthFacilityForm.code"
+                codeTakenLabel="location.HealthFacilityForm.codeTaken"
+                codeMaxLength="locationForm.CodeMaxLength"
                 name="code"
                 value={edited.code}
                 readOnly={readOnly}
                 required={true}
-                action={HFCodeValidationCheck}
-                clearAction={HFCodeValidationClear}
                 onChange={(code, s) => this.updateAttribute("code", code)}
                 inputProps={{
                   "maxLength": this.codeMaxLength,
@@ -267,4 +273,10 @@ class HealthFacilityMasterPanel extends FormPanel {
   }
 }
 
-export default withModulesManager(withTheme(withStyles(styles)(HealthFacilityMasterPanel)));
+const mapStateToProps = (state) => ({
+  isHFCodeValid: state.loc.validationFields?.HFCode?.isValid,
+  isHFCodeValidating: state.loc.validationFields?.HFCode?.isValidating,
+  HFCodeValidationError: state.loc.validationFields?.HFCode?.validationError,
+});
+
+export default withModulesManager(connect(mapStateToProps)(withTheme(withStyles(styles)(HealthFacilityMasterPanel))));

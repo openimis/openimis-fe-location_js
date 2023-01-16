@@ -112,6 +112,7 @@
   "location.HealthFacilityForm.phone": "Phone",
   "location.HealthFacilityForm.fax": "Fax",
   "location.HealthFacilityForm.email": "Email",
+  "location.HealthFacilityForm.codeTaken": "Code already taken.",
   "location.HealthFacilityFilter.showHistory": "Show historical values",
   "location.CreateHealthFacility.mutationLabel": "Create Health Facility {code}",
   "location.UpdateHealthFacility.mutationLabel": "Update Health Facilityt { code}",
