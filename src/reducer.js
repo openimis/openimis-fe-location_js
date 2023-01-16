@@ -333,6 +333,7 @@ function reducer(
         validationFields: {
           HFCode: {
             isValidating: false,
+            isValid: false,
             validationError: formatServerError(action.payload),
           },
         },
@@ -342,8 +343,8 @@ function reducer(
           ...state,
           validationFields: {
             HFCode: {
-              isValidating: false,
-              isValid: null,
+              isValidating: true,
+              isValid: false,
               validationError: null,
             },
           },

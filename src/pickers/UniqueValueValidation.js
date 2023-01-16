@@ -36,9 +36,9 @@ const UniqueValueValidation = ({
 
   //! If we want to have generic component, HFCode has to be somehow changed into props flow
   //! Maybe it is a good idea to dispatch all info below in the parent component and pass them as a prop value
-  const isValid = useSelector((store) => store.loc.validationFields?.HFCode?.isValid);
-  const isValidating = useSelector((store) => store.loc.validationFields?.HFCode.isValidating);
-  const validationError = useSelector((store) => store.loc.validationFields?.HFCode.validationError);
+  const isValid = useSelector((state) => state.loc.validationFields?.HFCode?.isValid);
+  const isValidating = useSelector((state) => state.loc.validationFields?.HFCode.isValidating);
+  const validationError = useSelector((state) => state.loc.validationFields?.HFCode.validationError);
 
   console.log("isValid", isValid);
   console.log("isValidating", isValidating);
@@ -65,7 +65,7 @@ const UniqueValueValidation = ({
       label={label}
       placeholder={placeholder}
       //! Code taken message should be changed into his own statement instead of using EditDialog one | This also has to be passed if we want to make this component generic
-      error={validationError || (!isValid && value) ? formatMessage("location.EditDialog.codeTaken") : null}
+      error={validationError || (!isValidating && !isValid && value) ? formatMessage("location.EditDialog.codeTaken") : null}
       value={value}
       //! Hardcoded fe-location has to be replaced
       inputProps={{
@@ -77,13 +77,13 @@ const UniqueValueValidation = ({
           className={clsx(isValid && value && classes.validIcon, !isValid && value && classes.invalidIcon)}
         >
           <>
-            {isValidating && (
+            {isValidating && value && (
               <Box mr={1}>
                 <CircularProgress size={20} />
               </Box>
             )}
-            {isValid && value && <CheckOutlinedIcon size={20} />}
-            {!isValid && value  && <ErrorOutlineOutlinedIcon size={20} />}
+            {!isValidating && isValid && value && <CheckOutlinedIcon size={20} />}
+            {!isValidating && !isValid && value && <ErrorOutlineOutlinedIcon size={20} />}
           </>
         </InputAdornment>
       }
