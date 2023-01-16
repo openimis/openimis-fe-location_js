@@ -156,11 +156,9 @@ class HealthFacilityMasterPanel extends FormPanel {
                 validationError={HFCodeValidationError}
                 action={HFCodeValidationCheck}
                 clearAction={HFCodeValidationClear}
-                feModule="fe-location"
                 module="location"
                 label="location.HealthFacilityForm.code"
                 codeTakenLabel="location.HealthFacilityForm.codeTaken"
-                codeMaxLength="locationForm.CodeMaxLength"
                 name="code"
                 value={edited.code}
                 readOnly={readOnly}
