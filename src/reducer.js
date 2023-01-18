@@ -305,6 +305,54 @@ function reducer(
         fetchingAllRegions: false,
         errorAllRegions: formatServerError(action.payload),
       };
+    case "LOCATION_VALIDATION_FIELDS_REQ":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          HFCode: {
+            isValidating: true,
+            isValid: false,
+            validationError: null,
+          },
+        },
+      };
+    case "LOCATION_VALIDATION_FIELDS_RESP":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          HFCode: {
+            isValidating: false,
+            isValid: action.payload?.data.isValid,
+            validationError: formatGraphQLError(action.payload),
+          },
+        },
+      };
+    case "LOCATION_VALIDATION_FIELDS_ERR":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          HFCode: {
+            isValidating: false,
+            isValid: false,
+            validationError: formatServerError(action.payload),
+          },
+        },
+      };
+    case "LOCATION_VALIDATION_FIELDS_CLEAR":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          HFCode: {
+            isValidating: true,
+            isValid: false,
+            validationError: null,
+          },
+        },
+      };
     case "LOCATION_MUTATION_REQ":
       return dispatchMutationReq(state, action);
     case "LOCATION_MUTATION_ERR":
