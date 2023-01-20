@@ -43,8 +43,22 @@ class HealthFacilityMasterPanel extends FormPanel {
     });
   };
 
+  shouldValidate = (inputValue) => {
+    const { savedHFCode } = this.props;
+    const shouldValidate = inputValue !== savedHFCode;
+    return shouldValidate;
+  };
+
   render() {
-    const { classes, edited, reset, readOnly = false, isHFCodeValid, isHFCodeValidating, HFCodeValidationError } = this.props;
+    const {
+      classes,
+      edited,
+      reset,
+      readOnly = false,
+      isHFCodeValid,
+      isHFCodeValidating,
+      HFCodeValidationError,
+    } = this.props;
     return (
       <Grid container>
         <ControlledField
@@ -151,6 +165,8 @@ class HealthFacilityMasterPanel extends FormPanel {
           field={
             <Grid item xs={2} className={classes.item}>
               <ValidatedTextInput
+                itemQueryIdentifier="healthFacilityCode"
+                shouldValidate={this.shouldValidate}
                 isValid={isHFCodeValid}
                 isValidating={isHFCodeValidating}
                 validationError={HFCodeValidationError}
@@ -275,6 +291,7 @@ const mapStateToProps = (state) => ({
   isHFCodeValid: state.loc.validationFields?.HFCode?.isValid,
   isHFCodeValidating: state.loc.validationFields?.HFCode?.isValidating,
   HFCodeValidationError: state.loc.validationFields?.HFCode?.validationError,
+  savedHFCode: state.loc?.healthFacility?.code,
 });
 
 export default withModulesManager(connect(mapStateToProps)(withTheme(withStyles(styles)(HealthFacilityMasterPanel))));
