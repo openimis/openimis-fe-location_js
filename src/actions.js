@@ -81,6 +81,12 @@ export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) 
   return graphql(payload, "LOCATION_HEALTH_FACILITY");
 }
 
+export function clearHealthFacility() {
+  return (dispatch) => {
+    dispatch({ type: "LOCATION_HEALTH_FACILITY_CLEAR" });
+  };
+}
+
 export function fetchHealthFacilitySummaries(filters) {
   var projections = [
     "id",

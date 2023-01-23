@@ -165,6 +165,14 @@ function reducer(
         fetchingHealthFacility: false,
         errorHealthFacility: formatServerError(action.payload),
       };
+      case "LOCATION_HEALTH_FACILITY_CLEAR":
+      return {
+        ...state,
+        fetchingHealthFacility: false,
+        fetchedHealthFacility: false,
+        healthFacility: null,
+        errorHealthFacility: null,
+      };
     case "LOCATION_LOCATIONS_0_REQ":
       return {
         ...state,

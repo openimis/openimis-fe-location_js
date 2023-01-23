@@ -13,7 +13,7 @@ import {
 } from "@openimis/fe-core";
 import HealthFacilityMasterPanel from "../components/HealthFacilityMasterPanel";
 import HealthFacilityCatchmentPanel from "../components/HealthFacilityCatchmentPanel";
-import { fetchHealthFacility } from "../actions";
+import { fetchHealthFacility, clearHealthFacility } from "../actions";
 
 const HF_FORM_CONTRIBUTION_KEY = "location.HealthFacility";
 
@@ -65,6 +65,10 @@ class HealthFacilityForm extends Component {
       this.setState((state) => ({ reset: state.reset + 1 }));
     }
   }
+  
+  componentWillUnmount() {
+    this.props.clearHealthFacility();
+  }
 
   _add = () => {
     this.setState(
@@ -87,7 +91,7 @@ class HealthFacilityForm extends Component {
 
   canSave = () => {
     if (!this.state.healthFacility.code) return false;
-    if (!this.props.isHFCodeValid) return false;
+    if (this.props.isHFCodeValid === false) return false;
     if (!this.state.healthFacility.name) return false;
     if (!this.state.healthFacility.location) return false;
     if (!this.state.healthFacility.legalForm) return false;
@@ -175,7 +179,7 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ fetchHealthFacility, journalize }, dispatch);
+  return bindActionCreators({ fetchHealthFacility, clearHealthFacility, journalize }, dispatch);
 };
 
 export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(injectIntl(HealthFacilityForm)));
