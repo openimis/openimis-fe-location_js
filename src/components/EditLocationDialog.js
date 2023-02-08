@@ -67,7 +67,6 @@ class EditLocationDialog extends Component {
 
   shouldValidate = (inputValue) => {
     const savedLocationCode = this.props.location?.code;
-    console.log(savedLocationCode);
     if (this.state.data?.uuid && inputValue === savedLocationCode) return false;
     return true;
   };
