@@ -183,7 +183,7 @@ const StyledResultPane = withTheme(withStyles(styles)(ResultPane));
 
 class TypeLocationsPaper extends Component {
   render() {
-    const { classes, rights, title, onRefresh, onEdit, readOnly, ...others } = this.props;
+    const { classes, rights, title, onRefresh, onEdit, readOnly, location, ...others } = this.props;
     let actions = [];
     if (!readOnly && rights.includes(RIGHT_LOCATION_ADD) && !!onEdit) {
       actions.push({

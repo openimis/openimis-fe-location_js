@@ -1,4 +1,8 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { injectIntl } from "react-intl";
+import _ from "lodash";
+
 import {
   Button,
   Dialog,
@@ -9,10 +13,9 @@ import {
   Divider,
   Grid,
 } from "@material-ui/core";
-import { injectIntl } from "react-intl";
-import { withModulesManager, formatMessage, TextInput, NumberInput } from "@openimis/fe-core";
-import UniqueCodeInput from "../pickers/UniqueCodeInput";
-import _ from "lodash";
+
+import { withModulesManager, formatMessage, TextInput, ValidatedTextInput, NumberInput } from "@openimis/fe-core";
+import { locationCodeValidationCheck, locationCodeValidationClear } from "../actions";
 
 class EditLocationDialog extends Component {
   state = {
@@ -56,34 +59,133 @@ class EditLocationDialog extends Component {
     this.setState({ data });
   };
 
-  changeMultipleData = (dataUpdate) =>{
-    let data = { ...this.state.data };
-    Object.keys(dataUpdate).map(key => {
-      data[key] = dataUpdate[key];
-    });
-    this.setState({ data });
-  }
+  canSave = () =>
+    !!this.state.data &&
+    !!this.state.data.code &&
+    !!this.state.data.name &&
+    !!(this.props.isCodeValid || this.props.location?.code === this.state.data?.code);
 
-  canSave = () => !!this.state.data && !!this.state.data.code && !!this.state.data.isValid && !!this.state.data.name;
+  shouldValidate = (inputValue) => {
+    const savedLocationCode = this.props.location?.code;
+    console.log(savedLocationCode);
+    if (this.state.data?.uuid && inputValue === savedLocationCode) return false;
+    return true;
+  };
 
   render() {
-    const { intl, open, title, onSave, onCancel, withCaptation = false } = this.props;
-    if (this.props.open === true && !this.props.location){
+    const {
+      intl,
+      open,
+      title,
+      onSave,
+      onCancel,
+      withCaptation = false,
+      isCodeValid,
+      isCodeValidating,
+      codeValidationError,
+    } = this.props;
+    
+    if (this.props.open === true && !this.props.location) {
       return (
         <Dialog open={open} onClose={onCancel}>
           <DialogTitle>{title}</DialogTitle>
           <Divider />
           <DialogContent>
             <DialogContentText>
-              <UniqueCodeInput
+              <ValidatedTextInput
+                action={locationCodeValidationCheck}
+                clearAction={locationCodeValidationClear}
+                itemQueryIdentifier="locationCode"
+                isValid={isCodeValid}
+                isValidating={isCodeValidating}
+                validationError={codeValidationError}
+                shouldValidate={this.shouldValidate}
+                codeTakenLabel="EditDialog.codeTaken"
+                onChange={(code) => this.changeData("code", code)}
                 module="location"
                 label="EditDialog.code"
                 autoFocus={true}
                 value={!!this.state.data ? this.state.data.code : null}
-                onChange={(dataUpdate) => this.changeMultipleData(dataUpdate)
-                         }
                 inputProps={{
-                "maxLength": this.codeMaxLength,
+                  "maxLength": this.codeMaxLength,
+                }}
+              />
+              <TextInput
+                module="location"
+                label="EditDialog.name"
+                value={!!this.state.data ? this.state.data.name : null}
+                onChange={(v) => this.changeData("name", v)}
+              />
+              {withCaptation && (
+                <Grid container>
+                  <Grid item xs={6}>
+                    <NumberInput
+                      module="location"
+                      label="EditDialog.male"
+                      value={!!this.state.data ? this.state.data.malePopulation : null}
+                      onChange={(v) => this.changeData("malePopulation", v)}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <NumberInput
+                      module="location"
+                      label="EditDialog.female"
+                      value={!!this.state.data ? this.state.data.femalePopulation : null}
+                      onChange={(v) => this.changeData("femalePopulation", v)}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <NumberInput
+                      module="location"
+                      label="EditDialog.other"
+                      value={!!this.state.data ? this.state.data.otherPopulation : null}
+                      onChange={(v) => this.changeData("otherPopulation", v)}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <NumberInput
+                      module="location"
+                      label="EditDialog.family"
+                      value={!!this.state.data ? this.state.data.families : null}
+                      onChange={(v) => this.changeData("families", v)}
+                    />
+                  </Grid>
+                </Grid>
+              )}
+            </DialogContentText>
+          </DialogContent>
+          <Divider />
+          <DialogActions>
+            <Button onClick={onCancel}>{formatMessage(intl, "location", "EditDialog.cancel")}</Button>
+            <Button onClick={(e) => onSave(this.state.data)} color="primary" autoFocus disabled={!this.canSave()}>
+              {formatMessage(intl, "location", "EditDialog.save")}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      );
+    } else {
+      return (
+        <Dialog open={open} onClose={onCancel}>
+          <DialogTitle>{title}</DialogTitle>
+          <Divider />
+          <DialogContent>
+            <DialogContentText>
+              <ValidatedTextInput
+                action={locationCodeValidationCheck}
+                clearAction={locationCodeValidationClear}
+                itemQueryIdentifier="locationCode"
+                isValid={isCodeValid}
+                isValidating={isCodeValidating}
+                validationError={codeValidationError}
+                shouldValidate={this.shouldValidate}
+                codeTakenLabel="EditDialog.codeTaken"
+                onChange={(code) => this.changeData("code", code)}
+                module="location"
+                label="EditDialog.code"
+                autoFocus={true}
+                value={!!this.state.data ? this.state.data.code : null}
+                inputProps={{
+                  "maxLength": this.codeMaxLength,
                 }}
               />
               <TextInput
@@ -140,78 +242,13 @@ class EditLocationDialog extends Component {
         </Dialog>
       );
     }
-    else{
-    return (
-      <Dialog open={open} onClose={onCancel}>
-        <DialogTitle>{title}</DialogTitle>
-        <Divider />
-        <DialogContent>
-          <DialogContentText>
-            <TextInput
-              module="location"
-              label="EditDialog.code"
-              autoFocus={true}
-              value={!!this.state.data ? this.state.data.code : null}
-              onChange={(v) => this.changeData("code", v)}
-              inputProps={{
-                "maxLength": this.codeMaxLength,
-              }}
-            />
-            <TextInput
-              module="location"
-              label="EditDialog.name"
-              value={!!this.state.data ? this.state.data.name : null}
-              onChange={(v) => this.changeData("name", v)}
-            />
-            {withCaptation && (
-              <Grid container>
-                <Grid item xs={6}>
-                  <NumberInput
-                    module="location"
-                    label="EditDialog.male"
-                    value={!!this.state.data ? this.state.data.malePopulation : null}
-                    onChange={(v) => this.changeData("malePopulation", v)}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <NumberInput
-                    module="location"
-                    label="EditDialog.female"
-                    value={!!this.state.data ? this.state.data.femalePopulation : null}
-                    onChange={(v) => this.changeData("femalePopulation", v)}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <NumberInput
-                    module="location"
-                    label="EditDialog.other"
-                    value={!!this.state.data ? this.state.data.otherPopulation : null}
-                    onChange={(v) => this.changeData("otherPopulation", v)}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <NumberInput
-                    module="location"
-                    label="EditDialog.family"
-                    value={!!this.state.data ? this.state.data.families : null}
-                    onChange={(v) => this.changeData("families", v)}
-                  />
-                </Grid>
-              </Grid>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        <Divider />
-        <DialogActions>
-          <Button onClick={onCancel}>{formatMessage(intl, "location", "EditDialog.cancel")}</Button>
-          <Button onClick={(e) => onSave(this.state.data)} color="primary" autoFocus disabled={!this.canSave()}>
-            {formatMessage(intl, "location", "EditDialog.save")}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-    }
   }
 }
 
-export default withModulesManager(injectIntl(EditLocationDialog));
+const mapStateToProps = (store) => ({
+  isCodeValid: store.loc.validationFields?.locationCode?.isValid,
+  isCodeValidating: store.loc.validationFields?.locationCode?.isValidating,
+  codeValidationError: store.loc.validationFields?.locationCode?.validationError,
+});
+
+export default withModulesManager(injectIntl(connect(mapStateToProps)(EditLocationDialog)));

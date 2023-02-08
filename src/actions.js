@@ -313,12 +313,30 @@ export function HFCodeValidationCheck(mm, variables) {
       }
     `,
     variables,
-    `LOCATION_VALIDATION_FIELDS`,
+    `LOCATION_HF_CODE_FIELDS_VALIDATION`,
   );
 }
 
 export function HFCodeValidationClear() {
   return (dispatch) => {
-    dispatch({ type: `LOCATION_VALIDATION_FIELDS_CLEAR` });
+    dispatch({ type: `LOCATION_HF_CODE_FIELDS_VALIDATION_CLEAR` });
+  };
+}
+
+export function locationCodeValidationCheck(mm, variables) {
+  return graphqlWithVariables(
+    `
+    query ($locationCode: String!) {
+      isValid: validateLocationCode(locationCode: $locationCode)
+ }
+    `,
+    variables,
+    `LOCATION_CODE_FIELDS_VALIDATION`,
+  );
+}
+
+export function locationCodeValidationClear() {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_CODE_FIELDS_VALIDATION_CLEAR` });
   };
 }

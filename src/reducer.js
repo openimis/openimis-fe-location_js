@@ -165,7 +165,7 @@ function reducer(
         fetchingHealthFacility: false,
         errorHealthFacility: formatServerError(action.payload),
       };
-      case "LOCATION_HEALTH_FACILITY_CLEAR":
+    case "LOCATION_HEALTH_FACILITY_CLEAR":
       return {
         ...state,
         fetchingHealthFacility: false,
@@ -313,7 +313,7 @@ function reducer(
         fetchingAllRegions: false,
         errorAllRegions: formatServerError(action.payload),
       };
-    case "LOCATION_VALIDATION_FIELDS_REQ":
+    case "LOCATION_HF_CODE_FIELDS_VALIDATION_REQ":
       return {
         ...state,
         validationFields: {
@@ -325,7 +325,7 @@ function reducer(
           },
         },
       };
-    case "LOCATION_VALIDATION_FIELDS_RESP":
+    case "LOCATION_HF_CODE_FIELDS_VALIDATION_RESP":
       return {
         ...state,
         validationFields: {
@@ -337,7 +337,7 @@ function reducer(
           },
         },
       };
-    case "LOCATION_VALIDATION_FIELDS_ERR":
+    case "LOCATION_HF_CODE_FIELDS_VALIDATION_ERR":
       return {
         ...state,
         validationFields: {
@@ -349,12 +349,60 @@ function reducer(
           },
         },
       };
-    case "LOCATION_VALIDATION_FIELDS_CLEAR":
+    case "LOCATION_HF_CODE_FIELDS_VALIDATION_CLEAR":
       return {
         ...state,
         validationFields: {
           ...state.validationFields,
           HFCode: {
+            isValidating: true,
+            isValid: false,
+            validationError: null,
+          },
+        },
+      };
+    case "LOCATION_CODE_FIELDS_VALIDATION_REQ":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          locationCode: {
+            isValidating: true,
+            isValid: false,
+            validationError: null,
+          },
+        },
+      };
+    case "LOCATION_CODE_FIELDS_VALIDATION_RESP":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          locationCode: {
+            isValidating: false,
+            isValid: action.payload?.data.isValid,
+            validationError: formatGraphQLError(action.payload),
+          },
+        },
+      };
+    case "LOCATION_CODE_FIELDS_VALIDATION_ERR":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          locationCode: {
+            isValidating: false,
+            isValid: false,
+            validationError: formatServerError(action.payload),
+          },
+        },
+      };
+    case "LOCATION_CODE_FIELDS_VALIDATION_CLEAR":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          locationCode: {
             isValidating: true,
             isValid: false,
             validationError: null,
