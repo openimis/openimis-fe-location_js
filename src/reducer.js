@@ -409,6 +409,18 @@ function reducer(
           },
         },
       };
+    case "LOCATION_CODE_SET_VALID":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          locationCode: {
+            isValidating: false,
+            isValid: true,
+            validationError: null,
+          },
+        },
+      };
     case "LOCATION_MUTATION_REQ":
       return dispatchMutationReq(state, action);
     case "LOCATION_MUTATION_ERR":
