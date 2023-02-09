@@ -340,3 +340,9 @@ export function locationCodeValidationClear() {
     dispatch({ type: `LOCATION_CODE_FIELDS_VALIDATION_CLEAR` });
   };
 }
+
+export function locationCodeSetValid() {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_CODE_SET_VALID` });
+  };
+}

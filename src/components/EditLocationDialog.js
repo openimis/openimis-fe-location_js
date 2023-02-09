@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 
 import { withModulesManager, formatMessage, TextInput, ValidatedTextInput, NumberInput } from "@openimis/fe-core";
-import { locationCodeValidationCheck, locationCodeValidationClear } from "../actions";
+import { locationCodeValidationCheck, locationCodeValidationClear, locationCodeSetValid } from "../actions";
 
 class EditLocationDialog extends Component {
   state = {
@@ -172,6 +172,7 @@ class EditLocationDialog extends Component {
               <ValidatedTextInput
                 action={locationCodeValidationCheck}
                 clearAction={locationCodeValidationClear}
+                setValidAction={locationCodeSetValid}
                 itemQueryIdentifier="locationCode"
                 isValid={isCodeValid}
                 isValidating={isCodeValidating}
