@@ -11,7 +11,7 @@ import {
 } from "@openimis/fe-core";
 import { Grid } from "@material-ui/core";
 import { connect } from "react-redux";
-import { HFCodeValidationCheck, HFCodeValidationClear } from "../actions";
+import { HFCodeValidationCheck, HFCodeValidationClear, HFCodeSetValid } from "../actions";
 
 const styles = (theme) => ({
   item: theme.paper.item,
@@ -172,6 +172,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 validationError={HFCodeValidationError}
                 action={HFCodeValidationCheck}
                 clearAction={HFCodeValidationClear}
+                setValidAction={HFCodeSetValid}
                 module="location"
                 label="location.HealthFacilityForm.code"
                 codeTakenLabel="location.HealthFacilityForm.codeTaken"

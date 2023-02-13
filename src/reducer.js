@@ -361,6 +361,18 @@ function reducer(
           },
         },
       };
+    case "LOCATION_HF_CODE_FIELDS_VALIDATION_SET_VALID":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          HFCode: {
+            isValidating: false,
+            isValid: true,
+            validationError: null,
+          },
+        },
+      };
     case "LOCATION_CODE_FIELDS_VALIDATION_REQ":
       return {
         ...state,

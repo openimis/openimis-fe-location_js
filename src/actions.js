@@ -317,6 +317,12 @@ export function HFCodeValidationCheck(mm, variables) {
   );
 }
 
+export function HFCodeSetValid() {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_HF_CODE_FIELDS_VALIDATION_SET_VALID` });
+  };
+}
+
 export function HFCodeValidationClear() {
   return (dispatch) => {
     dispatch({ type: `LOCATION_HF_CODE_FIELDS_VALIDATION_CLEAR` });
