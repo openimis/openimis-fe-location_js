@@ -48,6 +48,7 @@ function reducer(
     fetchingUserLocation: false,
     fetchedUserLocation: false,
     errorUserLocation: null,
+    userHealthFacilityFullPath: null
   },
   action,
 ) {
@@ -451,6 +452,47 @@ function reducer(
       return dispatchMutationResp(state, "updateHealthFacility", action);
     case "LOCATION_DELETE_HEALTH_FACILITY_RESP":
       return dispatchMutationResp(state, "deleteHealthFacility", action);
+    case "CORE_AUTH_LOGOUT":
+      return {
+        ...state,
+        fetchingHealthFacilityFullPath: false,
+        fetchedHealthFacilityFullPath: false,
+        healthFacilityFullPath: null,
+        errorHealthFacilityFullPath: null,
+        fetchingHealthFacilities: false,
+        fetchedHealthFacilities: false,
+        healthFacilities: null,
+        healthFacilitiesPageInfo: {},
+        errorHealthFacilities: null,
+        fetchingHealthFacility: false,
+        fetchedHealthFacility: false,
+        healthFacility: null,
+        errorHealthFacility: null,
+        fetchingL0s: false,
+        fetchedL0s: false,
+        l0s: [],
+        errorL0s: null,
+        fetchingL1s: false,
+        fetchedL1s: false,
+        l1s: [],
+        errorL1s: null,
+        fetchingL2s: false,
+        fetchedL2s: false,
+        l2s: [],
+        errorL2s: null,
+        fetchingL3s: false,
+        fetchedL3s: false,
+        l3s: [],
+        errorL3s: null,
+        submittingMutation: false,
+        mutation: {},
+        userL0s: [],
+        userL1s: [],
+        fetchingUserLocation: false,
+        fetchedUserLocation: false,
+        errorUserLocation: null,
+        userHealthFacilityFullPath: null
+      };
     default:
       return state;
   }
