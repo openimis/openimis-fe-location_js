@@ -169,7 +169,7 @@ class HealthFacilityCatchmentPanel extends FormPanel {
                 fetched={fetchedL0s}
                 error={errorL0s}
                 location={this.state.l0}
-                locations={userRegions}
+                locations={l0s}
                 currentParents={this.state.currentParents}
                 stateLocation={this.state.location}
                 reassign={true}
