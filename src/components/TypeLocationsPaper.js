@@ -11,7 +11,13 @@ import { formatMessage, formatMessageWithValues, SearcherPane, ProgressOrError }
 import EditLocationDialog from "./EditLocationDialog";
 import MoveLocationDialog from "./MoveLocationDialog";
 import DeleteLocationDialog from "../components/DeleteLocationDialog";
-import { RIGHT_LOCATION_ADD, RIGHT_LOCATION_EDIT, RIGHT_LOCATION_DELETE, RIGHT_LOCATION_MOVE } from "../constants";
+import {
+  RIGHT_LOCATION_ADD,
+  RIGHT_LOCATION_EDIT,
+  RIGHT_LOCATION_DELETE,
+  RIGHT_LOCATION_MOVE,
+  RIGHT_REGION_LOCATION_ADD
+} from "../constants";
 
 const styles = (theme) => ({
   paper: theme.paper.body,
@@ -90,9 +96,9 @@ class ActionDialogs extends Component {
           confirm={
             !!reassignLocations
               ? formatMessageWithValues(intl, "location", "DeleteDialog.confirm", {
-                  ...args,
-                  children,
-                })
+                ...args,
+                children,
+              })
               : formatMessageWithValues(intl, "location", "DeleteDialog.confirmSimple", args)
           }
           drop={formatMessageWithValues(intl, "location", "DeleteDialog.drop", {
@@ -184,8 +190,17 @@ const StyledResultPane = withTheme(withStyles(styles)(ResultPane));
 class TypeLocationsPaper extends Component {
   render() {
     const { classes, rights, title, onRefresh, onEdit, readOnly, location, ...others } = this.props;
+    const createRegionLocationRight = Boolean(
+      this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD)
+    );
     let actions = [];
-    if (!readOnly && rights.includes(RIGHT_LOCATION_ADD) && !!onEdit) {
+    if (
+      !readOnly &&
+      rights.includes(RIGHT_LOCATION_ADD) &&
+      Boolean(onEdit) &&
+      createRegionLocationRight ||
+      ![0,1].includes(this.props.type)
+    ) {
       actions.push({
         action: (e) => onEdit(null),
         icon: <AddIcon />,
