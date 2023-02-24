@@ -4,8 +4,20 @@ import { injectIntl } from "react-intl";
 import { bindActionCreators } from "redux";
 import { Grid } from "@material-ui/core";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
-import { fetchLocations, clearLocations, createOrUpdateLocation, deleteLocation, moveLocation } from "../actions";
-import { Helmet, withModulesManager, formatMessageWithValues, journalize, formatMessage } from "@openimis/fe-core";
+import {
+  fetchLocations,
+  clearLocations,
+  createOrUpdateLocation,
+  deleteLocation,
+  moveLocation
+} from "../actions";
+import {
+  Helmet,
+  withModulesManager,
+  formatMessageWithValues,
+  journalize,
+  formatMessage
+} from "@openimis/fe-core";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { RIGHT_REGION_LOCATION_ADD } from "../constants";
 import _ from "lodash";
@@ -230,9 +242,7 @@ class LocationsPage extends Component {
       errorL3s,
     } = this.props;
     const { l0s, l1s, l2s, l3s } = this.state;
-    const createRegionLocationRight = Boolean(
-      this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD)
-    );
+    const createRegionLocationRight = this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD);
     return (
       <div className={classes.page}>
         <Helmet title={formatMessage(this.props.intl, "location", "location.locations.page.title")} />
@@ -318,7 +328,7 @@ class LocationsPage extends Component {
           </Grid>
           <Grid item xs={4}>
             <TypeLocationsPaper
-              type={3}createRegionLocationRight
+              type={3} createRegionLocationRight
               onRefresh={() => this.props.fetchLocations(this.locationTypes, 3, this.state.l2)}
               onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 3) : null}
               onSelect={(l3) => this.setState({ l3 })}

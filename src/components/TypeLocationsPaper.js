@@ -189,17 +189,24 @@ const StyledResultPane = withTheme(withStyles(styles)(ResultPane));
 
 class TypeLocationsPaper extends Component {
   render() {
-    const { classes, rights, title, onRefresh, onEdit, readOnly, location, ...others } = this.props;
-    const createRegionLocationRight = Boolean(
-      this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD)
-    );
+    const {
+      classes,
+      rights,
+      title,
+      onRefresh,
+      onEdit,
+      readOnly,
+      location,
+      ...others
+    } = this.props;
+    const createRegionLocationRight = this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD);
     let actions = [];
     if (
       !readOnly &&
       rights.includes(RIGHT_LOCATION_ADD) &&
       Boolean(onEdit) &&
       createRegionLocationRight ||
-      ![0,1].includes(this.props.type)
+      ![0, 1].includes(this.props.type)
     ) {
       actions.push({
         action: (e) => onEdit(null),
