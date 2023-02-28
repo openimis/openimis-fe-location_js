@@ -328,7 +328,7 @@ class LocationsPage extends Component {
           </Grid>
           <Grid item xs={4}>
             <TypeLocationsPaper
-              type={3} createRegionLocationRight
+              type={3}
               onRefresh={() => this.props.fetchLocations(this.locationTypes, 3, this.state.l2)}
               onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 3) : null}
               onSelect={(l3) => this.setState({ l3 })}
