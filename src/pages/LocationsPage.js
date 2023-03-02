@@ -376,7 +376,7 @@ const mapStateToProps = (state) => ({
   errorL3s: state.loc.errorL3s,
   submittingMutation: state.loc.submittingMutation,
   mutation: state.loc.mutation,
-  rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
+  rights: state.core?.user?.i_user?.rights || [],
 });
 
 const mapDispatchToProps = (dispatch) => {

@@ -201,12 +201,15 @@ class TypeLocationsPaper extends Component {
     } = this.props;
     const createRegionLocationRight = this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD);
     let actions = [];
+    const isNotRegionOrDistrict = ![0, 1].includes(this.props.type);
     if (
       !readOnly &&
-      rights.includes(RIGHT_LOCATION_ADD) &&
       Boolean(onEdit) &&
-      createRegionLocationRight ||
-      ![0, 1].includes(this.props.type)
+      (
+        createRegionLocationRight ||
+        rights.includes(RIGHT_LOCATION_ADD) &&
+        isNotRegionOrDistrict
+      )
     ) {
       actions.push({
         action: (e) => onEdit(null),
