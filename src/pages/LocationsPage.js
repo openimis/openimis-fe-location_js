@@ -4,9 +4,22 @@ import { injectIntl } from "react-intl";
 import { bindActionCreators } from "redux";
 import { Grid } from "@material-ui/core";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
-import { fetchLocations, clearLocations, createOrUpdateLocation, deleteLocation, moveLocation } from "../actions";
-import { Helmet, withModulesManager, formatMessageWithValues, journalize, formatMessage } from "@openimis/fe-core";
+import {
+  fetchLocations,
+  clearLocations,
+  createOrUpdateLocation,
+  deleteLocation,
+  moveLocation
+} from "../actions";
+import {
+  Helmet,
+  withModulesManager,
+  formatMessageWithValues,
+  journalize,
+  formatMessage
+} from "@openimis/fe-core";
 import { withTheme, withStyles } from "@material-ui/core/styles";
+import { RIGHT_REGION_LOCATION_ADD } from "../constants";
 import _ from "lodash";
 
 const styles = (theme) => ({
@@ -229,6 +242,7 @@ class LocationsPage extends Component {
       errorL3s,
     } = this.props;
     const { l0s, l1s, l2s, l3s } = this.state;
+    const createRegionLocationRight = this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD);
     return (
       <div className={classes.page}>
         <Helmet title={formatMessage(this.props.intl, "location", "location.locations.page.title")} />
@@ -239,10 +253,10 @@ class LocationsPage extends Component {
                 <TypeLocationsPaper
                   type={0}
                   onRefresh={() => this.props.fetchLocations(this.locationTypes, 0, null)}
-                  onDelete={(l, idx) => this.onDelete(l, idx, 0)}
+                  onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 0) : null}
                   onSelect={(l0) => this.setState({ l0 })}
-                  onEdit={(l) => this.onEdit(l, 0)}
-                  onMove={(l) => this.onMove(l, 0)}
+                  onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 0) : null}
+                  onMove={createRegionLocationRight ? (l) => this.onMove(l, 0) : null}
                   editOpen={this.state.editOpen}
                   moveOpen={this.state.moveOpen}
                   delOpen={this.state.delOpen}
@@ -264,10 +278,10 @@ class LocationsPage extends Component {
                 <TypeLocationsPaper
                   type={1}
                   onRefresh={() => this.props.fetchLocations(this.locationTypes, 1, this.state.l0)}
-                  onDelete={(l, idx) => this.onDelete(l, idx, 1)}
+                  onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 1) : null}
                   onSelect={(l1) => this.setState({ l1 })}
-                  onEdit={(l) => this.onEdit(l, 1)}
-                  onMove={(l, idx) => this.onMove(l, 1, idx)}
+                  onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 1) : null}
+                  onMove={createRegionLocationRight ? (l, idx) => this.onMove(l, 1, idx) : null}
                   editOpen={this.state.editOpen}
                   moveOpen={this.state.moveOpen}
                   delOpen={this.state.delOpen}
@@ -289,10 +303,10 @@ class LocationsPage extends Component {
                 <TypeLocationsPaper
                   type={2}
                   onRefresh={() => this.props.fetchLocations(this.locationTypes, 2, this.state.l1)}
-                  onDelete={(l, idx) => this.onDelete(l, idx, 2)}
+                  onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 2) : null}
                   onSelect={(l2) => this.setState({ l2 })}
-                  onEdit={(l) => this.onEdit(l, 2)}
-                  onMove={(l, idx) => this.onMove(l, 2, idx)}
+                  onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 2) : null}
+                  onMove={createRegionLocationRight ? (l, idx) => this.onMove(l, 2, idx) : null}
                   editOpen={this.state.editOpen}
                   moveOpen={this.state.moveOpen}
                   delOpen={this.state.delOpen}
@@ -316,10 +330,10 @@ class LocationsPage extends Component {
             <TypeLocationsPaper
               type={3}
               onRefresh={() => this.props.fetchLocations(this.locationTypes, 3, this.state.l2)}
-              onDelete={(l, idx) => this.onDelete(l, idx, 3)}
+              onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 3) : null}
               onSelect={(l3) => this.setState({ l3 })}
-              onEdit={(l) => this.onEdit(l, 3)}
-              onMove={(l, idx) => this.onMove(l, 3, idx)}
+              onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 3) : null}
+              onMove={createRegionLocationRight ? (l, idx) => this.onMove(l, 3, idx) : null}
               editOpen={this.state.editOpen}
               moveOpen={this.state.moveOpen}
               delOpen={this.state.delOpen}
@@ -362,6 +376,7 @@ const mapStateToProps = (state) => ({
   errorL3s: state.loc.errorL3s,
   submittingMutation: state.loc.submittingMutation,
   mutation: state.loc.mutation,
+  rights: state.core?.user?.i_user?.rights || [],
 });
 
 const mapDispatchToProps = (dispatch) => {
