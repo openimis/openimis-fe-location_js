@@ -305,6 +305,14 @@ export function fetchAllRegions() {
   return graphql(payload, `LOCATION_REGIONS`);
 }
 
+export function fetchAllDistricts() {
+  let filters = [`type: "D"`, `name_Ne : "Funding"`];
+
+  let payload = formatPageQuery("locations", filters, ["id", "uuid", "code", "name", "parent{id, uuid, code, name}"]);
+
+  return graphql(payload, `LOCATION_DISTRICTS`);
+}
+
 export function HFCodeValidationCheck(mm, variables) {
   return graphqlWithVariables(
     `

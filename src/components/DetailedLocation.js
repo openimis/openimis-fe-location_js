@@ -94,7 +94,7 @@ class DetailedLocation extends Component {
   };
 
   render() {
-    const { classes, split = false, readOnly, required = false, filterLabels = true } = this.props;
+    const { classes, split = false, readOnly, required = false, filterLabels = true, allRegions } = this.props;
     let grid = split ? 12 : 6;
     return (
       <Grid container className={classes.form}>
@@ -106,6 +106,7 @@ class DetailedLocation extends Component {
             required={required}
             onChange={this.onDistrictChange}
             filterLabels={filterLabels}
+            allRegions={allRegions}
           />
         </Grid>
         {_.times(this.locationTypes.length - 2, (i) => (

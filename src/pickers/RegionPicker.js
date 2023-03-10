@@ -48,6 +48,7 @@ class RegionPicker extends Component {
       readOnly = false,
       required = false,
       allRegions,
+      userRegions,
     } = this.props;
 
     allRegionsFlag = allRegions;
@@ -62,10 +63,11 @@ class RegionPicker extends Component {
         />
       );
     }
+
     return (
       <AutoSuggestion
         module="location"
-        items={regions}
+        items={allRegionsFlag ? regions : userRegions}
         preValues={preValues}
         label={!!withLabel && (label || formatMessage(intl, "location", "RegionPicker.label"))}
         placeholder={
@@ -93,7 +95,8 @@ class RegionPicker extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  regions: allRegionsFlag ? state.loc.allRegions : state.loc.userL0s || [],
+  regions: state.loc.allRegions || [],
+  userRegions: state.loc.userL0s || [],
   userHealthFacilityFullPath: state.loc.userHealthFacilityFullPath,
 });
 

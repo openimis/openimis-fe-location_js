@@ -6,12 +6,16 @@ import { TextField } from "@material-ui/core";
 import { withModulesManager, formatMessage, AutoSuggestion } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
 import { locationLabel } from "../utils";
+import { fetchAllDistricts } from "../actions.js";
+import { bindActionCreators } from "redux";
 
 const styles = (theme) => ({
   textField: {
     width: "100%",
   },
 });
+
+let allDistrictsFlag = false;
 
 class DistrictPicker extends Component {
   constructor(props) {
@@ -22,6 +26,10 @@ class DistrictPicker extends Component {
   onSuggestionSelected = (v) => {
     this.props.onChange(v, locationLabel(v));
   };
+
+  componentDidMount() {
+    if (allDistrictsFlag) this.props.fetchAllDistricts();
+  }
 
   render() {
     const {
@@ -39,7 +47,11 @@ class DistrictPicker extends Component {
       districts,
       readOnly = false,
       required = false,
+      allRegions,
+      userDistricts,
     } = this.props;
+
+    allDistrictsFlag = allRegions; // If all regions are displayed, we also want to display all the districts
 
     if (!!userHealthFacilityFullPath) {
       return (
@@ -52,9 +64,11 @@ class DistrictPicker extends Component {
       );
     }
 
-    let items = districts || [];
+    let items = allDistrictsFlag ? districts : userDistricts;
+
     if (!!region) {
       items = items.filter((d) => {
+        console.log(d);
         return d.parent.uuid === region.uuid;
       });
     }
@@ -86,8 +100,13 @@ class DistrictPicker extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  districts: state.loc.userL1s,
+  userDistricts: state.loc.userL1s || [],
+  districts: state.loc.allDistricts || [],
   userHealthFacilityFullPath: state.loc.userHealthFacilityFullPath,
 });
 
-export default withModulesManager(connect(mapStateToProps)(injectIntl(withTheme(withStyles(styles)(DistrictPicker)))));
+const mapDispatchToProps = (dispatch) => bindActionCreators({ fetchAllDistricts }, dispatch);
+
+export default withModulesManager(
+  connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(DistrictPicker)))),
+);
