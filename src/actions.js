@@ -110,7 +110,10 @@ export function fetchHealthFacilitySummaries(filters) {
 }
 
 export function fetchLocations(levels, type, parent) {
-  let filters = [`type: "${levels[type]}"`];
+  let filters = [`
+    type: "${levels[type]}",
+    orderBy: "code"
+  `];
   if (!!parent) {
     filters.push(`parent_Uuid: "${parent.uuid}"`);
   }
