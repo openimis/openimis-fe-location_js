@@ -1,10 +1,11 @@
 import React, { Component } from "react";
+import { bindActionCreators } from "redux";
 import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Fab } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import { withHistory, historyPush, formatMessage, Helmet } from "@openimis/fe-core";
+import { withHistory, historyPush, formatMessage, Helmet, clearCurrentPaginationPage } from "@openimis/fe-core";
 import HealthFacilitiesSearcher from "../components/HealthFacilitiesSearcher";
 
 import { RIGHT_HEALTH_FACILITY_ADD } from "../constants";
@@ -21,6 +22,12 @@ class HealthFacilitiesPage extends Component {
 
   onDoubleClick = (hf) => {
     historyPush(this.props.modulesManager, this.props.history, "location.route.healthFacilityEdit", [hf.uuid]);
+  };
+
+  componentDidMount = () => {
+    const moduleName = "location";
+    const { module } = this.props;
+    if (module !== moduleName) this.props.clearCurrentPaginationPage();
   };
 
   render() {
@@ -43,6 +50,11 @@ class HealthFacilitiesPage extends Component {
 
 const mapStateToProps = (state) => ({
   rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
+  module: state.core?.savedPagination?.module,
 });
 
-export default injectIntl(withTheme(withStyles(styles)(withHistory(connect(mapStateToProps)(HealthFacilitiesPage)))));
+const mapDispatchToProps = (dispatch) => bindActionCreators({ clearCurrentPaginationPage }, dispatch);
+
+export default injectIntl(
+  withTheme(withStyles(styles)(withHistory(connect(mapStateToProps, mapDispatchToProps)(HealthFacilitiesPage)))),
+);
