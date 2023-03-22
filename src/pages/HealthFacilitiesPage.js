@@ -7,8 +7,7 @@ import { Fab } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import { withHistory, historyPush, formatMessage, Helmet, clearCurrentPaginationPage } from "@openimis/fe-core";
 import HealthFacilitiesSearcher from "../components/HealthFacilitiesSearcher";
-
-import { RIGHT_HEALTH_FACILITY_ADD } from "../constants";
+import { RIGHT_HEALTH_FACILITY_ADD, MODULE_NAME } from "../constants";
 
 const styles = (theme) => ({
   page: theme.page,
@@ -25,9 +24,8 @@ class HealthFacilitiesPage extends Component {
   };
 
   componentDidMount = () => {
-    const moduleName = "location";
     const { module } = this.props;
-    if (module !== moduleName) this.props.clearCurrentPaginationPage();
+    if (module !== MODULE_NAME) this.props.clearCurrentPaginationPage();
   };
 
   render() {
