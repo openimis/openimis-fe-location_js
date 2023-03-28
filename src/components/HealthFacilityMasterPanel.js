@@ -15,6 +15,11 @@ const styles = (theme) => ({
 });
 
 class HealthFacilityMasterPanel extends FormPanel {
+
+  state = {
+    parentLocation: null
+  }
+
   constructor(props) {
     super(props);
     this.codeMaxLength = props.modulesManager.getConf("fe-location", "healthFacilityForm.codeMaxLength", 8);
@@ -29,6 +34,9 @@ class HealthFacilityMasterPanel extends FormPanel {
       servicesPricelist: null,
       itemsPricelist: null,
     });
+    this.setState({
+      parentLocation: region,
+    })
   };
 
   updateDistrict = (district) => {
