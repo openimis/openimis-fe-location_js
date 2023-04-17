@@ -45,6 +45,9 @@ const LocationPicker = (props) => {
 
   const restricted = useSelector((state) => state.loc[`userL${locationLevel}s`]);
 
+  const regions = useSelector((state) => state.loc[`l0s`]);
+  const districts = useSelector((state) => state.loc[`l1s`]);
+
   const dispatch = useDispatch();
   const handleChange = (__, value) => {
     onChange(value, locationLabel(value));
@@ -66,7 +69,14 @@ const LocationPicker = (props) => {
       if (parentLocations) {
         dispatch(fetchParentLocationsStr(modulesManager, locationLevel, parentLocations, searchString, 20));
       } else {
-        dispatch(fetchLocationsStr(modulesManager, locationLevel, parentLocation, searchString));
+        dispatch(fetchLocationsStr(
+          modulesManager,
+          locationLevel,
+          regions[0]?.uuid,
+          districts[0]?.uuid,
+          parentLocation,
+          searchString,
+          ));
       }
     }
   }, [searchString, parentLocation, parentLocations]);
@@ -76,7 +86,9 @@ const LocationPicker = (props) => {
       if (parentLocations) {
         dispatch(fetchParentLocationsStr(modulesManager, locationLevel, parentLocations, searchString, 20));
       } else {
-        dispatch(fetchLocationsStr(modulesManager, locationLevel, parentLocation, searchString));
+        dispatch(fetchLocationsStr(modulesManager, locationLevel,regions[0]?.uuid,
+          districts[0]?.uuid, parentLocation, searchString,
+          ));
       }
     } else {
       setSearchString("");

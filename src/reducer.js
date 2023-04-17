@@ -288,19 +288,16 @@ function reducer(
       };
     case "LOCATION_FILTER_SELECTED":
       let newState = { ...state };
-      console.log(action.payload);
       for (var i = action.payload.level + 1; i < action.payload.maxLevels; i++) {
         newState[`l${i}s`] = [];
       }
       return newState;
     case "LOCATION_FILTER_REGION_SELECTED":
-      console.log(action.payload);
       return {
         ...state,
         l0s: [action.payload.location],
       };
     case "LOCATION_FILTER_DISTRICT_SELECTED":
-      console.log(action.payload);
       return {
         ...state,
         l1s: [action.payload.location],
