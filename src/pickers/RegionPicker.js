@@ -57,7 +57,6 @@ class RegionPicker extends Component {
     } = this.props;
 
     allRegionsFlag = allRegions;
-    console.log("im here, value:", value);
     if (!!userHealthFacilityFullPath) {
       return (
         <TextField
