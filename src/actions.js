@@ -32,17 +32,12 @@ export function filter_location_by_parents(parents_uuid, filters, location_type)
   parents_uuid.forEach(function (location_uuid) {
     if (location_uuid) {
       if (location_type == 'W'){
-
         filters.push(`parent_Parent_Uuid: "${location_uuid}"`);
         return true
-
       }
-        
       else if (location_type == 'V'){
         filters.push(`parent_Parent_Parent_Uuid: "${location_uuid}"`);
-  
         return true
-
       }
     }
   });

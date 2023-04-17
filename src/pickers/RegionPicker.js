@@ -30,17 +30,6 @@ class RegionPicker extends Component {
   componentDidUpdate(nextProps) {
     this.props.selectRegionLocation(nextProps.value);
   }
-  // TO DO:
-  // na componentDidMount/useEffect ... [], przy pierwszym renderze czytać value z propsów do state
-  // SPRAWDZIĆ CZY PROPSY SIĘ ZMIENIŁY, CHYBA TRZEBA DO TEGO DODAĆ MAPS STATE DO PROPS DLA 'l0s'
-  // (PO TO ŻEBY SIĘ TO NIE ODPALAŁO JAK KOMPONENT SIĘ RERENDERUJE)
-  // ZROBIĆ TO SAMO DLA DISTRICT PICKERA: akcja + reducer + component did update w district pickerze
-  // przekazywać w LocationPicker.js l0s i l1s na backend
-  // na backendzie sprawdzać jak: type = V to sprawdz parent, jak nie ma to parent_parent, jak nie ma to parent_parent_parent
-  // analogicznie dla M ale tylko parent i parent_parent
-  // to może coś zjebać, bo czasem l3s to nie jeden a kilka Villages, więc może trzeba zrobić osobny state dla selected lokacji
-  
-  // permsy w claimach, jest Claim i on bierze dane np. od policy, to czy policy ma sprawdzac też claim perms?
 
   componentDidMount() {
     if (allRegionsFlag) this.props.fetchAllRegions();
@@ -68,6 +57,7 @@ class RegionPicker extends Component {
     } = this.props;
 
     allRegionsFlag = allRegions;
+    console.log("im here, value:", value);
     if (!!userHealthFacilityFullPath) {
       return (
         <TextField
