@@ -300,6 +300,18 @@ export function selectLocation(location, level, maxLevels) {
   };
 }
 
+export function selectDistrictLocation(location) {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_FILTER_DISTRICT_SELECTED`, payload: { location } });
+  };
+}
+
+export function selectRegionLocation(location) {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_FILTER_REGION_SELECTED`, payload: { location } });
+  };
+}
+
 export function fetchAllRegions() {
   let filters = [`type: "R"`];
 

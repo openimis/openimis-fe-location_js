@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import { connect } from "react-redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { injectIntl } from "react-intl";
@@ -6,7 +6,7 @@ import { TextField } from "@material-ui/core";
 import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
 import { locationLabel } from "../utils";
-import { fetchAllRegions } from "../actions.js";
+import { fetchAllRegions, selectRegionLocation } from "../actions.js";
 import { bindActionCreators } from "redux";
 
 const styles = (theme) => ({
@@ -23,7 +23,13 @@ class RegionPicker extends Component {
     this.selectThreshold = props.modulesManager.getConf("fe-location", "RegionPicker.selectThreshold", 10);
   }
 
-  onSuggestionSelected = (v) => this.props.onChange(v, locationLabel(v));
+  onSuggestionSelected = (v) => {
+    this.props.onChange(v, locationLabel(v));
+  }
+  
+  componentDidUpdate(nextProps) {
+    this.props.selectRegionLocation(nextProps.value);
+  }
 
   componentDidMount() {
     if (allRegionsFlag) this.props.fetchAllRegions();
@@ -51,7 +57,7 @@ class RegionPicker extends Component {
     } = this.props;
 
     allRegionsFlag = allRegions;
-
+    console.log("im here, value:", value);
     if (!!userHealthFacilityFullPath) {
       return (
         <TextField
@@ -101,6 +107,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchAllRegions,
+      selectRegionLocation,
     },
     dispatch,
   );
