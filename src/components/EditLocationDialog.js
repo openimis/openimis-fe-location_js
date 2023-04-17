@@ -16,6 +16,7 @@ import {
 
 import { withModulesManager, formatMessage, TextInput, ValidatedTextInput, NumberInput } from "@openimis/fe-core";
 import { locationCodeValidationCheck, locationCodeValidationClear, locationCodeSetValid } from "../actions";
+import { MAX_INT_NUMBER } from "../constants";
 
 class EditLocationDialog extends Component {
   state = {
@@ -39,6 +40,15 @@ class EditLocationDialog extends Component {
     }
   };
 
+  validateNumberInputs = (malePopulation, femalePopulation, otherPopulation, families) => {
+    if (malePopulation > MAX_INT_NUMBER) return false;
+    if (femalePopulation > MAX_INT_NUMBER) return false;
+    if (otherPopulation > MAX_INT_NUMBER) return false;
+    if (families > MAX_INT_NUMBER) return false;
+
+    return true;
+  };
+
   componentDidMount() {
     document.addEventListener("keydown", this.keysFunction, false);
   }
@@ -50,6 +60,17 @@ class EditLocationDialog extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!_.isEqual(prevProps.location, this.props.location)) {
       this.setState((state, props) => ({ data: props.location }));
+    }
+
+    const areInputsValid = this.validateNumberInputs(
+      this.state.data.malePopulation,
+      this.state.data.femalePopulation,
+      this.state.data.otherPopulation,
+      this.state.data.families,
+    );
+
+    if (!_.isEqual(prevState.data, this.state.data)) {
+      this.setState((state, props) => ({ ...state, areInputsValid }));
     }
   }
 
@@ -63,6 +84,7 @@ class EditLocationDialog extends Component {
     !!this.state.data &&
     !!this.state.data.code &&
     !!this.state.data.name &&
+    !!this.state.areInputsValid &&
     !!(this.props.isCodeValid || this.props.location?.code === this.state.data?.code);
 
   shouldValidate = (inputValue) => {
@@ -83,7 +105,7 @@ class EditLocationDialog extends Component {
       isCodeValidating,
       codeValidationError,
     } = this.props;
-    
+
     if (this.props.open === true && !this.props.location) {
       return (
         <Dialog open={open} onClose={onCancel}>
@@ -121,6 +143,7 @@ class EditLocationDialog extends Component {
                     <NumberInput
                       module="location"
                       label="EditDialog.male"
+                      max={MAX_INT_NUMBER}
                       value={!!this.state.data ? this.state.data.malePopulation : null}
                       onChange={(v) => this.changeData("malePopulation", v)}
                     />
@@ -129,6 +152,7 @@ class EditLocationDialog extends Component {
                     <NumberInput
                       module="location"
                       label="EditDialog.female"
+                      max={MAX_INT_NUMBER}
                       value={!!this.state.data ? this.state.data.femalePopulation : null}
                       onChange={(v) => this.changeData("femalePopulation", v)}
                     />
@@ -137,6 +161,7 @@ class EditLocationDialog extends Component {
                     <NumberInput
                       module="location"
                       label="EditDialog.other"
+                      max={MAX_INT_NUMBER}
                       value={!!this.state.data ? this.state.data.otherPopulation : null}
                       onChange={(v) => this.changeData("otherPopulation", v)}
                     />
@@ -145,6 +170,7 @@ class EditLocationDialog extends Component {
                     <NumberInput
                       module="location"
                       label="EditDialog.family"
+                      max={MAX_INT_NUMBER}
                       value={!!this.state.data ? this.state.data.families : null}
                       onChange={(v) => this.changeData("families", v)}
                     />
@@ -200,6 +226,7 @@ class EditLocationDialog extends Component {
                     <NumberInput
                       module="location"
                       label="EditDialog.male"
+                      max={MAX_INT_NUMBER}
                       value={!!this.state.data ? this.state.data.malePopulation : null}
                       onChange={(v) => this.changeData("malePopulation", v)}
                     />
@@ -208,6 +235,7 @@ class EditLocationDialog extends Component {
                     <NumberInput
                       module="location"
                       label="EditDialog.female"
+                      max={MAX_INT_NUMBER}
                       value={!!this.state.data ? this.state.data.femalePopulation : null}
                       onChange={(v) => this.changeData("femalePopulation", v)}
                     />
@@ -216,6 +244,7 @@ class EditLocationDialog extends Component {
                     <NumberInput
                       module="location"
                       label="EditDialog.other"
+                      max={MAX_INT_NUMBER}
                       value={!!this.state.data ? this.state.data.otherPopulation : null}
                       onChange={(v) => this.changeData("otherPopulation", v)}
                     />
@@ -224,6 +253,7 @@ class EditLocationDialog extends Component {
                     <NumberInput
                       module="location"
                       label="EditDialog.family"
+                      max={MAX_INT_NUMBER}
                       value={!!this.state.data ? this.state.data.families : null}
                       onChange={(v) => this.changeData("families", v)}
                     />
