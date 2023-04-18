@@ -26,7 +26,8 @@ class DistrictPicker extends Component {
   };
 
   componentDidUpdate(nextProps) {
-    this.props.selectDistrictLocation(nextProps.value);
+    if (this.props.value !== nextProps.value)
+      this.props.selectDistrictLocation(nextProps.value);
   }
 
   render() {

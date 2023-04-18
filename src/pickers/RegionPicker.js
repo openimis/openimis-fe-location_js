@@ -26,9 +26,10 @@ class RegionPicker extends Component {
   onSuggestionSelected = (v) => {
     this.props.onChange(v, locationLabel(v));
   }
-  
+
   componentDidUpdate(nextProps) {
-    this.props.selectRegionLocation(nextProps.value);
+    if (this.props.value !== nextProps.value)
+      this.props.selectRegionLocation(nextProps.value);
   }
 
   componentDidMount() {
