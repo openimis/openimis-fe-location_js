@@ -6,7 +6,7 @@ import { TextField } from "@material-ui/core";
 import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
 import { locationLabel } from "../utils";
-import { fetchAllRegions, selectRegionLocation } from "../actions.js";
+import { fetchAllRegions, selectRegionLocation, clearLocations } from "../actions.js";
 import { bindActionCreators } from "redux";
 
 const styles = (theme) => ({
@@ -24,16 +24,17 @@ class RegionPicker extends Component {
   }
 
   onSuggestionSelected = (v) => {
+    if (this.props.value !== v)
+      this.props.selectRegionLocation(v);
     this.props.onChange(v, locationLabel(v));
-  }
-
-  componentDidUpdate(nextProps) {
-    if (this.props.value !== nextProps.value)
-      this.props.selectRegionLocation(nextProps.value);
   }
 
   componentDidMount() {
     if (allRegionsFlag) this.props.fetchAllRegions();
+  }
+
+  componentWillUnmount() {
+    this.props.clearLocations(0);
   }
 
   render() {
@@ -108,6 +109,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       fetchAllRegions,
       selectRegionLocation,
+      clearLocations,
     },
     dispatch,
   );

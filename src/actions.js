@@ -28,19 +28,22 @@ function _pageAndEdges(projections) {
     }`;
 }
 
-export function filter_location_by_parents(parents_uuid, filters, location_type) {
-  parents_uuid.forEach(function (location_uuid) {
-    if (location_uuid) {
-      if (location_type == 'W'){
-        filters.push(`parent_Parent_Uuid: "${location_uuid}"`);
-        return true
-      }
-      else if (location_type == 'V'){
-        filters.push(`parent_Parent_Parent_Uuid: "${location_uuid}"`);
-        return true
-      }
-    }
-  });
+export function filter_location_by_parents(district_uuid, region_uuid, filters, location_type) {
+  let parentFilter = '';
+  if (district_uuid) {
+    if (location_type == 'W')
+      parentFilter = `parent_Uuid: "${district_uuid}"`
+    else if (location_type == 'V')
+      parentFilter = `parent_Parent_Uuid: "${district_uuid}"`
+  }
+  else if (region_uuid) {
+    if (location_type == 'W')
+      parentFilter = `parent_Parent_Uuid: "${region_uuid}"`
+    else if (location_type == 'V')
+      parentFilter = `parent_Parent_Parent_Uuid: "${region_uuid}"`
+  }
+  filters.push(parentFilter);
+  return true
 }
 
 export function fetchUserDistricts() {
@@ -178,8 +181,8 @@ export function fetchLocationsStr(
   if (Boolean(parent)) {
     filters.push(`parent_Uuid: "${parent.uuid}"`);
   }
-  else{
-    filter_location_by_parents([districts, regions], filters, types[level])
+  else {
+    filter_location_by_parents(districts, regions, filters, types[level])
   }
   let projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
   return graphqlWithVariables(

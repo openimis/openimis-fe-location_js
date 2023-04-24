@@ -22,12 +22,13 @@ class DistrictPicker extends Component {
   }
 
   onSuggestionSelected = (v) => {
+    if (this.props.value !== v)
+      this.props.selectDistrictLocation(v);
     this.props.onChange(v, locationLabel(v));
   };
 
-  componentDidUpdate(nextProps) {
-    if (this.props.value !== nextProps.value)
-      this.props.selectDistrictLocation(nextProps.value);
+  componentWillUnmount() {
+    this.props.clearLocations(1);
   }
 
   render() {
