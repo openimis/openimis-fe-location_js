@@ -65,7 +65,7 @@ class HealthFacilityForm extends Component {
       this.setState((state) => ({ reset: state.reset + 1 }));
     }
   }
-  
+
   componentWillUnmount() {
     this.props.clearHealthFacility();
   }
@@ -158,6 +158,7 @@ class HealthFacilityForm extends Component {
               onEditedChanged={this.onEditedChanged}
               actions={actions}
               contributedPanelsKey={HF_FORM_CONTRIBUTION_KEY}
+              openDirty={save}
             />
           </Fragment>
         )}
