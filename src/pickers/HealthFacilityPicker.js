@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { useModulesManager, useTranslations, Autocomplete, useGraphqlQuery } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
 
+let ignoreLocationFlag = false;
+
 const HealthFacilityPicker = (props) => {
   const {
     onChange,
@@ -20,18 +22,23 @@ const HealthFacilityPicker = (props) => {
     region,
     district,
     level,
+    ignoreLocation,
   } = props;
+
+  ignoreLocationFlag = ignoreLocation == undefined ? false : ignoreLocation;
 
   const modulesManager = useModulesManager();
   const userHealthFacility = useSelector((state) => state.loc.userHealthFacilityFullPath);
   const { formatMessage } = useTranslations("location", modulesManager);
   const [searchString, setSearchString] = useState("");
   let pickedDistrictsUuids = [];
-  Array.isArray(district) ? pickedDistrictsUuids = district?.map((district) => district?.uuid) : pickedDistrictsUuids.push(district?.uuid);
+  Array.isArray(district)
+    ? (pickedDistrictsUuids = district?.map((district) => district?.uuid))
+    : pickedDistrictsUuids.push(district?.uuid);
   const { data, isLoading, error } = useGraphqlQuery(
     `
     query HealthFacilityPicker ($str: String, $region: String, $district: [String], $level: String) {
-      healthFacilities: healthFacilitiesStr(first: 20, str: $str, regionUuid: $region, districtsUuids: $district, level: $level) {
+      healthFacilities: healthFacilitiesStr(first: 20, str: $str, regionUuid: $region, districtsUuids: $district, level: $level, ignoreLocation:${ignoreLocationFlag}) {
         edges {
           node {
             id

@@ -48,7 +48,7 @@ function reducer(
     fetchingUserLocation: false,
     fetchedUserLocation: false,
     errorUserLocation: null,
-    userHealthFacilityFullPath: null
+    userHealthFacilityFullPath: null,
   },
   action,
 ) {
@@ -314,6 +314,30 @@ function reducer(
         fetchingAllRegions: false,
         errorAllRegions: formatServerError(action.payload),
       };
+
+    case "LOCATION_DISTRICTS_REQ":
+      return {
+        ...state,
+        allDistricts: [],
+        fetchingAllDistricts: true,
+        fetchedAllDistricts: false,
+        errorAllDistricts: null,
+      };
+    case "LOCATION_DISTRICTS_RESP":
+      return {
+        ...state,
+        allDistricts: parseData(action.payload.data.locations || action.payload.data.locationsStr),
+        fetchingAllDistricts: false,
+        fetchedAllDistricts: true,
+        errorAllDistricts: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_DISTRICTS_ERR":
+      return {
+        ...state,
+        fetchingAllDistricts: false,
+        errorAllDistricts: formatServerError(action.payload),
+      };
+
     case "LOCATION_HF_CODE_FIELDS_VALIDATION_REQ":
       return {
         ...state,
@@ -491,7 +515,7 @@ function reducer(
         fetchingUserLocation: false,
         fetchedUserLocation: false,
         errorUserLocation: null,
-        userHealthFacilityFullPath: null
+        userHealthFacilityFullPath: null,
       };
     default:
       return state;
