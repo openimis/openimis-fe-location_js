@@ -72,11 +72,11 @@ const LocationPicker = (props) => {
         dispatch(fetchLocationsStr(
           modulesManager,
           locationLevel,
-          regions[0]?.uuid,
-          districts[0]?.uuid,
+          regions?.[0]?.uuid,
+          districts?.[0]?.uuid,
           parentLocation,
           searchString,
-          ));
+        ));
       }
     }
   }, [searchString, parentLocation, parentLocations]);
@@ -86,9 +86,10 @@ const LocationPicker = (props) => {
       if (parentLocations) {
         dispatch(fetchParentLocationsStr(modulesManager, locationLevel, parentLocations, searchString, 20));
       } else {
-        dispatch(fetchLocationsStr(modulesManager, locationLevel,regions[0]?.uuid,
-          districts[0]?.uuid, parentLocation, searchString,
-          ));
+        dispatch(fetchLocationsStr(
+          modulesManager, locationLevel, regions?.[0]?.uuid,
+          districts?.[0]?.uuid, parentLocation, searchString,
+        ));
       }
     } else {
       setSearchString("");
