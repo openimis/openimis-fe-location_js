@@ -12,6 +12,40 @@ import {
 
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
 
+function _entityAndFilters(entity, filters) {
+  return `${entity}${!!filters && filters.length ? `(${filters.join(",")})` : ""}`;
+}
+
+function _pageAndEdges(projections) {
+  return `
+    pageInfo { hasNextPage, hasPreviousPage, startCursor, endCursor}
+    edges
+    {
+      node
+      {
+        ${projections.join(",")}
+      }
+    }`;
+}
+
+export function filter_location_by_parents(district_uuid, region_uuid, filters, location_type) {
+  let parentFilter = '';
+  if (district_uuid) {
+    if (location_type == 'W')
+      parentFilter = `parent_Uuid: "${district_uuid}"`
+    else if (location_type == 'V')
+      parentFilter = `parent_Parent_Uuid: "${district_uuid}"`
+  }
+  else if (region_uuid) {
+    if (location_type == 'W')
+      parentFilter = `parent_Parent_Uuid: "${region_uuid}"`
+    else if (location_type == 'V')
+      parentFilter = `parent_Parent_Parent_Uuid: "${region_uuid}"`
+  }
+  filters.push(parentFilter);
+  return true
+}
+
 export function fetchUserDistricts() {
   let payload = formatQuery("userDistricts", null, ["id", "uuid", "code", "name", "parent{id, uuid, code, name}"]);
   return graphql(payload, "LOCATION_USER_DISTRICTS");
@@ -133,18 +167,47 @@ export function fetchLocations(levels, type, parent) {
   return graphql(payload, `LOCATION_LOCATIONS_${type}`);
 }
 
-export function fetchLocationsStr(mm, level, parent, str, first) {
+export function fetchLocationsStr(
+  mm,
+  level,
+  regions = null,
+  districts = null,
+  parent,
+  str,
+  first,
+) {
   const types = mm.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
-  let filters = [`type: "${types[level]}"`, `str: "${str}"`, first && `first: ${first}`].filter(Boolean);
-  if (!!parent) {
+  let filters = [`type: "${types[level]}"`, `str: "${str}"`, first && `first: '${first}'`].filter(Boolean);
+  if (Boolean(parent)) {
     filters.push(`parent_Uuid: "${parent.uuid}"`);
   }
+  else {
+    filter_location_by_parents(districts, regions, filters, types[level])
+  }
   let projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
-  let payload = formatPageQuery("locationsStr", filters, projections);
-  return graphql(payload, `LOCATION_LOCATIONS_${level}`);
+  return graphqlWithVariables(
+    `
+      {
+        ${_entityAndFilters("locationsStr", filters)}
+        {
+          ${_pageAndEdges(projections)}
+        }
+      }
+      `,
+    {},
+    `LOCATION_LOCATIONS_${level}`,
+  );
 }
 
-export function fetchParentLocationsStr(modulesManager, level, parentUuids, searchString, first) {
+export function fetchParentLocationsStr(
+  modulesManager,
+  level,
+  parentUuids,
+  searchString,
+  first,
+  regions = null,
+  districts = null
+) {
   const types = modulesManager.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
   const filters = [`type: "${types[level]}"`, `str: "${searchString}"`, first && `first: ${first}`].filter(Boolean);
   if (parentUuids) {
@@ -297,6 +360,18 @@ export function deleteHealthFacility(hf, clientMutationLabel) {
 export function selectLocation(location, level, maxLevels) {
   return (dispatch) => {
     dispatch({ type: `LOCATION_FILTER_SELECTED`, payload: { location, level, maxLevels } });
+  };
+}
+
+export function selectDistrictLocation(location) {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_FILTER_DISTRICT_SELECTED`, payload: { location } });
+  };
+}
+
+export function selectRegionLocation(location) {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_FILTER_REGION_SELECTED`, payload: { location } });
   };
 }
 

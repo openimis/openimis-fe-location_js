@@ -292,6 +292,16 @@ function reducer(
         newState[`l${i}s`] = [];
       }
       return newState;
+    case "LOCATION_FILTER_REGION_SELECTED":
+      return {
+        ...state,
+        l0s: [action.payload.location],
+      };
+    case "LOCATION_FILTER_DISTRICT_SELECTED":
+      return {
+        ...state,
+        l1s: [action.payload.location],
+      };
     case "LOCATION_REGIONS_REQ":
       return {
         ...state,
