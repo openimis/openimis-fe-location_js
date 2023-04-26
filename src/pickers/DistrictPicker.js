@@ -5,7 +5,7 @@ import { injectIntl } from "react-intl";
 import { TextField } from "@material-ui/core";
 import { withModulesManager, formatMessage, AutoSuggestion } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
-import { selectDistrictLocation } from "../actions.js";
+import { selectDistrictLocation, clearLocations } from "../actions.js";
 import { locationLabel } from "../utils";
 import { bindActionCreators } from "redux";
 
@@ -102,6 +102,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       selectDistrictLocation,
+      clearLocations,
     },
     dispatch,
   );
