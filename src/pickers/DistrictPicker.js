@@ -22,8 +22,7 @@ class DistrictPicker extends Component {
   }
 
   onSuggestionSelected = (v) => {
-    if (this.props.value !== v)
-      this.props.selectDistrictLocation(v);
+    if (v && this.props.value !== v) this.props.selectDistrictLocation(v);
     this.props.onChange(v, locationLabel(v));
   };
 
@@ -108,5 +107,5 @@ const mapDispatchToProps = (dispatch) =>
   );
 
 export default withModulesManager(
-  connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(DistrictPicker))))
+  connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(DistrictPicker)))),
 );
