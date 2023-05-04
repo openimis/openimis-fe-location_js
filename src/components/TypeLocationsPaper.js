@@ -145,7 +145,7 @@ class ResultPane extends Component {
     return (
       <Fragment>
         <ProgressOrError progress={fetching} error={error} />
-        {!!fetched && !!locations && (
+        {!!fetched && !!locations && !error && (
           <List component="nav">
             {locations.map((l, idx) => (
               <ListItem
