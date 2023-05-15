@@ -29,21 +29,16 @@ function _pageAndEdges(projections) {
 }
 
 export function filter_location_by_parents(district_uuid, region_uuid, filters, location_type) {
-  let parentFilter = '';
+  let parentFilter = "";
   if (district_uuid) {
-    if (location_type == 'W')
-      parentFilter = `parent_Uuid: "${district_uuid}"`
-    else if (location_type == 'V')
-      parentFilter = `parent_Parent_Uuid: "${district_uuid}"`
-  }
-  else if (region_uuid) {
-    if (location_type == 'W')
-      parentFilter = `parent_Parent_Uuid: "${region_uuid}"`
-    else if (location_type == 'V')
-      parentFilter = `parent_Parent_Parent_Uuid: "${region_uuid}"`
+    if (location_type == "W") parentFilter = `parent_Uuid: "${district_uuid}"`;
+    else if (location_type == "V") parentFilter = `parent_Parent_Uuid: "${district_uuid}"`;
+  } else if (region_uuid) {
+    if (location_type == "W") parentFilter = `parent_Parent_Uuid: "${region_uuid}"`;
+    else if (location_type == "V") parentFilter = `parent_Parent_Parent_Uuid: "${region_uuid}"`;
   }
   filters.push(parentFilter);
-  return true
+  return true;
 }
 
 export function fetchUserDistricts() {
@@ -144,10 +139,12 @@ export function fetchHealthFacilitySummaries(filters) {
 }
 
 export function fetchLocations(levels, type, parent) {
-  let filters = [`
+  let filters = [
+    `
     type: "${levels[type]}",
     orderBy: "code"
-  `];
+  `,
+  ];
   if (!!parent) {
     filters.push(`parent_Uuid: "${parent.uuid}"`);
   }
@@ -167,22 +164,13 @@ export function fetchLocations(levels, type, parent) {
   return graphql(payload, `LOCATION_LOCATIONS_${type}`);
 }
 
-export function fetchLocationsStr(
-  mm,
-  level,
-  regions = null,
-  districts = null,
-  parent,
-  str,
-  first,
-) {
+export function fetchLocationsStr(mm, level, regions = null, districts = null, parent, str, first) {
   const types = mm.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
   let filters = [`type: "${types[level]}"`, `str: "${str}"`, first && `first: '${first}'`].filter(Boolean);
   if (Boolean(parent)) {
     filters.push(`parent_Uuid: "${parent.uuid}"`);
-  }
-  else {
-    filter_location_by_parents(districts, regions, filters, types[level])
+  } else {
+    filter_location_by_parents(districts, regions, filters, types[level]);
   }
   let projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
   return graphqlWithVariables(
@@ -206,7 +194,7 @@ export function fetchParentLocationsStr(
   searchString,
   first,
   regions = null,
-  districts = null
+  districts = null,
 ) {
   const types = modulesManager.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
   const filters = [`type: "${types[level]}"`, `str: "${searchString}"`, first && `first: ${first}`].filter(Boolean);
