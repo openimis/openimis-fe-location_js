@@ -371,6 +371,17 @@ export function fetchAllRegions() {
   return graphql(payload, `LOCATION_REGIONS`);
 }
 
+export function fetchAvailableLocations(mm, level) {
+  const types = mm.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
+  let filters = [`type: "${types[level]}"`];
+
+  let projection = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
+
+  const payload = formatPageQuery("locationsAll", filters, projection);
+
+  return graphql(payload, `LOCATION_ALL_LOCATION_${level}`);
+}
+
 export function HFCodeValidationCheck(mm, variables) {
   return graphqlWithVariables(
     `

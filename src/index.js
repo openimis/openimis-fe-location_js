@@ -12,17 +12,19 @@ import HealthFacilityPriceListsPanel from "./components/HealthFacilityPriceLists
 import CoarseLocationFilter from "./filters/CoarseLocationFilter";
 import DetailedLocationFilter from "./filters/DetailedLocationFilter";
 import CoarseLocation from "./components/CoarseLocation";
+import FSPCoarseLocation from "./components/FSPCoarseLocation";
 import DetailedLocation from "./components/DetailedLocation";
 import DetailedHealthFacility from "./components/DetailedHealthFacility";
 import RegionPicker from "./pickers/RegionPicker";
 import DistrictPicker from "./pickers/DistrictPicker";
 import LocationPicker from "./pickers/LocationPicker";
+import FSPLocationPicker from "./pickers/FSPLocationPicker";
 import LocationTypePicker from "./pickers/LocationTypePicker";
 import messages_en from "./translations/en.json";
 import reducer from "./reducer";
 
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
-import {HEALTH_FACILITY_PICKER_PROJECTION} from "./actions";
+import { HEALTH_FACILITY_PICKER_PROJECTION } from "./actions";
 
 const ROUTE_LOCATIONS = "location/locations";
 const ROUTE_HEALTH_FACILITIES = "location/healthFacilities";
@@ -47,6 +49,7 @@ const DEFAULT_CONFIG = {
     { key: "location.RegionPicker", ref: RegionPicker },
     { key: "location.DistrictPicker", ref: DistrictPicker },
     { key: "location.LocationPicker", ref: LocationPicker },
+    { key: "location.FSPLocationPicker", ref: FSPLocationPicker },
     { key: "location.HealthFacilityGQLType", ref: "HealthFacilityGQLType" },
     { key: "location.HealthFacilityPriceListsPanel", ref: HealthFacilityPriceListsPanel },
     { key: "location.LocationTypePicker", ref: LocationTypePicker },
@@ -57,6 +60,7 @@ const DEFAULT_CONFIG = {
     { key: "location.CoarseLocationFilter", ref: CoarseLocationFilter },
     { key: "location.DetailedLocationFilter", ref: DetailedLocationFilter },
     { key: "location.CoarseLocation", ref: CoarseLocation },
+    { key: "location.FSPCoarseLocation", ref: FSPCoarseLocation },
     { key: "location.DetailedLocation", ref: DetailedLocation },
     { key: "location.DetailedHealthFacility", ref: DetailedHealthFacility },
   ],
@@ -72,7 +76,7 @@ const DEFAULT_CONFIG = {
       type: "health facility",
       picker: HealthFacilityPicker,
       pickerProjection: HEALTH_FACILITY_PICKER_PROJECTION,
-    }
+    },
   ],
 };
 
