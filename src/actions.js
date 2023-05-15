@@ -28,7 +28,7 @@ function _pageAndEdges(projections) {
     }`;
 }
 
-export function filter_location_by_parents(district_uuid, region_uuid, filters, location_type) {
+export function filterLocationByParents(district_uuid, region_uuid, filters, location_type) {
   let parentFilter = "";
   if (district_uuid) {
     if (location_type == "W") parentFilter = `parent_Uuid: "${district_uuid}"`;
@@ -170,7 +170,7 @@ export function fetchLocationsStr(mm, level, regions = null, districts = null, p
   if (Boolean(parent)) {
     filters.push(`parent_Uuid: "${parent.uuid}"`);
   } else {
-    filter_location_by_parents(districts, regions, filters, types[level]);
+    filterLocationByParents(districts, regions, filters, types[level]);
   }
   let projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
   return graphqlWithVariables(
