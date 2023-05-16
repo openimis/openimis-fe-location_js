@@ -145,15 +145,15 @@ class ResultPane extends Component {
     return (
       <Fragment>
         <ProgressOrError progress={fetching} error={error} />
-        {!!fetched && !!locations && (
+        {!!fetched && !!locations && !error && (
           <List component="nav">
             {locations.map((l, idx) => (
               <ListItem
                 key={`location-${type}-${idx}`}
                 button
                 selected={location && location.id === l.id}
-                onClick={(e) => !!l.uuid && !!onSelect && onSelect(l)}
-                onDoubleClick={(e) => !!l.uuid && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
+                onClick={(e) => !!l.uuid && !!onSelect && !readOnly && onSelect(l)}
+                onDoubleClick={(e) => !!l.uuid && !readOnly && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
                 className={!l.uuid || !!l.clientMutationId ? classes.lockedRow : null}
               >
                 <ListItemText>

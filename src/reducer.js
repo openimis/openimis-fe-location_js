@@ -48,7 +48,15 @@ function reducer(
     fetchingUserLocation: false,
     fetchedUserLocation: false,
     errorUserLocation: null,
-    userHealthFacilityFullPath: null
+    userHealthFacilityFullPath: null,
+    allL0s: [],
+    fetchingAllL0s: false,
+    fetchedAllL0s: false,
+    errorAllL0s: null,
+    allL1s: [],
+    fetchingAllL1s: false,
+    fetchedAllL1s: false,
+    errorAllL1s: null,
   },
   action,
 ) {
@@ -292,6 +300,16 @@ function reducer(
         newState[`l${i}s`] = [];
       }
       return newState;
+    case "LOCATION_FILTER_REGION_SELECTED":
+      return {
+        ...state,
+        l0s: [action.payload.location],
+      };
+    case "LOCATION_FILTER_DISTRICT_SELECTED":
+      return {
+        ...state,
+        l1s: [action.payload.location],
+      };
     case "LOCATION_REGIONS_REQ":
       return {
         ...state,
@@ -313,6 +331,50 @@ function reducer(
         ...state,
         fetchingAllRegions: false,
         errorAllRegions: formatServerError(action.payload),
+      };
+    case "LOCATION_ALL_LOCATION_0_REQ":
+      return {
+        ...state,
+        allL0s: [],
+        fetchingAllL0s: true,
+        fetchedAllL0s: false,
+        errorAllL0s: null,
+      };
+    case "LOCATION_ALL_LOCATION_0_RESP":
+      return {
+        ...state,
+        allL0s: parseData(action.payload.data.locationsAll),
+        fetchingAllL0s: false,
+        fetchedAllL0s: true,
+        errorAllL0s: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_ALL_LOCATION_0_ERR":
+      return {
+        ...state,
+        fetchingAllL0s: false,
+        errorAllL0s: formatServerError(action.payload),
+      };
+    case "LOCATION_ALL_LOCATION_1_REQ":
+      return {
+        ...state,
+        allL1s: [],
+        fetchingAllL1s: true,
+        fetchedAllL1s: false,
+        errorAllL1s: null,
+      };
+    case "LOCATION_ALL_LOCATION_1_RESP":
+      return {
+        ...state,
+        allL1s: parseData(action.payload.data.locationsAll),
+        fetchingAllL1s: false,
+        fetchedAllL1s: true,
+        errorAllL1s: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_ALL_LOCATION_1_ERR":
+      return {
+        ...state,
+        fetchingAllL1s: false,
+        errorAllL1s: formatServerError(action.payload),
       };
     case "LOCATION_HF_CODE_FIELDS_VALIDATION_REQ":
       return {
@@ -491,7 +553,15 @@ function reducer(
         fetchingUserLocation: false,
         fetchedUserLocation: false,
         errorUserLocation: null,
-        userHealthFacilityFullPath: null
+        userHealthFacilityFullPath: null,
+        allL0s: [],
+        fetchingAllL0s: false,
+        fetchedAllL0s: false,
+        errorAllL0s: null,
+        allL1s: [],
+        fetchingAllL1s: false,
+        fetchedAllL1s: false,
+        errorAllL1s: null,
       };
     default:
       return state;

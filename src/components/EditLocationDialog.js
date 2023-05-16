@@ -63,10 +63,10 @@ class EditLocationDialog extends Component {
     }
 
     const areInputsValid = this.validateNumberInputs(
-      this.state.data.malePopulation,
-      this.state.data.femalePopulation,
-      this.state.data.otherPopulation,
-      this.state.data.families,
+      this.state.data?.malePopulation,
+      this.state.data?.femalePopulation,
+      this.state.data?.otherPopulation,
+      this.state.data?.families,
     );
 
     if (!_.isEqual(prevState.data, this.state.data)) {

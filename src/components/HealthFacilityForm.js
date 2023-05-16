@@ -158,7 +158,7 @@ class HealthFacilityForm extends Component {
               onEditedChanged={this.onEditedChanged}
               actions={actions}
               contributedPanelsKey={HF_FORM_CONTRIBUTION_KEY}
-              openDirty={save}
+              openDirty={save && !readOnly}
             />
           </Fragment>
         )}

@@ -5,7 +5,9 @@ import { injectIntl } from "react-intl";
 import { TextField } from "@material-ui/core";
 import { withModulesManager, formatMessage, AutoSuggestion } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
+import { selectDistrictLocation, clearLocations } from "../actions.js";
 import { locationLabel } from "../utils";
+import { bindActionCreators } from "redux";
 
 const styles = (theme) => ({
   textField: {
@@ -20,8 +22,13 @@ class DistrictPicker extends Component {
   }
 
   onSuggestionSelected = (v) => {
+    if (v && this.props.value !== v) this.props.selectDistrictLocation(v);
     this.props.onChange(v, locationLabel(v));
   };
+
+  componentWillUnmount() {
+    this.props.clearLocations(1);
+  }
 
   render() {
     const {
@@ -90,4 +97,15 @@ const mapStateToProps = (state) => ({
   userHealthFacilityFullPath: state.loc.userHealthFacilityFullPath,
 });
 
-export default withModulesManager(connect(mapStateToProps)(injectIntl(withTheme(withStyles(styles)(DistrictPicker)))));
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      selectDistrictLocation,
+      clearLocations,
+    },
+    dispatch,
+  );
+
+export default withModulesManager(
+  connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(DistrictPicker)))),
+);
