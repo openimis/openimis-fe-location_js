@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import { withTheme, withStyles } from "@material-ui/core/styles";
 import { injectIntl } from "react-intl";
 import _ from "lodash";
 import _debounce from "lodash/debounce";
+
 import { Grid, FormControlLabel, Checkbox } from "@material-ui/core";
+import { withTheme, withStyles } from "@material-ui/core/styles";
+
 import { withModulesManager, formatMessage, TextInput, PublishedComponent } from "@openimis/fe-core";
 
 const styles = (theme) => ({
@@ -21,23 +23,22 @@ const styles = (theme) => ({
 class HealthFacilityFilter extends Component {
   state = {
     reset: 0,
-    showHistory: false,
   };
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (
-      prevProps.filters["showHistory"] !== this.props.filters["showHistory"] &&
-      !!this.props.filters["showHistory"] &&
-      this.state.showHistory !== this.props.filters["showHistory"]["value"]
-    ) {
-      this.setState((sate, props) => ({ showHistory: props.filters["showHistory"]["value"] }));
-    }
-  }
 
   debouncedOnChangeFilter = _debounce(
     this.props.onChangeFilters,
-    this.props.modulesManager.getConf("fe-location", "debounceTime", 800),
+    this.props.modulesManager.getConf("fe-location", "debounceTime", 200),
   );
+
+  _filterValue = (k) => {
+    const { filters } = this.props;
+    return !!filters && !!filters[k] ? filters[k].value : null;
+  };
+
+  _filterTextFieldValue = (key) => {
+    const { filters } = this.props;
+    return !!filters && !!filters[key] ? filters[key].value : "";
+  };
 
   _regionFilter = (v) => {
     return {
@@ -79,19 +80,15 @@ class HealthFacilityFilter extends Component {
     }));
   };
 
-  _onChangeShowHistory = () => {
+  _onChangeCheckbox = (key, value) => {
     let filters = [
       {
-        id: "showHistory",
-        value: !this.state.showHistory,
-        filter: `showHistory: ${!this.state.showHistory}`,
+        id: key,
+        value: value,
+        filter: `${key}: ${value}`,
       },
     ];
     this.props.onChangeFilters(filters);
-    this.setState((state) => ({
-      showHistory: !state.showHistory,
-      reset: state.reset + 1,
-    }));
   };
 
   _onChange = (k, v, s) => {
@@ -109,13 +106,13 @@ class HealthFacilityFilter extends Component {
   };
 
   render() {
-    const { intl, classes, filters } = this.props;
+    const { intl, classes } = this.props;
     return (
       <Grid container className={classes.form}>
         <Grid item xs={2} className={classes.item}>
           <PublishedComponent
             pubRef="location.RegionPicker"
-            value={filters["region"] && filters["region"]["value"]}
+            value={this._filterValue("region")}
             reset={this.state.reset}
             withNull={true}
             onChange={this._onChangeRegion}
@@ -124,8 +121,8 @@ class HealthFacilityFilter extends Component {
         <Grid item xs={2} className={classes.item}>
           <PublishedComponent
             pubRef="location.DistrictPicker"
-            value={filters["district"] && filters["district"]["value"]}
-            region={filters["region"] && filters["region"]["value"]}
+            value={this._filterValue("district")}
+            region={this._filterValue("region")}
             reset={this.state.reset}
             withNull={true}
             onChange={this._onChangeDistrict}
@@ -134,21 +131,21 @@ class HealthFacilityFilter extends Component {
         <Grid item xs={2} className={classes.item}>
           <PublishedComponent
             pubRef="location.HealthFacilityLegalFormPicker"
-            value={filters["legalForm_Code"] && filters["legalForm_Code"]["value"]}
+            value={this._filterValue("legalForm_Code")}
             onChange={(v, s) => this._onChange("legalForm_Code", v, s)}
           />
         </Grid>
         <Grid item xs={2} className={classes.item}>
           <PublishedComponent
             pubRef="location.HealthFacilityLevelPicker"
-            value={filters["level"] && filters["level"]["value"]}
+            value={this._filterValue("level")}
             onChange={(v, s) => this._onChange("level", v, s)}
           />
         </Grid>
         <Grid item xs={2} className={classes.item}>
           <PublishedComponent
             pubRef="medical.CareTypePicker"
-            value={filters["careType"] && filters["careType"]["value"]}
+            value={this._filterValue("careType")}
             onChange={(v, s) => this._onChange("careType", v, s)}
           />
         </Grid>
@@ -157,8 +154,8 @@ class HealthFacilityFilter extends Component {
             control={
               <Checkbox
                 color="primary"
-                checked={this.state.showHistory}
-                onChange={(e) => this._onChangeShowHistory()}
+                checked={!!this._filterValue("showHistory")}
+                onChange={(event) => this._onChangeCheckbox("showHistory", event.target.checked)}
               />
             }
             label={formatMessage(intl, "location", "HealthFacilityFilter.showHistory")}
@@ -169,7 +166,7 @@ class HealthFacilityFilter extends Component {
             module="location"
             label="HealthFacilityFilter.code"
             name="code"
-            value={filters["clode"] && filters["code"]["value"]}
+            value={this._filterTextFieldValue("code")}
             onChange={(v) =>
               this.debouncedOnChangeFilter([
                 {
@@ -186,7 +183,7 @@ class HealthFacilityFilter extends Component {
             module="location"
             label="HealthFacilityFilter.name"
             name="name"
-            value={filters["name"] && filters["name"]["value"]}
+            value={this._filterTextFieldValue("name")}
             onChange={(v) =>
               this.debouncedOnChangeFilter([
                 {
@@ -203,7 +200,7 @@ class HealthFacilityFilter extends Component {
             module="location"
             label="HealthFacilityFilter.phone"
             name="phone"
-            value={filters["phone"] && filters["phone"]["value"]}
+            value={this._filterTextFieldValue("phone")}
             onChange={(v) =>
               this.debouncedOnChangeFilter([
                 {
@@ -220,7 +217,7 @@ class HealthFacilityFilter extends Component {
             module="location"
             label="HealthFacilityFilter.fax"
             name="fax"
-            value={filters["fax"] && filters["fax"]["value"]}
+            value={this._filterTextFieldValue("fax")}
             onChange={(v) =>
               this.debouncedOnChangeFilter([
                 {
@@ -237,7 +234,7 @@ class HealthFacilityFilter extends Component {
             module="location"
             label="HealthFacilityFilter.email"
             name="email"
-            value={filters["email"] && filters["email"]["value"]}
+            value={this._filterTextFieldValue("email")}
             onChange={(v) =>
               this.debouncedOnChangeFilter([
                 {
