@@ -1,8 +1,6 @@
 import { healthFacilityLabel, LOCATION_SUMMARY_PROJECTION } from "../utils";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import { useModulesManager, useTranslations, Autocomplete, useGraphqlQuery } from "@openimis/fe-core";
-import _debounce from "lodash/debounce";
 
 const HealthFacilityReferPicker = (props) => {
   const {
@@ -17,8 +15,6 @@ const HealthFacilityReferPicker = (props) => {
     filterSelectedOptions,
     placeholder,
     multiple,
-    region,
-    district,
     level,
   } = props;
 
@@ -27,8 +23,8 @@ const HealthFacilityReferPicker = (props) => {
   const [searchString, setSearchString] = useState("");
   const { data, isLoading, error } = useGraphqlQuery(
     `
-    query HealthFacilityPicker ($str: String, $region: String, $district: [String], $level: String) {
-      healthFacilities: healthFacilitiesStr(first: 20, str: $str, regionUuid: $region, districtsUuids: $district, level: $level) {
+    query HealthFacilityPicker ($str: String, $level: String) {
+      healthFacilities: healthFacilitiesStr(first: 20, str: $str, level: $level) {
         edges {
           node {
             id
@@ -38,7 +34,6 @@ const HealthFacilityReferPicker = (props) => {
             level
             servicesPricelist{id, uuid}
             itemsPricelist{id, uuid}
-            location {${LOCATION_SUMMARY_PROJECTION.join(",")} parent { ${LOCATION_SUMMARY_PROJECTION.join(",")} }}
           }
         }
       }
