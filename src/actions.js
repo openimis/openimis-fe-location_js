@@ -63,6 +63,13 @@ export const HEALTH_FACILITY_PICKER_PROJECTION = [
   `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`,
 ];
 
+export const HEALTH_FACILITY_REFER_PICKER_PROJECTION = [
+  "id",
+  "uuid",
+  "code",
+  "name"
+];
+
 function healthFacilityFullPath(key, mm, id) {
   let payload = formatPageQuery(
     "healthFacilities",

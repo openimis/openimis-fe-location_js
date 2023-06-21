@@ -5,6 +5,7 @@ import UserHealthFacilityLoader from "./components/UserHealthFacilityLoader";
 import UserDistrictsLoader from "./components/UserDistrictsLoader";
 import HealthFacilityFullPath from "./components/HealthFacilityFullPath";
 import HealthFacilityPicker from "./pickers/HealthFacilityPicker";
+import HealthFacilityReferPicker from "./pickers/HealthFacilityReferPicker";
 import HealthFacilityLevelPicker from "./pickers/HealthFacilityLevelPicker";
 import HealthFacilitySubLevelPicker from "./pickers/HealthFacilitySubLevelPicker";
 import HealthFacilityLegalFormPicker from "./pickers/HealthFacilityLegalFormPicker";
@@ -24,7 +25,7 @@ import messages_en from "./translations/en.json";
 import reducer from "./reducer";
 
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
-import { HEALTH_FACILITY_PICKER_PROJECTION } from "./actions";
+import { HEALTH_FACILITY_PICKER_PROJECTION, HEALTH_FACILITY_REFER_PICKER_PROJECTION } from "./actions";
 
 const ROUTE_LOCATIONS = "location/locations";
 const ROUTE_HEALTH_FACILITIES = "location/healthFacilities";
@@ -39,6 +40,8 @@ const DEFAULT_CONFIG = {
     { key: "location.HealthFacilityFullPath", ref: HealthFacilityFullPath },
     { key: "location.HealthFacilityPicker", ref: HealthFacilityPicker },
     { key: "location.HealthFacilityPicker.projection", ref: HEALTH_FACILITY_PICKER_PROJECTION },
+    { key: "location.HealthFacilityReferPicker", ref: HealthFacilityReferPicker },
+    { key: "location.HealthFacilityReferPicker.projection", ref: HEALTH_FACILITY_REFER_PICKER_PROJECTION },
     { key: "location.HealthFacilityPicker.sort", ref: "healthFacility__code" },
     { key: "location.HealthFacilityLevelPicker", ref: HealthFacilityLevelPicker },
     { key: "location.HealthFacilityLevelPicker.projection", ref: null },
