@@ -1,4 +1,4 @@
-import { healthFacilityLabel, LOCATION_SUMMARY_PROJECTION } from "../utils";
+import { healthFacilityLabel} from "../utils";
 import React, { useState } from "react";
 import { useModulesManager, useTranslations, Autocomplete, useGraphqlQuery } from "@openimis/fe-core";
 
