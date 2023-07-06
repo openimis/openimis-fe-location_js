@@ -26,10 +26,12 @@ const HealthFacilityPicker = (props) => {
   const userHealthFacility = useSelector((state) => state.loc.userHealthFacilityFullPath);
   const { formatMessage } = useTranslations("location", modulesManager);
   const [searchString, setSearchString] = useState("");
+  let pickedDistrictsUuids = [];
+  Array.isArray(district) ? pickedDistrictsUuids = district?.map((district) => district?.uuid) : pickedDistrictsUuids.push(district?.uuid);
   const { data, isLoading, error } = useGraphqlQuery(
     `
-    query HealthFacilityPicker ($str: String, $region: String, $district: String, $level: String) {
-      healthFacilities: healthFacilitiesStr(first: 20, str: $str, regionUuid: $region, districtUuid: $district, level: $level) {
+    query HealthFacilityPicker ($str: String, $region: String, $district: [String], $level: String) {
+      healthFacilities: healthFacilitiesStr(first: 20, str: $str, regionUuid: $region, districtsUuids: $district, level: $level) {
         edges {
           node {
             id
@@ -45,7 +47,7 @@ const HealthFacilityPicker = (props) => {
       }
     }
   `,
-    { level, region: region?.uuid, district: district?.uuid, str: searchString },
+    { level, region: region?.uuid, district: pickedDistrictsUuids, str: searchString },
     { skip: true },
   );
 

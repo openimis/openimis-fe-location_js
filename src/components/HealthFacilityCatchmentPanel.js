@@ -40,6 +40,7 @@ class HealthFacilityCatchmentPanel extends FormPanel {
     l2s: [],
     l3: null,
     l3s: [],
+    userL0s: [],
   };
 
   constructor(props) {
@@ -60,6 +61,7 @@ class HealthFacilityCatchmentPanel extends FormPanel {
         l1s: this.props.l1s,
         l2s: this.props.l2s,
         l3s: this.props.l3s,
+        userL0s: this.props.userL0s,
       });
     } else if (prevState.l0 !== this.state.l0) {
       if (!this.state.l0) {
@@ -168,7 +170,7 @@ class HealthFacilityCatchmentPanel extends FormPanel {
                 fetched={fetchedL0s}
                 error={errorL0s}
                 location={this.state.l0}
-                locations={l0s}
+                locations={this.state.userL0s}
                 currentParents={this.state.currentParents}
                 stateLocation={this.state.location}
                 reassign={true}
@@ -253,6 +255,7 @@ const mapStateToProps = (state) => ({
   fetchedL3s: state.loc.fetchedL3s,
   l3s: state.loc.l3s,
   errorL3s: state.loc.errorL3s,
+  userL0s: state.loc.userL0s,
 });
 
 const mapDispatchToProps = (dispatch) => {

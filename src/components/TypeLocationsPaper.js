@@ -11,7 +11,13 @@ import { formatMessage, formatMessageWithValues, SearcherPane, ProgressOrError }
 import EditLocationDialog from "./EditLocationDialog";
 import MoveLocationDialog from "./MoveLocationDialog";
 import DeleteLocationDialog from "../components/DeleteLocationDialog";
-import { RIGHT_LOCATION_ADD, RIGHT_LOCATION_EDIT, RIGHT_LOCATION_DELETE, RIGHT_LOCATION_MOVE } from "../constants";
+import {
+  RIGHT_LOCATION_ADD,
+  RIGHT_LOCATION_EDIT,
+  RIGHT_LOCATION_DELETE,
+  RIGHT_LOCATION_MOVE,
+  RIGHT_REGION_LOCATION_ADD
+} from "../constants";
 
 const styles = (theme) => ({
   paper: theme.paper.body,
@@ -90,9 +96,9 @@ class ActionDialogs extends Component {
           confirm={
             !!reassignLocations
               ? formatMessageWithValues(intl, "location", "DeleteDialog.confirm", {
-                  ...args,
-                  children,
-                })
+                ...args,
+                children,
+              })
               : formatMessageWithValues(intl, "location", "DeleteDialog.confirmSimple", args)
           }
           drop={formatMessageWithValues(intl, "location", "DeleteDialog.drop", {
@@ -139,15 +145,15 @@ class ResultPane extends Component {
     return (
       <Fragment>
         <ProgressOrError progress={fetching} error={error} />
-        {!!fetched && !!locations && (
+        {!!fetched && !!locations && !error && (
           <List component="nav">
             {locations.map((l, idx) => (
               <ListItem
                 key={`location-${type}-${idx}`}
                 button
                 selected={location && location.id === l.id}
-                onClick={(e) => !!l.uuid && !!onSelect && onSelect(l)}
-                onDoubleClick={(e) => !!l.uuid && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
+                onClick={(e) => !!l.uuid && !!onSelect && !readOnly && onSelect(l)}
+                onDoubleClick={(e) => !!l.uuid && !readOnly && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
                 className={!l.uuid || !!l.clientMutationId ? classes.lockedRow : null}
               >
                 <ListItemText>
@@ -183,9 +189,28 @@ const StyledResultPane = withTheme(withStyles(styles)(ResultPane));
 
 class TypeLocationsPaper extends Component {
   render() {
-    const { classes, rights, title, onRefresh, onEdit, readOnly, ...others } = this.props;
+    const {
+      classes,
+      rights,
+      title,
+      onRefresh,
+      onEdit,
+      readOnly,
+      location,
+      ...others
+    } = this.props;
+    const createRegionLocationRight = this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD);
     let actions = [];
-    if (!readOnly && rights.includes(RIGHT_LOCATION_ADD) && !!onEdit) {
+    const isNotRegionOrDistrict = ![0, 1].includes(this.props.type);
+    if (
+      !readOnly &&
+      Boolean(onEdit) &&
+      (
+        createRegionLocationRight ||
+        rights.includes(RIGHT_LOCATION_ADD) &&
+        isNotRegionOrDistrict
+      )
+    ) {
       actions.push({
         action: (e) => onEdit(null),
         icon: <AddIcon />,

@@ -43,10 +43,33 @@ function reducer(
     errorL3s: null,
     submittingMutation: false,
     mutation: {},
+    userL0s: [],
+    userL1s: [],
+    fetchingUserLocation: false,
+    fetchedUserLocation: false,
+    errorUserLocation: null,
+    userHealthFacilityFullPath: null,
+    allL0s: [],
+    fetchingAllL0s: false,
+    fetchedAllL0s: false,
+    errorAllL0s: null,
+    allL1s: [],
+    fetchingAllL1s: false,
+    fetchedAllL1s: false,
+    errorAllL1s: null,
   },
   action,
 ) {
   switch (action.type) {
+    case "LOCATION_USER_DISTRICTS_REQ":
+      return {
+        ...state,
+        userL0s: [],
+        userL1s: [],
+        errorUserLocation: null,
+        fetchingUserLocation: true,
+        fetchedUserLocation: false,
+      };
     case "LOCATION_USER_DISTRICTS_RESP":
       const userL1s = action.payload.data.userDistricts || [];
 
@@ -54,6 +77,24 @@ function reducer(
         ...state,
         userL0s: _.uniqBy(_.map(userL1s, "parent"), "uuid"),
         userL1s,
+        errorUserLocation: formatGraphQLError(action.payload),
+        fetchingUserLocation: false,
+        fetchedUserLocation: true,
+      };
+    case "LOCATION_USER_DISTRICTS_ERR":
+      return {
+        ...state,
+        errorUserLocation: formatServerError(action.payload),
+        fetchingUserLocation: false,
+      };
+    case "LOCATION_USER_DISTRICTS_CLEAR":
+      return {
+        ...state,
+        userL0s: [],
+        userL1s: [],
+        fetchingUserLocation: false,
+        fetchedUserLocation: false,
+        errorUserLocation: null,
       };
     case "LOCATION_USER_HEALTH_FACILITY_FULL_PATH_RESP":
       var userHealthFacilityFullPath = parseData(action.payload.data.healthFacilities)[0];
@@ -132,6 +173,14 @@ function reducer(
         ...state,
         fetchingHealthFacility: false,
         errorHealthFacility: formatServerError(action.payload),
+      };
+    case "LOCATION_HEALTH_FACILITY_CLEAR":
+      return {
+        ...state,
+        fetchingHealthFacility: false,
+        fetchedHealthFacility: false,
+        healthFacility: null,
+        errorHealthFacility: null,
       };
     case "LOCATION_LOCATIONS_0_REQ":
       return {
@@ -251,6 +300,202 @@ function reducer(
         newState[`l${i}s`] = [];
       }
       return newState;
+    case "LOCATION_FILTER_REGION_SELECTED":
+      return {
+        ...state,
+        l0s: [action.payload.location],
+      };
+    case "LOCATION_FILTER_DISTRICT_SELECTED":
+      return {
+        ...state,
+        l1s: [action.payload.location],
+      };
+    case "LOCATION_REGIONS_REQ":
+      return {
+        ...state,
+        allRegions: [],
+        fetchingAllRegions: true,
+        fetchedAllRegions: false,
+        errorAllRegions: null,
+      };
+    case "LOCATION_REGIONS_RESP":
+      return {
+        ...state,
+        allRegions: parseData(action.payload.data.locations || action.payload.data.locationsStr),
+        fetchingAllRegions: false,
+        fetchedAllRegions: true,
+        errorAllRegions: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_REGIONS_ERR":
+      return {
+        ...state,
+        fetchingAllRegions: false,
+        errorAllRegions: formatServerError(action.payload),
+      };
+    case "LOCATION_ALL_LOCATION_0_REQ":
+      return {
+        ...state,
+        allL0s: [],
+        fetchingAllL0s: true,
+        fetchedAllL0s: false,
+        errorAllL0s: null,
+      };
+    case "LOCATION_ALL_LOCATION_0_RESP":
+      return {
+        ...state,
+        allL0s: parseData(action.payload.data.locationsAll),
+        fetchingAllL0s: false,
+        fetchedAllL0s: true,
+        errorAllL0s: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_ALL_LOCATION_0_ERR":
+      return {
+        ...state,
+        fetchingAllL0s: false,
+        errorAllL0s: formatServerError(action.payload),
+      };
+    case "LOCATION_ALL_LOCATION_1_REQ":
+      return {
+        ...state,
+        allL1s: [],
+        fetchingAllL1s: true,
+        fetchedAllL1s: false,
+        errorAllL1s: null,
+      };
+    case "LOCATION_ALL_LOCATION_1_RESP":
+      return {
+        ...state,
+        allL1s: parseData(action.payload.data.locationsAll),
+        fetchingAllL1s: false,
+        fetchedAllL1s: true,
+        errorAllL1s: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_ALL_LOCATION_1_ERR":
+      return {
+        ...state,
+        fetchingAllL1s: false,
+        errorAllL1s: formatServerError(action.payload),
+      };
+    case "LOCATION_HF_CODE_FIELDS_VALIDATION_REQ":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          HFCode: {
+            isValidating: true,
+            isValid: false,
+            validationError: null,
+          },
+        },
+      };
+    case "LOCATION_HF_CODE_FIELDS_VALIDATION_RESP":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          HFCode: {
+            isValidating: false,
+            isValid: action.payload?.data.isValid,
+            validationError: formatGraphQLError(action.payload),
+          },
+        },
+      };
+    case "LOCATION_HF_CODE_FIELDS_VALIDATION_ERR":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          HFCode: {
+            isValidating: false,
+            isValid: false,
+            validationError: formatServerError(action.payload),
+          },
+        },
+      };
+    case "LOCATION_HF_CODE_FIELDS_VALIDATION_CLEAR":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          HFCode: {
+            isValidating: true,
+            isValid: false,
+            validationError: null,
+          },
+        },
+      };
+    case "LOCATION_HF_CODE_FIELDS_VALIDATION_SET_VALID":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          HFCode: {
+            isValidating: false,
+            isValid: true,
+            validationError: null,
+          },
+        },
+      };
+    case "LOCATION_CODE_FIELDS_VALIDATION_REQ":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          locationCode: {
+            isValidating: true,
+            isValid: false,
+            validationError: null,
+          },
+        },
+      };
+    case "LOCATION_CODE_FIELDS_VALIDATION_RESP":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          locationCode: {
+            isValidating: false,
+            isValid: action.payload?.data.isValid,
+            validationError: formatGraphQLError(action.payload),
+          },
+        },
+      };
+    case "LOCATION_CODE_FIELDS_VALIDATION_ERR":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          locationCode: {
+            isValidating: false,
+            isValid: false,
+            validationError: formatServerError(action.payload),
+          },
+        },
+      };
+    case "LOCATION_CODE_FIELDS_VALIDATION_CLEAR":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          locationCode: {
+            isValidating: true,
+            isValid: false,
+            validationError: null,
+          },
+        },
+      };
+    case "LOCATION_CODE_SET_VALID":
+      return {
+        ...state,
+        validationFields: {
+          ...state.validationFields,
+          locationCode: {
+            isValidating: false,
+            isValid: true,
+            validationError: null,
+          },
+        },
+      };
     case "LOCATION_MUTATION_REQ":
       return dispatchMutationReq(state, action);
     case "LOCATION_MUTATION_ERR":
@@ -269,6 +514,55 @@ function reducer(
       return dispatchMutationResp(state, "updateHealthFacility", action);
     case "LOCATION_DELETE_HEALTH_FACILITY_RESP":
       return dispatchMutationResp(state, "deleteHealthFacility", action);
+    case "CORE_AUTH_LOGOUT":
+      return {
+        ...state,
+        fetchingHealthFacilityFullPath: false,
+        fetchedHealthFacilityFullPath: false,
+        healthFacilityFullPath: null,
+        errorHealthFacilityFullPath: null,
+        fetchingHealthFacilities: false,
+        fetchedHealthFacilities: false,
+        healthFacilities: null,
+        healthFacilitiesPageInfo: {},
+        errorHealthFacilities: null,
+        fetchingHealthFacility: false,
+        fetchedHealthFacility: false,
+        healthFacility: null,
+        errorHealthFacility: null,
+        fetchingL0s: false,
+        fetchedL0s: false,
+        l0s: [],
+        errorL0s: null,
+        fetchingL1s: false,
+        fetchedL1s: false,
+        l1s: [],
+        errorL1s: null,
+        fetchingL2s: false,
+        fetchedL2s: false,
+        l2s: [],
+        errorL2s: null,
+        fetchingL3s: false,
+        fetchedL3s: false,
+        l3s: [],
+        errorL3s: null,
+        submittingMutation: false,
+        mutation: {},
+        userL0s: [],
+        userL1s: [],
+        fetchingUserLocation: false,
+        fetchedUserLocation: false,
+        errorUserLocation: null,
+        userHealthFacilityFullPath: null,
+        allL0s: [],
+        fetchingAllL0s: false,
+        fetchedAllL0s: false,
+        errorAllL0s: null,
+        allL1s: [],
+        fetchingAllL1s: false,
+        fetchedAllL1s: false,
+        errorAllL1s: null,
+      };
     default:
       return state;
   }

@@ -6,7 +6,7 @@ import { withTheme, withStyles } from "@material-ui/core/styles";
 import { withModulesManager, combine, useTranslations, useDebounceCb } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
 import { locationLabel } from "../utils";
-import { fetchLocationsStr, clearLocations } from "../actions";
+import { fetchLocationsStr, clearLocations, fetchParentLocationsStr } from "../actions";
 import _ from "lodash";
 
 const styles = () => ({
@@ -28,9 +28,11 @@ const LocationPicker = (props) => {
     placeholder,
     filterOptions,
     parentLocation,
+    parentLocations,
     required,
     filterSelectedOptions = true,
     withPlaceholder,
+    restrictedOptions,
   } = props;
   const [open, setOpen] = useState(false);
   const [resetKey, setResetKey] = useState();
@@ -41,13 +43,17 @@ const LocationPicker = (props) => {
   const isLoading = useSelector((state) => state.loc[`fetchingL${locationLevel}s`]);
   const options = useSelector((state) => state.loc[`l${locationLevel}s`] ?? []);
 
+  const restricted = useSelector((state) => state.loc[`userL${locationLevel}s`]);
+
+  const regions = useSelector((state) => state.loc[`l0s`]);
+  const districts = useSelector((state) => state.loc[`l1s`]);
+
   const dispatch = useDispatch();
   const handleChange = (__, value) => {
     onChange(value, locationLabel(value));
     if (!multiple) setOpen(false);
   };
 
-  // Clear locations on unmount to avoid conflicts with RegionPicker & DistrictPicker
   useEffect(() => {
     return () => {
       dispatch(clearLocations(locationLevel));
@@ -60,13 +66,31 @@ const LocationPicker = (props) => {
       !isLoading &&
       searchString.length >= modulesManager.getConf("fe-location", "locationMinCharLookup", 2)
     ) {
-      dispatch(fetchLocationsStr(modulesManager, locationLevel, parentLocation, searchString));
+      if (parentLocations) {
+        dispatch(fetchParentLocationsStr(modulesManager, locationLevel, parentLocations, searchString, 20));
+      } else {
+        dispatch(fetchLocationsStr(
+          modulesManager,
+          locationLevel,
+          regions?.[0]?.uuid,
+          districts?.[0]?.uuid,
+          parentLocation,
+          searchString,
+        ));
+      }
     }
-  }, [searchString, parentLocation]);
+  }, [searchString, parentLocation, parentLocations]);
 
   useEffect(() => {
     if (open) {
-      dispatch(fetchLocationsStr(modulesManager, locationLevel, parentLocation, searchString, 20));
+      if (parentLocations) {
+        dispatch(fetchParentLocationsStr(modulesManager, locationLevel, parentLocations, searchString, 20));
+      } else {
+        dispatch(fetchLocationsStr(
+          modulesManager, locationLevel, regions?.[0]?.uuid,
+          districts?.[0]?.uuid, parentLocation, searchString,
+        ));
+      }
     } else {
       setSearchString("");
     }
@@ -86,7 +110,7 @@ const LocationPicker = (props) => {
       openOnFocus
       multiple={multiple}
       disabled={readOnly}
-      options={options}
+      options={restrictedOptions ? restricted : options}
       loading={isLoading}
       open={open}
       onOpen={() => setOpen(true)}

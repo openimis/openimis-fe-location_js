@@ -13,7 +13,7 @@ import {
 } from "@openimis/fe-core";
 import HealthFacilityMasterPanel from "../components/HealthFacilityMasterPanel";
 import HealthFacilityCatchmentPanel from "../components/HealthFacilityCatchmentPanel";
-import { fetchHealthFacility } from "../actions";
+import { fetchHealthFacility, clearHealthFacility } from "../actions";
 
 const HF_FORM_CONTRIBUTION_KEY = "location.HealthFacility";
 
@@ -30,7 +30,7 @@ class HealthFacilityForm extends Component {
   constructor(props) {
     super(props);
     this.HealthFacilityPriceListsPanel = props.modulesManager.getRef("location.HealthFacilityPriceListsPanel");
-    this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", true);
+    this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
   }
 
   _newHealthFacility() {
@@ -66,6 +66,10 @@ class HealthFacilityForm extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.clearHealthFacility();
+  }
+
   _add = () => {
     this.setState(
       (state) => ({
@@ -87,6 +91,7 @@ class HealthFacilityForm extends Component {
 
   canSave = () => {
     if (!this.state.healthFacility.code) return false;
+    if (this.props.isHFCodeValid === false) return false;
     if (!this.state.healthFacility.name) return false;
     if (!this.state.healthFacility.location) return false;
     if (!this.state.healthFacility.legalForm) return false;
@@ -153,6 +158,7 @@ class HealthFacilityForm extends Component {
               onEditedChanged={this.onEditedChanged}
               actions={actions}
               contributedPanelsKey={HF_FORM_CONTRIBUTION_KEY}
+              openDirty={save && !readOnly}
             />
           </Fragment>
         )}
@@ -170,10 +176,11 @@ const mapStateToProps = (state, props) => ({
   errorHealthFacility: state.loc.errorHealthFacility,
   submittingMutation: state.loc.submittingMutation,
   mutation: state.loc.mutation,
+  isHFCodeValid: state.loc.validationFields?.HFCode?.isValid,
 });
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ fetchHealthFacility, journalize }, dispatch);
+  return bindActionCreators({ fetchHealthFacility, clearHealthFacility, journalize }, dispatch);
 };
 
 export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(injectIntl(HealthFacilityForm)));

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import _debounce from "lodash/debounce";
-import { withTheme, withStyles } from "@material-ui/core/styles";
 import _ from "lodash";
+
 import { Grid, Box } from "@material-ui/core";
+import { withTheme, withStyles } from "@material-ui/core/styles";
+
 import { withModulesManager, ControlledField, PublishedComponent } from "@openimis/fe-core";
-import CoarseLocation from "./CoarseLocation";
+import FSPCoarseLocation from "./FSPCoarseLocation";
 
 const styles = (theme) => ({
   form: {
@@ -28,7 +29,7 @@ const DetailedHealthFacility = (props) => {
   return (
     <Grid container className={classes.form}>
       <Box flexGrow={2}>
-        <CoarseLocation region={district?.parent} district={district} readOnly={readOnly} onChange={setDistrict} />
+        <FSPCoarseLocation region={district?.parent} district={district} readOnly={readOnly} onChange={setDistrict} />
       </Box>
       <ControlledField
         module="location"

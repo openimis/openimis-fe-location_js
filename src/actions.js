@@ -6,14 +6,50 @@ import {
   formatPageQueryWithCount,
   formatGQLString,
   formatMutation,
-  formatJsonField
+  formatJsonField,
+  graphqlWithVariables,
 } from "@openimis/fe-core";
 
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
 
+function _entityAndFilters(entity, filters) {
+  return `${entity}${!!filters && filters.length ? `(${filters.join(",")})` : ""}`;
+}
+
+function _pageAndEdges(projections) {
+  return `
+    pageInfo { hasNextPage, hasPreviousPage, startCursor, endCursor}
+    edges
+    {
+      node
+      {
+        ${projections.join(",")}
+      }
+    }`;
+}
+
+export function filterLocationByParents(district_uuid, region_uuid, filters, location_type) {
+  let parentFilter = "";
+  if (district_uuid) {
+    if (location_type == "W") parentFilter = `parent_Uuid: "${district_uuid}"`;
+    else if (location_type == "V") parentFilter = `parent_Parent_Uuid: "${district_uuid}"`;
+  } else if (region_uuid) {
+    if (location_type == "W") parentFilter = `parent_Parent_Uuid: "${region_uuid}"`;
+    else if (location_type == "V") parentFilter = `parent_Parent_Parent_Uuid: "${region_uuid}"`;
+  }
+  filters.push(parentFilter);
+  return true;
+}
+
 export function fetchUserDistricts() {
   let payload = formatQuery("userDistricts", null, ["id", "uuid", "code", "name", "parent{id, uuid, code, name}"]);
   return graphql(payload, "LOCATION_USER_DISTRICTS");
+}
+
+export function clearUserDistricts() {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_USER_DISTRICTS_CLEAR` });
+  };
 }
 
 export const HEALTH_FACILITY_PICKER_PROJECTION = [
@@ -24,7 +60,7 @@ export const HEALTH_FACILITY_PICKER_PROJECTION = [
   "level",
   "servicesPricelist{id, uuid}",
   "itemsPricelist{id, uuid}",
-  `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`
+  `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`,
 ];
 
 function healthFacilityFullPath(key, mm, id) {
@@ -74,6 +110,12 @@ export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) 
   return graphql(payload, "LOCATION_HEALTH_FACILITY");
 }
 
+export function clearHealthFacility() {
+  return (dispatch) => {
+    dispatch({ type: "LOCATION_HEALTH_FACILITY_CLEAR" });
+  };
+}
+
 export function fetchHealthFacilitySummaries(filters) {
   var projections = [
     "id",
@@ -97,7 +139,12 @@ export function fetchHealthFacilitySummaries(filters) {
 }
 
 export function fetchLocations(levels, type, parent) {
-  let filters = [`type: "${levels[type]}"`];
+  let filters = [
+    `
+    type: "${levels[type]}",
+    orderBy: "code"
+  `,
+  ];
   if (!!parent) {
     filters.push(`parent_Uuid: "${parent.uuid}"`);
   }
@@ -113,17 +160,49 @@ export function fetchLocations(levels, type, parent) {
     "families",
     "clientMutationId",
   ]);
+
   return graphql(payload, `LOCATION_LOCATIONS_${type}`);
 }
 
-export function fetchLocationsStr(mm, level, parent, str, first) {
+export function fetchLocationsStr(mm, level, regions = null, districts = null, parent, str, first) {
   const types = mm.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
-  let filters = [`type: "${types[level]}"`, `str: "${str}"`, first && `first: ${first}`].filter(Boolean);
-  if (!!parent) {
+  let filters = [`type: "${types[level]}"`, `str: "${str}"`, first && `first: '${first}'`].filter(Boolean);
+  if (Boolean(parent)) {
     filters.push(`parent_Uuid: "${parent.uuid}"`);
+  } else {
+    filterLocationByParents(districts, regions, filters, types[level]);
   }
   let projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
-  let payload = formatPageQuery("locationsStr", filters, projections);
+  return graphqlWithVariables(
+    `
+      {
+        ${_entityAndFilters("locationsStr", filters)}
+        {
+          ${_pageAndEdges(projections)}
+        }
+      }
+      `,
+    {},
+    `LOCATION_LOCATIONS_${level}`,
+  );
+}
+
+export function fetchParentLocationsStr(
+  modulesManager,
+  level,
+  parentUuids,
+  searchString,
+  first,
+  regions = null,
+  districts = null,
+) {
+  const types = modulesManager.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
+  const filters = [`type: "${types[level]}"`, `str: "${searchString}"`, first && `first: ${first}`].filter(Boolean);
+  if (parentUuids) {
+    filters.push(`parent_Uuid_In: ["${parentUuids.join('", "')}"]`);
+  }
+  const projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
+  const payload = formatPageQuery("locationsStr", filters, projections);
   return graphql(payload, `LOCATION_LOCATIONS_${level}`);
 }
 
@@ -199,7 +278,7 @@ function formatCatchment(catchment) {
   return `{
     ${!!catchment.id ? `id: ${catchment.id}` : ""}
     locationId: ${decodeId(catchment.location.id)}
-    catchment: ${catchment.catchment}    
+    catchment: ${catchment.catchment}
   }`;
 }
 
@@ -214,12 +293,12 @@ function formatHealthFacilityGQL(hf) {
   return `
     ${hf.uuid !== undefined && hf.uuid !== null ? `uuid: "${hf.uuid}"` : ""}
     code: "${formatGQLString(hf.code)}"
-    accCode: "${formatGQLString(hf.accCode)}"
     name: "${formatGQLString(hf.name)}"
     locationId: ${decodeId(hf.location.id)}
     level: "${hf.level}"
     legalFormId: "${hf.legalForm.code}"
     careType: "${hf.careType}"
+    ${!!hf.accCode ? `accCode: "${hf.accCode}"` : ""}
     ${!!hf.subLevel ? `subLevelId: "${hf.subLevel.code}"` : ""}
     ${!!hf.address ? `address: "${formatGQLString(hf.address)}"` : ""}
     ${!!hf.phone ? `phone: "${formatGQLString(hf.phone)}"` : ""}
@@ -269,5 +348,84 @@ export function deleteHealthFacility(hf, clientMutationLabel) {
 export function selectLocation(location, level, maxLevels) {
   return (dispatch) => {
     dispatch({ type: `LOCATION_FILTER_SELECTED`, payload: { location, level, maxLevels } });
+  };
+}
+
+export function selectDistrictLocation(location) {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_FILTER_DISTRICT_SELECTED`, payload: { location } });
+  };
+}
+
+export function selectRegionLocation(location) {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_FILTER_REGION_SELECTED`, payload: { location } });
+  };
+}
+
+export function fetchAllRegions() {
+  let filters = [`type: "R"`];
+
+  let payload = formatPageQuery("locations", filters, ["id", "uuid", "code", "name"]);
+
+  return graphql(payload, `LOCATION_REGIONS`);
+}
+
+export function fetchAvailableLocations(mm, level) {
+  const types = mm.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
+  let filters = [`type: "${types[level]}"`];
+
+  let projection = ["id", "uuid", "type", "code", "name", nestParentsProjections(level)];
+
+  const payload = formatPageQuery("locationsAll", filters, projection);
+
+  return graphql(payload, `LOCATION_ALL_LOCATION_${level}`);
+}
+
+export function HFCodeValidationCheck(mm, variables) {
+  return graphqlWithVariables(
+    `
+      query ($healthFacilityCode: String!) {
+        isValid: validateHealthFacilityCode(healthFacilityCode: $healthFacilityCode)
+      }
+    `,
+    variables,
+    `LOCATION_HF_CODE_FIELDS_VALIDATION`,
+  );
+}
+
+export function HFCodeSetValid() {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_HF_CODE_FIELDS_VALIDATION_SET_VALID` });
+  };
+}
+
+export function HFCodeValidationClear() {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_HF_CODE_FIELDS_VALIDATION_CLEAR` });
+  };
+}
+
+export function locationCodeValidationCheck(mm, variables) {
+  return graphqlWithVariables(
+    `
+    query ($locationCode: String!) {
+      isValid: validateLocationCode(locationCode: $locationCode)
+ }
+    `,
+    variables,
+    `LOCATION_CODE_FIELDS_VALIDATION`,
+  );
+}
+
+export function locationCodeValidationClear() {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_CODE_FIELDS_VALIDATION_CLEAR` });
+  };
+}
+
+export function locationCodeSetValid() {
+  return (dispatch) => {
+    dispatch({ type: `LOCATION_CODE_SET_VALID` });
   };
 }

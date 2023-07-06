@@ -7,8 +7,11 @@ import {
   TextInput,
   TextAreaInput,
   withModulesManager,
+  ValidatedTextInput,
 } from "@openimis/fe-core";
 import { Grid } from "@material-ui/core";
+import { connect } from "react-redux";
+import { HFCodeValidationCheck, HFCodeValidationClear, HFCodeSetValid } from "../actions";
 
 const styles = (theme) => ({
   item: theme.paper.item,
@@ -19,7 +22,7 @@ class HealthFacilityMasterPanel extends FormPanel {
     super(props);
     this.codeMaxLength = props.modulesManager.getConf("fe-location", "healthFacilityForm.codeMaxLength", 8);
     this.accCodeMaxLength = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMaxLength", 25);
-    this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", true);
+    this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
   }
 
   updateRegion = (region) => {
@@ -40,8 +43,22 @@ class HealthFacilityMasterPanel extends FormPanel {
     });
   };
 
+  shouldValidate = (inputValue) => {
+    const { savedHFCode } = this.props;
+    const shouldValidate = inputValue !== savedHFCode;
+    return shouldValidate;
+  };
+
   render() {
-    const { classes, edited, reset, readOnly = false } = this.props;
+    const {
+      classes,
+      edited,
+      reset,
+      readOnly = false,
+      isHFCodeValid,
+      isHFCodeValidating,
+      HFCodeValidationError,
+    } = this.props;
     return (
       <Grid container>
         <ControlledField
@@ -69,6 +86,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 value={edited.location}
                 readOnly={readOnly}
                 region={this.state.parentLocation}
+                withNull={true}
                 required={true}
                 onChange={(v, s) => this.updateDistrict(v)}
               />
@@ -147,14 +165,23 @@ class HealthFacilityMasterPanel extends FormPanel {
           id="HealthFacility.code"
           field={
             <Grid item xs={2} className={classes.item}>
-              <TextInput
+              <ValidatedTextInput
+                itemQueryIdentifier="healthFacilityCode"
+                shouldValidate={this.shouldValidate}
+                isValid={isHFCodeValid}
+                isValidating={isHFCodeValidating}
+                validationError={HFCodeValidationError}
+                action={HFCodeValidationCheck}
+                clearAction={HFCodeValidationClear}
+                setValidAction={HFCodeSetValid}
                 module="location"
-                label="HealthFacilityForm.code"
+                label="location.HealthFacilityForm.code"
+                codeTakenLabel="location.HealthFacilityForm.codeTaken"
                 name="code"
                 value={edited.code}
                 readOnly={readOnly}
                 required={true}
-                onChange={(v, s) => this.updateAttribute("code", v)}
+                onChange={(code, s) => this.updateAttribute("code", code)}
                 inputProps={{
                   "maxLength": this.codeMaxLength,
                 }}
@@ -262,4 +289,11 @@ class HealthFacilityMasterPanel extends FormPanel {
   }
 }
 
-export default withModulesManager(withTheme(withStyles(styles)(HealthFacilityMasterPanel)));
+const mapStateToProps = (state) => ({
+  isHFCodeValid: state.loc.validationFields?.HFCode?.isValid,
+  isHFCodeValidating: state.loc.validationFields?.HFCode?.isValidating,
+  HFCodeValidationError: state.loc.validationFields?.HFCode?.validationError,
+  savedHFCode: state.loc?.healthFacility?.code,
+});
+
+export default withModulesManager(connect(mapStateToProps)(withTheme(withStyles(styles)(HealthFacilityMasterPanel))));
