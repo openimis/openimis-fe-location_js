@@ -23,7 +23,6 @@ const HealthFacilityPicker = (props) => {
   } = props;
 
   const modulesManager = useModulesManager();
-  const userHealthFacility = useSelector((state) => state.loc.userHealthFacilityFullPath);
   const { formatMessage } = useTranslations("location", modulesManager);
   const [searchString, setSearchString] = useState("");
   let pickedDistrictsUuids = [];
@@ -60,10 +59,10 @@ const HealthFacilityPicker = (props) => {
       error={error}
       withLabel={withLabel}
       withPlaceholder={withPlaceholder}
-      readOnly={Boolean(userHealthFacility) || readOnly}
+      readOnly={readOnly}
       options={data?.healthFacilities?.edges.map((edge) => edge.node) ?? []}
       isLoading={isLoading}
-      value={userHealthFacility ?? value}
+      value={value}
       getOptionLabel={healthFacilityLabel}
       onChange={(option) => onChange(option, healthFacilityLabel(option))}
       filterOptions={filterOptions}
