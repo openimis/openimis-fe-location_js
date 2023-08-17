@@ -314,6 +314,8 @@ function formatHealthFacilityGQL(hf) {
     ${!!hf.servicesPricelist ? `servicesPricelistId: ${decodeId(hf.servicesPricelist.id)}` : ""}
     ${!!hf.itemsPricelist ? `itemsPricelistId: ${decodeId(hf.itemsPricelist.id)}` : ""}
     ${!!hf.mutationExtensions ? `mutationExtensions: ${formatJsonField(hf.mutationExtensions)}` : ""}
+    ${!!hf.contractStartDate ? `contractStartDate: ${hf.contractStartDate}` : ""}
+    ${!!hf.contractEndDate ? `contractEndDate: ${hf.contractEndDate}` : ""}
     ${formatCatchments(hf.catchments)}
   `;
 }
