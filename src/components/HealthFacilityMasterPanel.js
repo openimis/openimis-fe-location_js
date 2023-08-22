@@ -254,6 +254,42 @@ class HealthFacilityMasterPanel extends FormPanel {
         />
         <ControlledField
           module="location"
+          id="HealthFacility.contractStartDate"
+          field={
+            <Grid item xs={2} className={classes.item}>
+              <PublishedComponent
+                pubRef="core.DatePicker"
+                value={edited.contractStartDate}
+                module="location"
+                label="HealthFacilityForm.contractStartDate"
+                reset={reset}
+                onChange={(date) => this.updateAttribute("contractStartDate", date)}
+                readOnly={readOnly}
+                required={false}
+              />
+            </Grid>
+          }
+        />
+        <ControlledField
+          module="location"
+          id="HealthFacility.contractEndDate"
+          field={
+            <Grid item xs={2} className={classes.item}>
+              <PublishedComponent
+                pubRef="core.DatePicker"
+                value={edited.contractEndDate}
+                module="location"
+                label="HealthFacilityForm.contractEndDate"
+                reset={reset}
+                onChange={(date) => this.updateAttribute("contractEndDate", date)}
+                readOnly={readOnly}
+                required={false}
+              />
+            </Grid>
+          }
+        />
+        <ControlledField
+          module="location"
           id="HealthFacility.fax"
           field={
             <Grid item xs={1} className={classes.item}>
