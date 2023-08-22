@@ -260,7 +260,7 @@ class HealthFacilityMasterPanel extends FormPanel {
               <PublishedComponent
                 pubRef="core.DatePicker"
                 value={edited.contractStartDate}
-                module="claim"
+                module="location"
                 label="HealthFacilityForm.contractStartDate"
                 reset={reset}
                 onChange={(date) => this.updateAttribute("contractStartDate", date)}
@@ -278,7 +278,7 @@ class HealthFacilityMasterPanel extends FormPanel {
               <PublishedComponent
                 pubRef="core.DatePicker"
                 value={edited.contractEndDate}
-                module="claim"
+                module="location"
                 label="HealthFacilityForm.contractEndDate"
                 reset={reset}
                 onChange={(date) => this.updateAttribute("contractEndDate", date)}
