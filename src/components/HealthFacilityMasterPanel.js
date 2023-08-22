@@ -266,7 +266,6 @@ class HealthFacilityMasterPanel extends FormPanel {
                 onChange={(date) => this.updateAttribute("contractStartDate", date)}
                 readOnly={readOnly}
                 required={false}
-                // maxDate={edited.dateTo < edited.dateClaimed ? edited.dateTo : edited.dateClaimed}
               />
             </Grid>
           }
@@ -285,7 +284,6 @@ class HealthFacilityMasterPanel extends FormPanel {
                 onChange={(date) => this.updateAttribute("contractEndDate", date)}
                 readOnly={readOnly}
                 required={false}
-                // maxDate={edited.dateTo < edited.dateClaimed ? edited.dateTo : edited.dateClaimed}
               />
             </Grid>
           }
