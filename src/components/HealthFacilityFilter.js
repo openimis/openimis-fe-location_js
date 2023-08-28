@@ -106,7 +106,8 @@ class HealthFacilityFilter extends Component {
   };
 
   render() {
-    const { intl, classes } = this.props;
+    const { intl, classes, modulesManager } = this.props;
+    this.isHealthFacilityStatusEnabled  = modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", true);
     return (
       <Grid container className={classes.form}>
         <Grid item xs={2} className={classes.item}>
@@ -246,6 +247,16 @@ class HealthFacilityFilter extends Component {
             }
           />
         </Grid>
+        {this.isHealthFacilityStatusEnabled && <Grid item xs={3} className={classes.item}>
+          <PublishedComponent
+            module="location"
+            label="HealthFacilityForm.status"
+            pubRef="location.HealthFacilityStatusPicker"
+            value={this._filterValue("status")}
+            onChange={(v, s) => this._onChange("status", v, s)}
+            withNull={true}
+          />
+        </Grid>}
       </Grid>
     );
   }

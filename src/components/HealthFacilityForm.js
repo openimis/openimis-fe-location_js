@@ -40,6 +40,7 @@ class HealthFacilityForm extends Component {
     super(props);
     this.HealthFacilityPriceListsPanel = props.modulesManager.getRef("location.HealthFacilityPriceListsPanel");
     this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
+    this.isHealthFacilityStatusEnabled  = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", true);
   }
 
   _newHealthFacility() {
@@ -108,6 +109,7 @@ class HealthFacilityForm extends Component {
     if (!this.state.healthFacility.careType) return false;
     if (this.state.healthFacility.validityTo) return false;
     if (!!this.accCodeMandatory && !this.state.healthFacility.accCode) return false;
+    if (!!this.isHealthFacilityStatusEnabled & !this.state.healthFacility.status) return false;
     return true;
   };
 

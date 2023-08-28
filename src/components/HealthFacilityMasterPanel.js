@@ -23,6 +23,7 @@ class HealthFacilityMasterPanel extends FormPanel {
     this.codeMaxLength = props.modulesManager.getConf("fe-location", "healthFacilityForm.codeMaxLength", 8);
     this.accCodeMaxLength = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMaxLength", 25);
     this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
+    this.isHealthFacilityStatusEnabled  = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", true);
   }
 
   updateRegion = (region) => {
@@ -304,6 +305,25 @@ class HealthFacilityMasterPanel extends FormPanel {
             </Grid>
           }
         />
+        {!!this.isHealthFacilityStatusEnabled && <ControlledField
+          module="location"
+          id="HealthFacility.status"
+          field={
+            <Grid item xs={1} className={classes.item}>
+              <PublishedComponent
+                pubRef="location.HealthFacilityStatusPicker"
+                value={edited.status}
+                module="location"
+                withNull={false}
+                label="HealthFacilityForm.status"
+                reset={reset}
+                onChange={(value) => this.updateAttribute("status", value)}
+                readOnly={readOnly}
+                required={true}
+              />
+            </Grid>
+          }
+        />}
         <ControlledField
           module="location"
           id="HealthFacility.email"
