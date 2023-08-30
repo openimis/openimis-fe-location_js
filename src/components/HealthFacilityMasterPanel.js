@@ -23,7 +23,7 @@ class HealthFacilityMasterPanel extends FormPanel {
     this.codeMaxLength = props.modulesManager.getConf("fe-location", "healthFacilityForm.codeMaxLength", 8);
     this.accCodeMaxLength = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMaxLength", 25);
     this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
-    this.isHealthFacilityStatusEnabled  = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", true);
+    this.isHealthFacilityStatusEnabled  = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", false);
   }
 
   updateRegion = (region) => {

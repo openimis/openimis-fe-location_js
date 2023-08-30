@@ -107,7 +107,7 @@ class HealthFacilityFilter extends Component {
 
   render() {
     const { intl, classes, modulesManager } = this.props;
-    this.isHealthFacilityStatusEnabled  = modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", true);
+    this.isHealthFacilityStatusEnabled  = modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", false);
     return (
       <Grid container className={classes.form}>
         <Grid item xs={2} className={classes.item}>
