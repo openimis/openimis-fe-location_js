@@ -2,7 +2,11 @@ export const DEFAULT_LOCATION_TYPES = ["R", "D", "W", "V"]; //overwrittn by prop
 export const HEALTH_FACILITY_LEVELS = ["C", "D", "H"];
 export const HEALTH_FACILITY_LEGAL_FORMS = ["C", "D", "G", "P"];
 export const HEALTH_FACILITY_SUB_LEVELS = ["I", "N", "R"];
-export const HEALTH_FACILITY_STATUSES = ["Active", "Inactive", "Delisted", "Idle"];
+const HF_STATUS_ACTIVE = "AC"
+const HF_STATUS_INACTIVE = "IN"
+const HF_STATUS_DELISTED = "DE"
+const HF_STATUS_IDLE = "ID"
+export const HEALTH_FACILITY_STATUSES = [HF_STATUS_ACTIVE, HF_STATUS_INACTIVE, HF_STATUS_DELISTED, HF_STATUS_IDLE];
 
 export const MODULE_NAME = "location";
 

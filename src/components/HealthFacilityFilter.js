@@ -253,7 +253,7 @@ class HealthFacilityFilter extends Component {
             label="HealthFacilityForm.status"
             pubRef="location.HealthFacilityStatusPicker"
             value={this._filterValue("status")}
-            onChange={(v, s) => this._onChange("status", v, s)}
+            onChange={(value, s) => this._onChange("status", value, s)}
             withNull={true}
           />
         </Grid>}
