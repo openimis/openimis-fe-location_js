@@ -7,6 +7,7 @@ import HealthFacilityFullPath from "./components/HealthFacilityFullPath";
 import HealthFacilityPicker from "./pickers/HealthFacilityPicker";
 import HealthFacilityReferPicker from "./pickers/HealthFacilityReferPicker";
 import HealthFacilityLevelPicker from "./pickers/HealthFacilityLevelPicker";
+import HealthFacilityStatusPicker from "./pickers/HealthFacilityStatusPicker";
 import HealthFacilitySubLevelPicker from "./pickers/HealthFacilitySubLevelPicker";
 import HealthFacilityLegalFormPicker from "./pickers/HealthFacilityLegalFormPicker";
 import HealthFacilityPriceListsPanel from "./components/HealthFacilityPriceListsPanel";
@@ -46,6 +47,7 @@ const DEFAULT_CONFIG = {
     { key: "location.HealthFacilityLevelPicker", ref: HealthFacilityLevelPicker },
     { key: "location.HealthFacilityLevelPicker.projection", ref: null },
     { key: "location.HealthFacilitySubLevelPicker", ref: HealthFacilitySubLevelPicker },
+    { key: "location.HealthFacilityStatusPicker", ref: HealthFacilityStatusPicker },
     { key: "location.HealthFacilitySubLevelPicker.projection", ref: null },
     { key: "location.HealthFacilityLegalFormPicker", ref: HealthFacilityLegalFormPicker },
     { key: "location.HealthFacilityLegalFormPicker.projection", ref: ["code", "legalForm"] },

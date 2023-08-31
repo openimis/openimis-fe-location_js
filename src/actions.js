@@ -112,6 +112,7 @@ export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) 
     "catchments{id, location{id, uuid, code, name}, catchment}",
     "contractStartDate",
     "contractEndDate",
+    "status",
     "validityFrom",
     "validityTo",
   ];
@@ -318,6 +319,7 @@ function formatHealthFacilityGQL(hf) {
     ${!!hf.mutationExtensions ? `mutationExtensions: ${formatJsonField(hf.mutationExtensions)}` : ""}
     ${!!hf.contractStartDate ? `contractStartDate: "${hf.contractStartDate}"` : ""}
     ${!!hf.contractEndDate ? `contractEndDate: "${hf.contractEndDate}"` : ""}
+    ${!!hf.status ? `status: "${hf.status}"` : ""}
     ${formatCatchments(hf.catchments)}
   `;
 }
