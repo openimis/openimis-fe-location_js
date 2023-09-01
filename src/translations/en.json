@@ -116,6 +116,7 @@
   "location.HealthFacilityForm.email": "Email",
   "location.HealthFacilityForm.status": "Status",
   "location.HealthFacilityForm.status.null": "Any",
+  "location.HealthFacilityMasterPanel.careType.nullLabel": "Select Care Type",
   "location.HealthFacilityForm.status.AC": "Active",
   "location.HealthFacilityForm.status.IN": "Inactive",
   "location.HealthFacilityForm.status.DE": "Delisted",
