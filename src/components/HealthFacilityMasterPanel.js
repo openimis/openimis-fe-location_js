@@ -152,7 +152,7 @@ class HealthFacilityMasterPanel extends FormPanel {
               <PublishedComponent
                 pubRef="medical.CareTypePicker"
                 value={edited.careType}
-                nullLabel="empty"
+                nullLabel="location.HealthFacilityMasterPanel.careType.nullLabel"
                 reset={reset}
                 readOnly={readOnly}
                 required={true}
