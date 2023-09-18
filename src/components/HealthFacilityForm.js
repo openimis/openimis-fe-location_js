@@ -41,6 +41,7 @@ class HealthFacilityForm extends Component {
     this.HealthFacilityPriceListsPanel = props.modulesManager.getRef("location.HealthFacilityPriceListsPanel");
     this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
     this.isHealthFacilityStatusEnabled  = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", false);
+    this.isHealthFacilityContractMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityContractMandatory", false);
   }
 
   _newHealthFacility() {
@@ -100,6 +101,7 @@ class HealthFacilityForm extends Component {
   };
 
   canSave = () => {
+    // TODO - after such component is available, add contract dates as date range, not two separate dates
     if (!this.state.healthFacility.code) return false;
     if (this.props.isHFCodeValid === false) return false;
     if (!this.state.healthFacility.name) return false;
@@ -110,6 +112,9 @@ class HealthFacilityForm extends Component {
     if (this.state.healthFacility.validityTo) return false;
     if (!!this.accCodeMandatory && !this.state.healthFacility.accCode) return false;
     if (!!this.isHealthFacilityStatusEnabled & !this.state.healthFacility.status) return false;
+    if (this.isHealthFacilityContractMandatory){
+      return !!this.state.healthFacility.contractStartDate && !!this.state.healthFacility.contractEndDate;
+    }
     return true;
   };
 

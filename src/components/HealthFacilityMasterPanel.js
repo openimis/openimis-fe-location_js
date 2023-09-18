@@ -24,6 +24,7 @@ class HealthFacilityMasterPanel extends FormPanel {
     this.accCodeMaxLength = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMaxLength", 25);
     this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
     this.isHealthFacilityStatusEnabled  = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", false);
+    this.isHealthFacilityContractMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityContractMandatory", false);
   }
 
   updateRegion = (region) => {
@@ -266,7 +267,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 reset={reset}
                 onChange={(date) => this.updateAttribute("contractStartDate", date)}
                 readOnly={readOnly}
-                required={false}
+                required={this.isHealthFacilityContractMandatory}
               />
             </Grid>
           }
@@ -284,7 +285,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 reset={reset}
                 onChange={(date) => this.updateAttribute("contractEndDate", date)}
                 readOnly={readOnly}
-                required={false}
+                required={this.isHealthFacilityContractMandatory}
               />
             </Grid>
           }
