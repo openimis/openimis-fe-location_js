@@ -1,13 +1,14 @@
-import React, { Component, useEffect } from "react";
-import { connect } from "react-redux";
-import { withTheme, withStyles } from "@material-ui/core/styles";
-import { injectIntl } from "react-intl";
-import { TextField } from "@material-ui/core";
-import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
-import _debounce from "lodash/debounce";
-import { locationLabel } from "../utils";
-import { fetchAllRegions, selectRegionLocation, clearLocations } from "../actions.js";
+import React, { Component } from "react";
 import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { injectIntl } from "react-intl";
+import _debounce from "lodash/debounce";
+
+import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
+import { withTheme, withStyles } from "@material-ui/core/styles";
+
+import { fetchAllRegions, selectRegionLocation, clearLocations } from "../actions.js";
+import { locationLabel } from "../utils";
 
 const styles = (theme) => ({
   textField: {
@@ -39,7 +40,6 @@ class RegionPicker extends Component {
   render() {
     const {
       intl,
-      classes,
       value,
       reset,
       userHealthFacilityFullPath,
@@ -58,20 +58,13 @@ class RegionPicker extends Component {
     } = this.props;
 
     allRegionsFlag = allRegions;
-    if (!!userHealthFacilityFullPath) {
-      return (
-        <TextField
-          label={!!withLabel && (label || formatMessage(intl, "location", "RegionPicker.label"))}
-          className={classes.textField}
-          disabled
-          value={locationLabel(userHealthFacilityFullPath.location.parent)}
-        />
-      );
-    }
+
+    let items = userHealthFacilityFullPath && [userHealthFacilityFullPath.location.parent] || regions || [];
+
     return (
       <AutoSuggestion
         module="location"
-        items={regions}
+        items={items}
         preValues={preValues}
         label={!!withLabel && (label || formatMessage(intl, "location", "RegionPicker.label"))}
         placeholder={
