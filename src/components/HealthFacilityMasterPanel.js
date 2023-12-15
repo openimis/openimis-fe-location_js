@@ -87,7 +87,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 pubRef="location.DistrictPicker"
                 value={edited.location}
                 readOnly={readOnly}
-                region={this.state.parentLocation}
+                region={edited.parentLocation}
                 withNull={true}
                 required={true}
                 onChange={(v, s) => this.updateDistrict(v)}
