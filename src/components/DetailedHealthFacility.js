@@ -40,7 +40,7 @@ const DetailedHealthFacility = (props) => {
               pubRef="location.HealthFacilityLevelPicker"
               value={level}
               readOnly={readOnly}
-              withNull
+              withNull={false}
               onChange={setLevel}
             />
           </Box>

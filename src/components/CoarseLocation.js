@@ -74,7 +74,7 @@ class CoarseLocation extends Component {
                 readOnly={readOnly}
                 required={required}
                 value={region}
-                withNull={true}
+                withNull={false}
                 filterLabels={filterLabels}
                 onChange={this.onChangeRegion}
                 allRegions={allRegions}
@@ -93,7 +93,7 @@ class CoarseLocation extends Component {
                 required={required}
                 value={district}
                 region={this.state.region}
-                withNull={true}
+                withNull={false}
                 filterLabels={filterLabels}
                 onChange={this.onChangeDistrict}
               />
