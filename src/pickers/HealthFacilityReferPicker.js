@@ -1,10 +1,8 @@
-import { healthFacilityLabel, LOCATION_SUMMARY_PROJECTION } from "../utils";
+import { healthFacilityLabel} from "../utils";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import { useModulesManager, useTranslations, Autocomplete, useGraphqlQuery } from "@openimis/fe-core";
-import _debounce from "lodash/debounce";
 
-const HealthFacilityPicker = (props) => {
+const HealthFacilityReferPicker = (props) => {
   const {
     onChange,
     readOnly,
@@ -17,20 +15,16 @@ const HealthFacilityPicker = (props) => {
     filterSelectedOptions,
     placeholder,
     multiple,
-    region,
-    district,
     level,
   } = props;
 
   const modulesManager = useModulesManager();
   const { formatMessage } = useTranslations("location", modulesManager);
   const [searchString, setSearchString] = useState("");
-  let pickedDistrictsUuids = [];
-  Array.isArray(district) ? pickedDistrictsUuids = district?.map((district) => district?.uuid) : pickedDistrictsUuids.push(district?.uuid);
   const { data, isLoading, error } = useGraphqlQuery(
     `
-    query HealthFacilityPicker ($str: String, $region: String, $district: [String], $level: String) {
-      healthFacilities: healthFacilitiesStr(first: 20, str: $str, regionUuid: $region, districtsUuids: $district, level: $level) {
+    query HealthFacilityPicker ($str: String, $level: String) {
+      healthFacilities: healthFacilitiesStr(first: 20, str: $str, level: $level) {
         edges {
           node {
             id
@@ -40,13 +34,12 @@ const HealthFacilityPicker = (props) => {
             level
             servicesPricelist{id, uuid}
             itemsPricelist{id, uuid}
-            location {${LOCATION_SUMMARY_PROJECTION.join(",")} parent { ${LOCATION_SUMMARY_PROJECTION.join(",")} }}
           }
         }
       }
     }
   `,
-    { level, region: region?.uuid, district: pickedDistrictsUuids, str: searchString },
+    { level, str: searchString },
     { skip: true },
   );
 
@@ -72,4 +65,4 @@ const HealthFacilityPicker = (props) => {
   );
 };
 
-export default HealthFacilityPicker;
+export default HealthFacilityReferPicker;

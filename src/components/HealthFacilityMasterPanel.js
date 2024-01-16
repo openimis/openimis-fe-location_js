@@ -23,6 +23,8 @@ class HealthFacilityMasterPanel extends FormPanel {
     this.codeMaxLength = props.modulesManager.getConf("fe-location", "healthFacilityForm.codeMaxLength", 8);
     this.accCodeMaxLength = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMaxLength", 25);
     this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
+    this.isHealthFacilityStatusEnabled  = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", false);
+    this.isHealthFacilityContractMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityContractMandatory", false);
   }
 
   updateRegion = (region) => {
@@ -85,7 +87,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 pubRef="location.DistrictPicker"
                 value={edited.location}
                 readOnly={readOnly}
-                region={this.state.parentLocation}
+                region={edited.parentLocation}
                 withNull={true}
                 required={true}
                 onChange={(v, s) => this.updateDistrict(v)}
@@ -151,7 +153,7 @@ class HealthFacilityMasterPanel extends FormPanel {
               <PublishedComponent
                 pubRef="medical.CareTypePicker"
                 value={edited.careType}
-                nullLabel="empty"
+                nullLabel="location.HealthFacilityMasterPanel.careType.nullLabel"
                 reset={reset}
                 readOnly={readOnly}
                 required={true}
@@ -254,6 +256,42 @@ class HealthFacilityMasterPanel extends FormPanel {
         />
         <ControlledField
           module="location"
+          id="HealthFacility.contractStartDate"
+          field={
+            <Grid item xs={2} className={classes.item}>
+              <PublishedComponent
+                pubRef="core.DatePicker"
+                value={edited.contractStartDate}
+                module="location"
+                label="HealthFacilityForm.contractStartDate"
+                reset={reset}
+                onChange={(date) => this.updateAttribute("contractStartDate", date)}
+                readOnly={readOnly}
+                required={this.isHealthFacilityContractMandatory}
+              />
+            </Grid>
+          }
+        />
+        <ControlledField
+          module="location"
+          id="HealthFacility.contractEndDate"
+          field={
+            <Grid item xs={2} className={classes.item}>
+              <PublishedComponent
+                pubRef="core.DatePicker"
+                value={edited.contractEndDate}
+                module="location"
+                label="HealthFacilityForm.contractEndDate"
+                reset={reset}
+                onChange={(date) => this.updateAttribute("contractEndDate", date)}
+                readOnly={readOnly}
+                required={this.isHealthFacilityContractMandatory}
+              />
+            </Grid>
+          }
+        />
+        <ControlledField
+          module="location"
           id="HealthFacility.fax"
           field={
             <Grid item xs={1} className={classes.item}>
@@ -268,6 +306,25 @@ class HealthFacilityMasterPanel extends FormPanel {
             </Grid>
           }
         />
+        {!!this.isHealthFacilityStatusEnabled && <ControlledField
+          module="location"
+          id="HealthFacility.status"
+          field={
+            <Grid item xs={1} className={classes.item}>
+              <PublishedComponent
+                pubRef="location.HealthFacilityStatusPicker"
+                value={edited.status}
+                module="location"
+                withNull={false}
+                label="HealthFacilityForm.status"
+                reset={reset}
+                onChange={(value) => this.updateAttribute("status", value)}
+                readOnly={readOnly}
+                required={true}
+              />
+            </Grid>
+          }
+        />}
         <ControlledField
           module="location"
           id="HealthFacility.email"

@@ -60,7 +60,16 @@ export const HEALTH_FACILITY_PICKER_PROJECTION = [
   "level",
   "servicesPricelist{id, uuid}",
   "itemsPricelist{id, uuid}",
+  "contractStartDate",
+  "contractEndDate",
   `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`,
+];
+
+export const HEALTH_FACILITY_REFER_PICKER_PROJECTION = [
+  "id",
+  "uuid",
+  "code",
+  "name"
 ];
 
 function healthFacilityFullPath(key, mm, id) {
@@ -103,6 +112,9 @@ export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) 
     "servicesPricelist{id, uuid, name}",
     "itemsPricelist{id, uuid, name}",
     "catchments{id, location{id, uuid, code, name}, catchment}",
+    "contractStartDate",
+    "contractEndDate",
+    "status",
     "validityFrom",
     "validityTo",
   ];
@@ -307,6 +319,9 @@ function formatHealthFacilityGQL(hf) {
     ${!!hf.servicesPricelist ? `servicesPricelistId: ${decodeId(hf.servicesPricelist.id)}` : ""}
     ${!!hf.itemsPricelist ? `itemsPricelistId: ${decodeId(hf.itemsPricelist.id)}` : ""}
     ${!!hf.mutationExtensions ? `mutationExtensions: ${formatJsonField(hf.mutationExtensions)}` : ""}
+    ${!!hf.contractStartDate ? `contractStartDate: "${hf.contractStartDate}"` : ""}
+    ${!!hf.contractEndDate ? `contractEndDate: "${hf.contractEndDate}"` : ""}
+    ${!!hf.status ? `status: "${hf.status}"` : ""}
     ${formatCatchments(hf.catchments)}
   `;
 }

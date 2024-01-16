@@ -2,7 +2,11 @@ import React, { Component, Fragment } from "react";
 import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import clsx from "clsx";
+
 import ReplayIcon from "@material-ui/icons/Replay";
+import { withTheme, withStyles } from "@material-ui/core/styles";
+
 import {
   ProgressOrError,
   Form,
@@ -11,11 +15,16 @@ import {
   formatMessageWithValues,
   Helmet,
 } from "@openimis/fe-core";
+import { fetchHealthFacility, clearHealthFacility } from "../actions";
 import HealthFacilityMasterPanel from "../components/HealthFacilityMasterPanel";
 import HealthFacilityCatchmentPanel from "../components/HealthFacilityCatchmentPanel";
-import { fetchHealthFacility, clearHealthFacility } from "../actions";
 
 const HF_FORM_CONTRIBUTION_KEY = "location.HealthFacility";
+
+const styles = (theme) => ({
+  page: theme.page,
+  lockedPage: theme.page.locked,
+});
 
 class HealthFacilityForm extends Component {
   state = {
@@ -31,6 +40,8 @@ class HealthFacilityForm extends Component {
     super(props);
     this.HealthFacilityPriceListsPanel = props.modulesManager.getRef("location.HealthFacilityPriceListsPanel");
     this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
+    this.isHealthFacilityStatusEnabled  = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", false);
+    this.isHealthFacilityContractMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityContractMandatory", false);
   }
 
   _newHealthFacility() {
@@ -90,6 +101,7 @@ class HealthFacilityForm extends Component {
   };
 
   canSave = () => {
+    // TODO - after such component is available, add contract dates as date range, not two separate dates
     if (!this.state.healthFacility.code) return false;
     if (this.props.isHFCodeValid === false) return false;
     if (!this.state.healthFacility.name) return false;
@@ -97,7 +109,12 @@ class HealthFacilityForm extends Component {
     if (!this.state.healthFacility.legalForm) return false;
     if (!this.state.healthFacility.level) return false;
     if (!this.state.healthFacility.careType) return false;
+    if (this.state.healthFacility.validityTo) return false;
     if (!!this.accCodeMandatory && !this.state.healthFacility.accCode) return false;
+    if (!!this.isHealthFacilityStatusEnabled & !this.state.healthFacility.status) return false;
+    if (this.isHealthFacilityContractMandatory){
+      return !!this.state.healthFacility.contractStartDate && !!this.state.healthFacility.contractEndDate;
+    }
     return true;
   };
 
@@ -117,7 +134,7 @@ class HealthFacilityForm extends Component {
   };
 
   render() {
-    const { fetchingHealthFacility, fetchedHealthFacility, errorHealthFacility, add, save, back } = this.props;
+    const { fetchingHealthFacility, fetchedHealthFacility, errorHealthFacility, add, save, back, classes } = this.props;
     const { healthFacility_uuid, lockNew, healthFacility, newHealthFacility, reset, update } = this.state;
     let readOnly = lockNew || !!healthFacility.validityTo;
     let actions = [];
@@ -130,7 +147,7 @@ class HealthFacilityForm extends Component {
       });
     }
     return (
-      <Fragment>
+      <div className={clsx(classes.page, readOnly && classes.lockedPage)}>
         <Helmet
           title={formatMessageWithValues(this.props.intl, "location", "healthFacility.edit.page.title", {
             code: this.state.healthFacility.code,
@@ -158,11 +175,11 @@ class HealthFacilityForm extends Component {
               onEditedChanged={this.onEditedChanged}
               actions={actions}
               contributedPanelsKey={HF_FORM_CONTRIBUTION_KEY}
-              openDirty={save && !readOnly}
+              openDirty={save}
             />
           </Fragment>
         )}
-      </Fragment>
+      </div>
     );
   }
 }
@@ -183,4 +200,6 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ fetchHealthFacility, clearHealthFacility, journalize }, dispatch);
 };
 
-export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(injectIntl(HealthFacilityForm)));
+export default withModulesManager(
+  connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(HealthFacilityForm)))),
+);

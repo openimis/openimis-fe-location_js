@@ -17,7 +17,7 @@ const styles = (theme) => ({
 });
 
 const DetailedHealthFacility = (props) => {
-  const { onChange, classes, value, readOnly = true } = props;
+  const { onChange, classes, value, required, readOnly = true } = props;
   const [district, setDistrict] = useState(value?.location);
   const [level, setLevel] = useState(value?.level);
 
@@ -56,6 +56,7 @@ const DetailedHealthFacility = (props) => {
               district={district}
               level={level}
               value={value}
+              required={required}
               readOnly={readOnly}
               withNull
               onChange={onChange}

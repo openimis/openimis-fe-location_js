@@ -40,3 +40,5 @@ None
 * `RegionPicker.selectThreshold`: region suggestions count threshold under which the AutoSuggestion switch to a SelectInut (drop down list), default: 10
 * `DistrictPicker.selectThreshold`: district suggestions count threshold under which the AutoSuggestion switch to a SelectInut (drop down list), default: 10
 * `HealthFacilityPicker.selectThreshold`: HF suggestions count threshold under which the AutoSuggestion switch to a SelectInut (drop down list), default: 10
+* `healthFacilityForm.isHealthFacilityStatusEnabled"`: enable HF status dropdown (Active/Inactive/Delisted/Idle), default false.
+* `healthFacilityForm.isHealthFacilityContractMandatory`: make HF contract dates mandatory, default false.

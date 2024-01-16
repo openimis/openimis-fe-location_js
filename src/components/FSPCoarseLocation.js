@@ -5,6 +5,7 @@ import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
 
 import { ControlledField, PublishedComponent } from "@openimis/fe-core";
+import { locationLabel } from "../utils";
 
 const styles = (theme) => ({
   dialogTitle: theme.dialog.title,
@@ -51,9 +52,17 @@ class FSPCoarseLocation extends Component {
     );
   };
 
-  filterDistrict = (options) => {
-    if (!this.state.region) return options;
-    return options.filter((district) => this.state.region?.uuid === district.parent.uuid);
+  filterDistrict = (options, { inputValue }) => {
+    if (this.state.region) {
+      const filteredOptions = options.filter((district) => this.state.region?.uuid === district.parent.uuid);
+      return !!inputValue
+        ? filteredOptions.filter((option) => locationLabel(option).includes(inputValue))
+        : filteredOptions;
+    }
+
+    if (inputValue) {
+      return options.filter((option) => locationLabel(option).includes(inputValue));
+    } else return options;
   };
 
   onChangeDistrict = (district) => {
