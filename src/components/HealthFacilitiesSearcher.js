@@ -44,8 +44,8 @@ class HealthFacilitiesSearcher extends Component {
       "healthFacilitySummaries.email",
       "healthFacilitySummaries.region",
       "healthFacilitySummaries.district",
-      "healthFacilitySummaries.validityFrom",
-      "healthFacilitySummaries.validityTo",
+      filters?.showHistory?.value ? "healthFacilitySummaries.validityFrom" : null,
+      filters?.showHistory?.value ? "healthFacilitySummaries.validityTo" : null,
     ];
     if (this.props.rights.includes(RIGHT_HEALTH_FACILITY_DELETE)) {
       headers.push(null);
@@ -64,8 +64,8 @@ class HealthFacilitiesSearcher extends Component {
     null,
     null,
     null,
-    ["validityFrom", false],
-    ["validityTo", false],
+    filters?.showHistory?.value ? ["validityFrom", false] : null,
+    filters?.showHistory?.value ? ["validityTo", false] : null,
   ];
 
   itemFormatters = (filters) => {
@@ -91,9 +91,14 @@ class HealthFacilitiesSearcher extends Component {
       (hf) => hf.email,
       (hf) => (hf.location && hf.location.parent ? `${hf.location.parent.code} - ${hf.location.parent.name}` : null),
       (hf) => (hf.location ? `${hf.location.code} - ${hf.location.name}` : null),
-
-      (hf) => formatDateFromISO(this.props.modulesManager, this.props.intl, hf.validityFrom),
-      (hf) => formatDateFromISO(this.props.modulesManager, this.props.intl, hf.validityTo),
+      (hf) =>
+        filters?.showHistory?.value
+          ? formatDateFromISO(this.props.modulesManager, this.props.intl, hf.validityFrom)
+          : null,
+      (hf) =>
+        filters?.showHistory?.value
+          ? formatDateFromISO(this.props.modulesManager, this.props.intl, hf.validityTo)
+          : null,
     ];
     if (this.props.rights.includes(RIGHT_HEALTH_FACILITY_DELETE)) {
       formatters.push((hf) =>
