@@ -4,11 +4,17 @@ import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import _ from "lodash";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { withModulesManager, decodeId, formatDateFromISO, journalize, coreConfirm, Searcher } from "@openimis/fe-core";
+import {
+  withModulesManager,
+  IconButton,
+  formatDateFromISO,
+  journalize,
+  coreConfirm,
+  Searcher,
+} from "@openimis/fe-core";
 import HealthFacilityFilter from "./HealthFacilityFilter";
 import { fetchHealthFacilitySummaries, deleteHealthFacility } from "../actions";
 import { formatMessage, formatMessageWithValues, PublishedComponent } from "@openimis/fe-core";
-import { IconButton } from "@material-ui/core";
 import { RIGHT_HEALTH_FACILITY_DELETE } from "../constants";
 
 class HealthFacilitiesSearcher extends Component {
