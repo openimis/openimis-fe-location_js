@@ -6,7 +6,9 @@ import _ from "lodash";
 import DeleteIcon from "@material-ui/icons/Delete";
 import {
   withModulesManager,
-  IconButton,
+  formatMessage,
+  formatMessageWithValues,
+  PublishedComponent,
   formatDateFromISO,
   journalize,
   coreConfirm,
@@ -14,7 +16,7 @@ import {
 } from "@openimis/fe-core";
 import HealthFacilityFilter from "./HealthFacilityFilter";
 import { fetchHealthFacilitySummaries, deleteHealthFacility } from "../actions";
-import { formatMessage, formatMessageWithValues, PublishedComponent } from "@openimis/fe-core";
+import { IconButton } from "@material-ui/core";
 import { RIGHT_HEALTH_FACILITY_DELETE } from "../constants";
 
 class HealthFacilitiesSearcher extends Component {
