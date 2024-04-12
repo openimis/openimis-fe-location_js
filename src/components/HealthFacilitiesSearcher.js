@@ -20,6 +20,8 @@ import { IconButton } from "@material-ui/core";
 import { RIGHT_HEALTH_FACILITY_DELETE } from "../constants";
 
 class HealthFacilitiesSearcher extends Component {
+  state = { reset: 0, confirmedAction: null };
+
   constructor(props) {
     super(props);
     this.rowsPerPageOptions = props.modulesManager.getConf(
@@ -33,6 +35,7 @@ class HealthFacilitiesSearcher extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.submittingMutation && !this.props.submittingMutation) {
       this.props.journalize(this.props.mutation);
+      this.setState((prevState) => ({ ...prevState, reset: prevState.reset + 1 }));
     } else if (prevProps.confirmed !== this.props.confirmed && !!this.props.confirmed && !!this.state.confirmedAction) {
       this.state.confirmedAction();
     }
@@ -110,8 +113,8 @@ class HealthFacilitiesSearcher extends Component {
     ];
     if (this.props.rights.includes(RIGHT_HEALTH_FACILITY_DELETE)) {
       formatters.push((hf) =>
-        !!hf.validityTo ? null : (
-          <IconButton onClick={(e) => this.onDelete(hf)}>
+        hf.validityTo ? null : (
+          <IconButton disabled={!!hf.clientMutationId} onClick={(e) => this.onDelete(hf)}>
             <DeleteIcon />
           </IconButton>
         ),
@@ -120,7 +123,7 @@ class HealthFacilitiesSearcher extends Component {
     return formatters;
   };
 
-  rowDisabled = (selection, i) => !!i.validityTo;
+  rowDisabled = (selection, hf) => hf.clientMutationId;
 
   onDelete = (hf) => {
     let confirm = (e) =>
@@ -139,7 +142,7 @@ class HealthFacilitiesSearcher extends Component {
     this.setState({ confirmedAction }, confirm);
   };
 
-  rowLocked = (selection, hf) => !!hf.clientMutationId;
+  rowLocked = (selection, hf) => hf.clientMutationId;
 
   render() {
     const {
@@ -159,6 +162,7 @@ class HealthFacilitiesSearcher extends Component {
           rowsPerPageOptions={this.rowsPerPageOptions}
           defaultPageSize={this.defaultPageSize}
           fetch={this.props.fetchHealthFacilitySummaries}
+          reset={this.state.reset}
           cacheFiltersKey="locationHealthFacilitiesSearcher"
           items={healthFacilities}
           rowIdentifier={this.rowIdentifier}
