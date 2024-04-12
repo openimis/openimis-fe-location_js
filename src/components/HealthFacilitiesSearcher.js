@@ -35,7 +35,7 @@ class HealthFacilitiesSearcher extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.submittingMutation && !this.props.submittingMutation) {
       this.props.journalize(this.props.mutation);
-      this.setState((prevState) => ({ prevState, reset: this.state.reset + 1 }));
+      this.setState((prevState) => ({ ...prevState, reset: prevState.reset + 1 }));
     } else if (prevProps.confirmed !== this.props.confirmed && !!this.props.confirmed && !!this.state.confirmedAction) {
       this.state.confirmedAction();
     }
