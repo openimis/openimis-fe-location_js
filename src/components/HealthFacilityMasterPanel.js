@@ -71,7 +71,7 @@ class HealthFacilityMasterPanel extends FormPanel {
               <PublishedComponent
                 pubRef="location.RegionPicker"
                 value={edited.parentLocation}
-                withNull={true}
+                withNull={false}
                 readOnly={readOnly}
                 onChange={(v, s) => this.updateRegion(v)}
               />
@@ -88,7 +88,7 @@ class HealthFacilityMasterPanel extends FormPanel {
                 value={edited.location}
                 readOnly={readOnly}
                 region={edited.parentLocation}
-                withNull={true}
+                withNull={false}
                 required={true}
                 onChange={(v, s) => this.updateDistrict(v)}
               />
@@ -103,9 +103,9 @@ class HealthFacilityMasterPanel extends FormPanel {
               <PublishedComponent
                 pubRef="location.HealthFacilityLegalFormPicker"
                 value={!!edited.legalForm ? edited.legalForm.code : null}
-                nullLabel="empty"
                 reset={reset}
                 readOnly={readOnly}
+                withNull={false}
                 required={true}
                 onChange={(v, s) => this.updateAttribute("legalForm", !!v ? { code: v } : null)}
               />
@@ -120,9 +120,9 @@ class HealthFacilityMasterPanel extends FormPanel {
               <PublishedComponent
                 pubRef="location.HealthFacilityLevelPicker"
                 value={edited.level}
-                nullLabel="empty"
                 reset={reset}
                 readOnly={readOnly}
+                withNull={false}
                 required={true}
                 onChange={(v, s) => this.updateAttribute("level", v)}
               />
@@ -137,8 +137,8 @@ class HealthFacilityMasterPanel extends FormPanel {
               <PublishedComponent
                 pubRef="location.HealthFacilitySubLevelPicker"
                 value={!!edited.subLevel ? edited.subLevel.code : null}
-                nullLabel="empty"
                 reset={reset}
+                withNull={false}
                 readOnly={readOnly}
                 onChange={(v, s) => this.updateAttribute("subLevel", !!v ? { code: v } : null)}
               />
@@ -153,9 +153,9 @@ class HealthFacilityMasterPanel extends FormPanel {
               <PublishedComponent
                 pubRef="medical.CareTypePicker"
                 value={edited.careType}
-                nullLabel="location.HealthFacilityMasterPanel.careType.nullLabel"
                 reset={reset}
                 readOnly={readOnly}
+                withNull={false}
                 required={true}
                 onChange={(v, s) => this.updateAttribute("careType", v)}
               />

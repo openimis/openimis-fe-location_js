@@ -68,6 +68,8 @@ const DEFAULT_CONFIG = {
     { key: "location.FSPCoarseLocation", ref: FSPCoarseLocation },
     { key: "location.DetailedLocation", ref: DetailedLocation },
     { key: "location.DetailedHealthFacility", ref: DetailedHealthFacility },
+    
+    { key: "location.route.healthFacility", ref: ROUTE_HEALTH_FACILITY_EDIT },
   ],
   "core.Router": [
     { path: ROUTE_LOCATIONS, component: LocationsPage },
