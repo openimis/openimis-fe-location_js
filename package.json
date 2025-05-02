@@ -14,7 +14,7 @@
     "build": "rollup -c",
     "start": "rollup -c -w",
     "format": "prettier src -w",
-    "prepare":"npm run build"
+    "prepare": "npm run build"
   },
   "peerDependency": {
     "react-intl": "^5.8.1"
@@ -44,5 +44,7 @@
   "files": [
     "dist"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "rc-cascader": "^3.34.0"
+  }
 }
