@@ -176,7 +176,7 @@ export function fetchLocations(levels, type, parent) {
   return graphql(payload, `LOCATION_LOCATIONS_${type}`);
 }
 
-export function fetchLocationsStr(mm, level, regions = null, districts = null, parent, str, first) {
+export function fetchLocationsStr(mm, level, regions = null, districts = null, parent, str='', first) {
   const types = mm.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
   let filters = [`type: "${types[level]}"`, `str: "${str}"`, first && `first: '${first}'`].filter(Boolean);
   if (Boolean(parent)) {

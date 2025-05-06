@@ -20,6 +20,7 @@ import DetailedHealthFacility from "./components/DetailedHealthFacility";
 import RegionPicker from "./pickers/RegionPicker";
 import DistrictPicker from "./pickers/DistrictPicker";
 import LocationPicker from "./pickers/LocationPicker";
+import LocationCascader from "./pickers/LocationCascader";
 import FSPLocationPicker from "./pickers/FSPLocationPicker";
 import LocationTypePicker from "./pickers/LocationTypePicker";
 import messages_en from "./translations/en.json";
@@ -54,6 +55,7 @@ const DEFAULT_CONFIG = {
     { key: "location.RegionPicker", ref: RegionPicker },
     { key: "location.DistrictPicker", ref: DistrictPicker },
     { key: "location.LocationPicker", ref: LocationPicker },
+    { key: "location.LocationCascader", ref: LocationCascader },
     { key: "location.FSPLocationPicker", ref: FSPLocationPicker },
     { key: "location.HealthFacilityGQLType", ref: "HealthFacilityGQLType" },
     { key: "location.HealthFacilityPriceListsPanel", ref: HealthFacilityPriceListsPanel },
