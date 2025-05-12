@@ -136,5 +136,15 @@
   "location.locationType.R": "Region",
   "location.locationType.D": "District",
   "location.locationType.W": "Municipality",
-  "location.locationType.V": "Village"
+  "location.locationType.V": "Village",
+  "location.gql_query_locations_perms": "Location | Query Locations",
+  "location.gql_query_health_facilities_perms": "Location | Query Health Facilities",
+  "location.gql_mutation_create_locations_perms": "Location | Mutation Create Locations",
+  "location.gql_mutation_edit_locations_perms": "Location | Mutation Edit Locations",
+  "location.gql_mutation_delete_locations_perms": "Location | Mutation Delete Locations",
+  "location.gql_mutation_move_location_perms": "Location | Mutation Move Location",
+  "location.gql_mutation_create_region_locations_perms": "Location | Mutation Create Region Locations",
+  "location.gql_mutation_create_health_facilities_perms": "Location | Mutation Create Health Facilities",
+  "location.gql_mutation_edit_health_facilities_perms": "Location | Mutation Edit Health Facilities",
+  "location.gql_mutation_delete_health_facilities_perms": "Location | Mutation Delete Health Facilities"
 }
