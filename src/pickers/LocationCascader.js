@@ -16,7 +16,30 @@ const styles = () => ({
   },
 });
 
-const LocationCascader = ({ label = "Location", onChange, readOnly, classes }) => {
+const extractPathFromValue = (location) => {
+  const names = [];
+  const uuids = [];
+
+  let current = location;
+  while (current) {
+    names.unshift(current.name);
+    uuids.unshift(current.uuid);
+    current = current.parent;
+  }
+
+  return {
+    names,
+    uuids,
+  };
+};
+
+const LocationCascader = ({
+  label = "Location",
+  onChange,
+  readOnly,
+  classes,
+  value,
+}) => {
   const modulesManager = useModulesManager();
   const { formatMessage } = useTranslations("location", modulesManager);
   const dispatch = useDispatch();
@@ -27,6 +50,7 @@ const LocationCascader = ({ label = "Location", onChange, readOnly, classes }) =
 
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [defaultValue, setDefaultValue] = useState([]);
 
   const locationCache = useRef({}); // { [parentUuid]: [childLocations] }
   const pendingExpansion = useRef(null);
@@ -84,6 +108,17 @@ const LocationCascader = ({ label = "Location", onChange, readOnly, classes }) =
     pendingExpansion.current = null;
   }, [locState]);
 
+  useEffect(() => {
+    if (value?.uuid) {
+      const { names, uuids } = extractPathFromValue(value);
+      setDefaultValue(uuids);
+      setInputValue(locationLabel(value));
+    } else {
+      setDefaultValue([]);
+      setInputValue("");
+    }
+  }, [value]);
+
   const handleCascaderChange = (uuids, selectedOptions) => {
     const selected = selectedOptions[selectedOptions.length - 1];
     setInputValue(selected?.label || "");
@@ -94,6 +129,7 @@ const LocationCascader = ({ label = "Location", onChange, readOnly, classes }) =
     <div className={classes.root}>
       <Cascader
         options={options}
+        defaultValue={defaultValue}
         loadData={loadData}
         onChange={handleCascaderChange}
         changeOnSelect={true}
@@ -105,6 +141,7 @@ const LocationCascader = ({ label = "Location", onChange, readOnly, classes }) =
           label={label || formatMessage("LocationPicker.label")}
           value={inputValue}
           fullWidth
+          disabled={readOnly}
           InputProps={{
             readOnly: true,
             endAdornment: (<ArrowDropDownIcon 
