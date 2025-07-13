@@ -12,7 +12,7 @@ import {
   DialogTitle,
   Divider,
   Grid,
-} from "@material-ui/core";
+} from "@mui/material";
 
 import { withModulesManager, formatMessage, TextInput, ValidatedTextInput, NumberInput } from "@openimis/fe-core";
 import { locationCodeValidationCheck, locationCodeValidationClear, locationCodeSetValid } from "../actions";

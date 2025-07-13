@@ -1,12 +1,12 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
-import { withTheme, withStyles } from "@material-ui/core/styles";
-import { Paper, List, ListItem, ListItemText, IconButton, ListItemSecondaryAction } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import MoveIcon from "@material-ui/icons/Shuffle";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ReplayIcon from "@material-ui/icons/Replay";
+import { withTheme, withStyles } from "@mui/material/styles";
+import { Paper, List, ListItem, ListItemText, IconButton, ListItemSecondaryAction } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import MoveIcon from "@mui/icons-material/Shuffle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ReplayIcon from "@mui/icons-material/Replay";
 import { formatMessage, formatMessageWithValues, SearcherPane, ProgressOrError } from "@openimis/fe-core";
 import EditLocationDialog from "./EditLocationDialog";
 import MoveLocationDialog from "./MoveLocationDialog";

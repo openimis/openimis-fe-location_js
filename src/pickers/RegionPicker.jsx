@@ -5,7 +5,7 @@ import { injectIntl } from "react-intl";
 import _debounce from "lodash/debounce";
 
 import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { withTheme, withStyles } from "@mui/material/styles";
 
 import { fetchAllRegions, selectRegionLocation, clearLocations } from "../actions.js";
 import { locationLabel } from "../utils";

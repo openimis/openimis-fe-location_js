@@ -14,7 +14,7 @@ import {
   Select,
   InputLabel,
   MenuItem,
-} from "@material-ui/core";
+} from "@mui/material";
 import { injectIntl } from "react-intl";
 import { formatMessage } from "@openimis/fe-core";
 

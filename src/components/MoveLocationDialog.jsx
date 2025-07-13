@@ -15,7 +15,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from "@material-ui/core";
+} from "@mui/material";
 import { formatMessage, withModulesManager, TextInput } from "@openimis/fe-core";
 import { fetchLocations, clearLocations } from "../actions";
 

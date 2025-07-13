@@ -2,9 +2,9 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import _debounce from "lodash/debounce";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { withTheme, withStyles } from "@mui/material/styles";
 import _ from "lodash";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { ControlledField, PublishedComponent } from "@openimis/fe-core";
 
 const styles = (theme) => ({

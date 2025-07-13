@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import { bindActionCreators } from "redux";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
 import {
   fetchLocations,
@@ -18,7 +18,7 @@ import {
   journalize,
   formatMessage
 } from "@openimis/fe-core";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { withTheme, withStyles } from "@mui/material/styles";
 import { RIGHT_REGION_LOCATION_ADD } from "../constants";
 import _ from "lodash";
 
