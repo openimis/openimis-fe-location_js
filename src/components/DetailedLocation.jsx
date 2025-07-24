@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import _debounce from "lodash/debounce";
-import { withTheme, withStyles } from "@mui/material/styles";
+import { withTheme, withStyles } from "@mui/styles";
 import _ from "lodash";
 import { Grid } from "@mui/material";
 import { withModulesManager, ControlledField, PublishedComponent } from "@openimis/fe-core";

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import _ from "lodash";
 
 import { Grid, Box } from "@mui/material";
-import { withTheme, withStyles } from "@mui/material/styles";
+import { withTheme, withStyles } from "@mui/styles";
 
 import { withModulesManager, ControlledField, PublishedComponent } from "@openimis/fe-core";
 import FSPCoarseLocation from "./FSPCoarseLocation";

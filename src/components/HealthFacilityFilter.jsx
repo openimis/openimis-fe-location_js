@@ -4,7 +4,7 @@ import _ from "lodash";
 import _debounce from "lodash/debounce";
 
 import { Grid, FormControlLabel, Checkbox } from "@mui/material";
-import { withTheme, withStyles } from "@mui/material/styles";
+import { withTheme, withStyles } from "@mui/styles";
 
 import { withModulesManager, formatMessage, TextInput, PublishedComponent } from "@openimis/fe-core";
 

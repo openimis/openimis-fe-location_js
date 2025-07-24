@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
-import { withTheme, withStyles } from "@mui/material/styles";
+import { withTheme, withStyles } from "@mui/styles";
 import { Paper, List, ListItem, ListItemText, IconButton, ListItemSecondaryAction } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MoveIcon from "@mui/icons-material/Shuffle";

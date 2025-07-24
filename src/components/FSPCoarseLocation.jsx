@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import _ from "lodash";
 
-import { withTheme, withStyles } from "@mui/material/styles";
+import { withTheme, withStyles } from "@mui/styles";
 import { Grid } from "@mui/material";
 
 import { ControlledField, PublishedComponent } from "@openimis/fe-core";

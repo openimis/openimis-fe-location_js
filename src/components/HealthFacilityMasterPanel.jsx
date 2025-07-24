@@ -1,5 +1,5 @@
 import React from "react";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { withTheme, withStyles } from "@mui/styles";
 import {
   ControlledField,
   PublishedComponent,
@@ -9,7 +9,7 @@ import {
   withModulesManager,
   ValidatedTextInput,
 } from "@openimis/fe-core";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { connect } from "react-redux";
 import { HFCodeValidationCheck, HFCodeValidationClear, HFCodeSetValid } from "../actions";
 

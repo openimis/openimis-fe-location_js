@@ -6,7 +6,6 @@
   "repository": "openimis/openimis-fe-location_js",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
- 
   "engines": {
     "node": ">=8",
     "npm": ">=5"
@@ -18,8 +17,8 @@
     "prepare": "npm run build"
   },
   "peerDependencies": {
-    "react-intl": "^5.8.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "react-intl": "^5.8.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -29,6 +28,10 @@
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
     "@babel/runtime": "^7.9.6",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.17",
+    "@mui/material": "^5.15.14",
     "@vitejs/plugin-react": "^4.5.2",
     "moment": "^2.25.3",
     "prettier": "^2.3.2",
@@ -38,17 +41,13 @@
     "redux": "^4.0.5",
     "redux-api-middleware": "^3.2.1",
     "vite": "^6.3.5",
-    "vite-plugin-svgr": "^4.3.0",
-    "@mui/material": "^5.15.14",
-    "@mui/icons-material": "^5.14.17",
-    "@mui/lab": "^5.0.0-alpha.147",
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.0"
+    "vite-plugin-svgr": "^4.3.0"
   },
   "files": [
     "dist"
   ],
   "dependencies": {
+    "@mui/styles": "^6.4.8",
     "rc-cascader": "^3.34.0"
   }
 }

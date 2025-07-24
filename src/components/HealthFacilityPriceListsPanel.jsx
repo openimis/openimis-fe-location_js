@@ -1,7 +1,7 @@
 import React from "react";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { withTheme, withStyles } from "@mui/styles";
 import { FormPanel, PublishedComponent, ControlledField } from "@openimis/fe-core";
-import { Paper, Grid } from "@material-ui/core";
+import { Paper, Grid } from "@mui/material";
 
 const styles = (theme) => ({
   item: theme.paper.item,

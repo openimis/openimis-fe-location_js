@@ -5,7 +5,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cascader from "rc-cascader";
 import { TextField } from "@mui/material";
-import { withTheme, withStyles } from "@mui/material/styles";
+import { withTheme, withStyles } from "@mui/styles";
 import { useModulesManager, useTranslations } from "@openimis/fe-core";
 import { fetchLocationsStr } from "../actions";
 import { locationLabel } from "../utils";

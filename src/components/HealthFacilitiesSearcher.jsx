@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import _ from "lodash";
-import DeleteIcon from "@material-ui/icons/Delete";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   withModulesManager,
   formatMessage,
@@ -16,7 +16,7 @@ import {
 } from "@openimis/fe-core";
 import HealthFacilityFilter from "./HealthFacilityFilter";
 import { fetchHealthFacilitySummaries, deleteHealthFacility } from "../actions";
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import { RIGHT_HEALTH_FACILITY_DELETE } from "../constants";
 
 class HealthFacilitiesSearcher extends Component {

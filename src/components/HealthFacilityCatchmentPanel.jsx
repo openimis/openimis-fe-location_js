@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import { bindActionCreators } from "redux";
-import { Grid, InputAdornment } from "@material-ui/core";
+import { Grid, InputAdornment } from "@mui/material";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
 import { fetchLocations, clearLocations } from "../actions";
 import { withModulesManager, FormPanel, NumberInput } from "@openimis/fe-core";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { withTheme, withStyles } from "@mui/styles";
 import _ from "lodash";
 
 const styles = (theme) => ({

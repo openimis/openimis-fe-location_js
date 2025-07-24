@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import _debounce from "lodash/debounce";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { withTheme, withStyles } from "@mui/styles";
 import { withModulesManager, formatMessage, AutoSuggestion } from "@openimis/fe-core";
 import { selectDistrictLocation, clearLocations } from "../actions.js";
 import { locationLabel } from "../utils";

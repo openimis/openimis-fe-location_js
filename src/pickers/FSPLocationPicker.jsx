@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { Autocomplete } from "@mui/lab";
+import  Autocomplete  from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
-import { withTheme, withStyles } from "@mui/material/styles";
+import { withTheme, withStyles } from "@mui/styles";
 
 import { withModulesManager, combine, useTranslations } from "@openimis/fe-core";
 import { fetchAvailableLocations } from "../actions";
