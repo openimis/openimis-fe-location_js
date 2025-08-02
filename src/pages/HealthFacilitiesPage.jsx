@@ -2,17 +2,17 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
-import { withTheme, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 import { Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { withHistory, historyPush, formatMessage, Helmet, clearCurrentPaginationPage } from "@openimis/fe-core";
 import HealthFacilitiesSearcher from "../components/HealthFacilitiesSearcher";
 import { RIGHT_HEALTH_FACILITY_ADD, MODULE_NAME } from "../constants";
 
-const styles = (theme) => ({
-  page: theme.page,
-  fab: theme.fab,
-});
+const StyledHealthFacilitiesPage = styled('div')(({ theme }) => ({
+  '& .page': theme.page,
+  '& .fab': theme.fab,
+}));
 
 class HealthFacilitiesPage extends Component {
   onAdd = () => {
@@ -29,19 +29,21 @@ class HealthFacilitiesPage extends Component {
   };
 
   render() {
-    const { classes, rights } = this.props;
+    const { rights } = this.props;
     return (
-      <div className={classes.page}>
-        <Helmet title={formatMessage(this.props.intl, "location", "healthFacilities.page.title")} />
-        <HealthFacilitiesSearcher onDoubleClick={this.onDoubleClick} />
-        {rights.includes(RIGHT_HEALTH_FACILITY_ADD) && (
-          <div className={classes.fab}>
-            <Fab color="primary" onClick={this.onAdd}>
-              <AddIcon />
-            </Fab>
-          </div>
-        )}
-      </div>
+      <StyledHealthFacilitiesPage>
+        <div className="page">
+          <Helmet title={formatMessage(this.props.intl, "location", "healthFacilities.page.title")} />
+          <HealthFacilitiesSearcher onDoubleClick={this.onDoubleClick} />
+          {rights.includes(RIGHT_HEALTH_FACILITY_ADD) && (
+            <div className="fab">
+              <Fab color="primary" onClick={this.onAdd}>
+                <AddIcon />
+              </Fab>
+            </div>
+          )}
+        </div>
+      </StyledHealthFacilitiesPage>
     );
   }
 }
@@ -54,5 +56,5 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({ clearCurrentPaginationPage }, dispatch);
 
 export default injectIntl(
-  withTheme(withStyles(styles)(withHistory(connect(mapStateToProps, mapDispatchToProps)(HealthFacilitiesPage)))),
+  withHistory(connect(mapStateToProps, mapDispatchToProps)(HealthFacilitiesPage)),
 );

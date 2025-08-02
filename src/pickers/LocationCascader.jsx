@@ -5,16 +5,16 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cascader from "rc-cascader";
 import { TextField } from "@mui/material";
-import { withTheme, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 import { useModulesManager, useTranslations } from "@openimis/fe-core";
 import { fetchLocationsStr } from "../actions";
 import { locationLabel } from "../utils";
 
-const styles = () => ({
-  root: {
+const StyledLocationCascader = styled('div')(({ theme }) => ({
+  '& .root': {
     width: "100%",
   },
-});
+}));
 
 const extractPathFromValue = (location) => {
   const names = [];
@@ -37,7 +37,6 @@ const LocationCascader = ({
   label = "Location",
   onChange,
   readOnly,
-  classes,
   value,
 }) => {
   const modulesManager = useModulesManager();
@@ -126,32 +125,34 @@ const LocationCascader = ({
   };
 
   return (
-    <div className={classes.root}>
-      <Cascader
-        options={options}
-        defaultValue={defaultValue}
-        loadData={loadData}
-        onChange={handleCascaderChange}
-        changeOnSelect={true}
-        disabled={readOnly}
-        expandIcon={<KeyboardArrowRightIcon fontSize="small" />}
-        loadingIcon={<AutorenewIcon fontSize="small" className="spin" />}
-      >
-        <TextField
-          label={label || formatMessage("LocationPicker.label")}
-          value={inputValue}
-          fullWidth
+    <StyledLocationCascader>
+      <div className="root">
+        <Cascader
+          options={options}
+          defaultValue={defaultValue}
+          loadData={loadData}
+          onChange={handleCascaderChange}
+          changeOnSelect={true}
           disabled={readOnly}
-          InputProps={{
-            readOnly: true,
-            endAdornment: (<ArrowDropDownIcon 
-              style={{ color: "rgba(0, 0, 0, 0.54)" }}
-            />),
-          }}
-        />
-      </Cascader>
-    </div>
+          expandIcon={<KeyboardArrowRightIcon fontSize="small" />}
+          loadingIcon={<AutorenewIcon fontSize="small" className="spin" />}
+        >
+          <TextField
+            label={label || formatMessage("LocationPicker.label")}
+            value={inputValue}
+            fullWidth
+            disabled={readOnly}
+            InputProps={{
+              readOnly: true,
+              endAdornment: (<ArrowDropDownIcon 
+                style={{ color: "rgba(0, 0, 0, 0.54)" }}
+              />),
+            }}
+          />
+        </Cascader>
+      </div>
+    </StyledLocationCascader>
   );
 };
 
-export default withStyles(styles)(withTheme(LocationCascader));
+export default LocationCascader;

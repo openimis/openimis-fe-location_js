@@ -2,22 +2,22 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import _debounce from "lodash/debounce";
-import { withTheme, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 import _ from "lodash";
 import { Grid } from "@mui/material";
 import { ControlledField, PublishedComponent } from "@openimis/fe-core";
 
-const styles = (theme) => ({
-  dialogTitle: theme.dialog.title,
-  dialogContent: theme.dialog.content,
-  form: {
+const StyledCoarseLocation = styled('div')(({ theme }) => ({
+  '& .dialogTitle': theme.dialog.title,
+  '& .dialogContent': theme.dialog.content,
+  '& .form': {
     padding: 0,
   },
-  item: {
+  '& .item': {
     padding: theme.spacing(1),
   },
-  paperDivider: theme.paper.divider,
-});
+  '& .paperDivider': theme.paper.divider,
+}));
 
 class CoarseLocation extends Component {
   state = {
@@ -61,7 +61,6 @@ class CoarseLocation extends Component {
 
   render() {
     const {
-      classes,
       readOnly,
       required = false,
       filterLabels = true,
@@ -70,48 +69,50 @@ class CoarseLocation extends Component {
     } = this.props;
     const { region, district } = this.state;
     return (
-      <Grid container className={classes.form}>
-        <ControlledField
-          module="location"
-          id={`CoarseLocation.location_0`}
-          field={
-            <Grid item xs={6} className={classes.item}>
-              <PublishedComponent
-                pubRef="location.RegionPicker"
-                readOnly={readOnly}
-                required={required}
-                value={region}
-                withNull={false}
-                filterLabels={filterLabels}
-                onChange={this.onChangeRegion}
-                allRegions={allRegions}
-                title={title}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id={`CoarseLocation.location_1`}
-          field={
-            <Grid item xs={6} className={classes.item}>
-              <PublishedComponent
-                pubRef="location.DistrictPicker"
-                readOnly={readOnly}
-                required={required}
-                value={district}
-                region={this.state.region}
-                withNull={false}
-                filterLabels={filterLabels}
-                onChange={this.onChangeDistrict}
-                title={title}
-              />
-            </Grid>
-          }
-        />
-      </Grid>
+      <StyledCoarseLocation>
+        <Grid container className="form">
+          <ControlledField
+            module="location"
+            id={`CoarseLocation.location_0`}
+            field={
+              <Grid item xs={6} className="item">
+                <PublishedComponent
+                  pubRef="location.RegionPicker"
+                  readOnly={readOnly}
+                  required={required}
+                  value={region}
+                  withNull={false}
+                  filterLabels={filterLabels}
+                  onChange={this.onChangeRegion}
+                  allRegions={allRegions}
+                  title={title}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id={`CoarseLocation.location_1`}
+            field={
+              <Grid item xs={6} className="item">
+                <PublishedComponent
+                  pubRef="location.DistrictPicker"
+                  readOnly={readOnly}
+                  required={required}
+                  value={district}
+                  region={this.state.region}
+                  withNull={false}
+                  filterLabels={filterLabels}
+                  onChange={this.onChangeDistrict}
+                  title={title}
+                />
+              </Grid>
+            }
+          />
+        </Grid>
+      </StyledCoarseLocation>
     );
   }
 }
 
-export default withTheme(withStyles(styles)(CoarseLocation));
+export default CoarseLocation;

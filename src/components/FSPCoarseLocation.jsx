@@ -1,23 +1,23 @@
 import React, { Component } from "react";
 import _ from "lodash";
 
-import { withTheme, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 import { Grid } from "@mui/material";
 
 import { ControlledField, PublishedComponent } from "@openimis/fe-core";
 import { locationLabel } from "../utils";
 
-const styles = (theme) => ({
-  dialogTitle: theme.dialog.title,
-  dialogContent: theme.dialog.content,
-  form: {
+const StyledFSPCoarseLocation = styled('div')(({ theme }) => ({
+  '& .dialogTitle': theme.dialog.title,
+  '& .dialogContent': theme.dialog.content,
+  '& .form': {
     padding: 0,
   },
-  item: {
+  '& .item': {
     padding: theme.spacing(1),
   },
-  paperDivider: theme.paper.divider,
-});
+  '& .paperDivider': theme.paper.divider,
+}));
 
 class FSPCoarseLocation extends Component {
   state = {
@@ -73,46 +73,48 @@ class FSPCoarseLocation extends Component {
   };
 
   render() {
-    const { classes, readOnly, required = false } = this.props;
+    const { readOnly, required = false } = this.props;
     const { region, district } = this.state;
     return (
-      <Grid container className={classes.form}>
-        <ControlledField
-          module="location"
-          id={`FSPCoarseLocation.location_0`}
-          field={
-            <Grid item xs={6} className={classes.item}>
-              <PublishedComponent
-                pubRef="location.FSPLocationPicker"
-                locationLevel={0}
-                value={region}
-                onChange={this.onChangeRegion}
-                readOnly={readOnly}
-                required={required}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id={`FSPCoarseLocation.location_1`}
-          field={
-            <Grid item xs={6} className={classes.item}>
-              <PublishedComponent
-                pubRef="location.FSPLocationPicker"
-                locationLevel={1}
-                value={district}
-                onChange={this.onChangeDistrict}
-                filterOptions={this.filterDistrict}
-                readOnly={readOnly}
-                required={required}
-              />
-            </Grid>
-          }
-        />
-      </Grid>
+      <StyledFSPCoarseLocation>
+        <Grid container className="form">
+          <ControlledField
+            module="location"
+            id={`FSPCoarseLocation.location_0`}
+            field={
+              <Grid item xs={6} className="item">
+                <PublishedComponent
+                  pubRef="location.FSPLocationPicker"
+                  locationLevel={0}
+                  value={region}
+                  onChange={this.onChangeRegion}
+                  readOnly={readOnly}
+                  required={required}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id={`FSPCoarseLocation.location_1`}
+            field={
+              <Grid item xs={6} className="item">
+                <PublishedComponent
+                  pubRef="location.FSPLocationPicker"
+                  locationLevel={1}
+                  value={district}
+                  onChange={this.onChangeDistrict}
+                  filterOptions={this.filterDistrict}
+                  readOnly={readOnly}
+                  required={required}
+                />
+              </Grid>
+            }
+          />
+        </Grid>
+      </StyledFSPCoarseLocation>
     );
   }
 }
 
-export default withTheme(withStyles(styles)(FSPCoarseLocation));
+export default FSPCoarseLocation;

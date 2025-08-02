@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
-import { withTheme, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 import { Paper, List, ListItem, ListItemText, IconButton, ListItemSecondaryAction } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MoveIcon from "@mui/icons-material/Shuffle";
@@ -19,14 +19,14 @@ import {
   RIGHT_REGION_LOCATION_ADD
 } from "../constants";
 
-const styles = (theme) => ({
-  paper: theme.paper.body,
-  paperHeader: theme.paper.header,
-  paperHeaderTitle: theme.paper.title,
-  paperHeaderMessage: theme.paper.message,
-  paperHeaderAction: theme.paper.action,
-  lockedRow: theme.table.lockedRow,
-});
+const StyledTypeLocationsPaper = styled('div')(({ theme }) => ({
+  '& .paper': theme.paper.body,
+  '& .paperHeader': theme.paper.header,
+  '& .paperHeaderTitle': theme.paper.title,
+  '& .paperHeaderMessage': theme.paper.message,
+  '& .paperHeaderAction': theme.paper.action,
+  '& .lockedRow': theme.table.lockedRow,
+}));
 
 class ActionDialogs extends Component {
   render() {
@@ -125,7 +125,6 @@ const StyledActionDialogs = injectIntl(ActionDialogs);
 class ResultPane extends Component {
   render() {
     const {
-      classes,
       rights,
       type,
       fetching,
@@ -154,7 +153,7 @@ class ResultPane extends Component {
                 selected={location && location.id === l.id}
                 onClick={(e) => !!l.uuid && !!onSelect && !readOnly && onSelect(l)}
                 onDoubleClick={(e) => !!l.uuid && !readOnly && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
-                className={!l.uuid || !!l.clientMutationId ? classes.lockedRow : null}
+                className={!l.uuid || !!l.clientMutationId ? "lockedRow" : null}
               >
                 <ListItemText>
                   {l.code} - {l.name}
@@ -185,12 +184,9 @@ class ResultPane extends Component {
   }
 }
 
-const StyledResultPane = withTheme(withStyles(styles)(ResultPane));
-
 class TypeLocationsPaper extends Component {
   render() {
     const {
-      classes,
       rights,
       title,
       onRefresh,
@@ -217,18 +213,20 @@ class TypeLocationsPaper extends Component {
       });
     }
     return (
-      <Paper className={classes.paper}>
-        {!readOnly && <StyledActionDialogs {...others} />}
-        <SearcherPane
-          module="location"
-          title={title || `locations.searcher.title.${this.props.type}`}
-          refresh={onRefresh}
-          SearchIcon={ReplayIcon}
-          actions={actions}
-          readOnly={readOnly}
-          resultsPane={<StyledResultPane onEdit={onEdit} rights={rights} readOnly={readOnly} {...others} />}
-        />
-      </Paper>
+      <StyledTypeLocationsPaper>
+        <Paper className="paper">
+          {!readOnly && <StyledActionDialogs {...others} />}
+          <SearcherPane
+            module="location"
+            title={title || `locations.searcher.title.${this.props.type}`}
+            refresh={onRefresh}
+            SearchIcon={ReplayIcon}
+            actions={actions}
+            readOnly={readOnly}
+            resultsPane={<ResultPane onEdit={onEdit} rights={rights} readOnly={readOnly} {...others} />}
+          />
+        </Paper>
+      </StyledTypeLocationsPaper>
     );
   }
 }
@@ -237,4 +235,4 @@ const mapStateToProps = (state) => ({
   rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
 });
 
-export default withTheme(connect(mapStateToProps)(withStyles(styles)(TypeLocationsPaper)));
+export default connect(mapStateToProps)(TypeLocationsPaper);

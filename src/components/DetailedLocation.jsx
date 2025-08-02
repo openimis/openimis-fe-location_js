@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import _debounce from "lodash/debounce";
-import { withTheme, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 import _ from "lodash";
 import { Grid } from "@mui/material";
 import { withModulesManager, ControlledField, PublishedComponent } from "@openimis/fe-core";
@@ -10,17 +10,17 @@ import { selectLocation } from "../actions";
 import { DEFAULT_LOCATION_TYPES } from "../constants";
 import CoarseLocation from "./CoarseLocation";
 
-const styles = (theme) => ({
-  dialogTitle: theme.dialog.title,
-  dialogContent: theme.dialog.content,
-  form: {
+const StyledDetailedLocation = styled('div')(({ theme }) => ({
+  '& .dialogTitle': theme.dialog.title,
+  '& .dialogContent': theme.dialog.content,
+  '& .form': {
     padding: 0,
   },
-  item: {
+  '& .item': {
     padding: theme.spacing(1),
   },
-  paperDivider: theme.paper.divider,
-});
+  '& .paperDivider': theme.paper.divider,
+}));
 
 class DetailedLocation extends Component {
   state = {};
@@ -95,7 +95,6 @@ class DetailedLocation extends Component {
 
   render() {
     const {
-      classes,
       split = false,
       readOnly,
       required = false,
@@ -104,42 +103,44 @@ class DetailedLocation extends Component {
     } = this.props;
     let grid = split ? 12 : 6;
     return (
-      <Grid container className={classes.form}>
-        <Grid item xs={grid}>
-          <CoarseLocation
-            region={this.state[`location_-2`]}
-            district={this.state[`location_-1`]}
-            readOnly={readOnly}
-            required={required}
-            onChange={this.onDistrictChange}
-            filterLabels={filterLabels}
-            title={title}
-          />
+      <StyledDetailedLocation>
+        <Grid container className="form">
+          <Grid item xs={grid}>
+            <CoarseLocation
+              region={this.state[`location_-2`]}
+              district={this.state[`location_-1`]}
+              readOnly={readOnly}
+              required={required}
+              onChange={this.onDistrictChange}
+              filterLabels={filterLabels}
+              title={title}
+            />
+          </Grid>
+          {_.times(this.locationTypes.length - 2, (i) => (
+            <ControlledField
+              module="location"
+              id={`DetailedLocation.location_${this.locationTypes.length - 2 + i}`}
+              key={`location_${this.locationTypes.length - 2 + i}`}
+              field={
+                <Grid item xs={Math.floor(grid / (this.locationTypes.length - 2))} className="item">
+                  <PublishedComponent
+                    pubRef="location.LocationPicker"
+                    value={this.state[`location_${i}`]}
+                    parentLocation={this.state[`location_${i - 1}`]}
+                    readOnly={readOnly}
+                    required={required}
+                    withNull={true}
+                    filterLabels={filterLabels}
+                    locationLevel={this.locationTypes.length - 2 + i}
+                    onChange={(v) => this.onLocationChange(i, v)}
+                    title={title}
+                  />
+                </Grid>
+              }
+            />
+          ))}
         </Grid>
-        {_.times(this.locationTypes.length - 2, (i) => (
-          <ControlledField
-            module="location"
-            id={`DetailedLocation.location_${this.locationTypes.length - 2 + i}`}
-            key={`location_${this.locationTypes.length - 2 + i}`}
-            field={
-              <Grid item xs={Math.floor(grid / (this.locationTypes.length - 2))} className={classes.item}>
-                <PublishedComponent
-                  pubRef="location.LocationPicker"
-                  value={this.state[`location_${i}`]}
-                  parentLocation={this.state[`location_${i - 1}`]}
-                  readOnly={readOnly}
-                  required={required}
-                  withNull={true}
-                  filterLabels={filterLabels}
-                  locationLevel={this.locationTypes.length - 2 + i}
-                  onChange={(v) => this.onLocationChange(i, v)}
-                  title={title}
-                />
-              </Grid>
-            }
-          />
-        ))}
-      </Grid>
+      </StyledDetailedLocation>
     );
   }
 }
@@ -151,5 +152,5 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default withModulesManager(
-  connect(mapStateToProps, mapDispatchToProps)(withTheme(withStyles(styles)(DetailedLocation))),
+  connect(mapStateToProps, mapDispatchToProps)(DetailedLocation),
 );

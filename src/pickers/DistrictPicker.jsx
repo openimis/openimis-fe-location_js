@@ -3,16 +3,16 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import _debounce from "lodash/debounce";
-import { withTheme, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 import { withModulesManager, formatMessage, AutoSuggestion } from "@openimis/fe-core";
 import { selectDistrictLocation, clearLocations } from "../actions.js";
 import { locationLabel } from "../utils";
 
-const styles = (theme) => ({
-  textField: {
+const StyledDistrictPicker = styled('div')(({ theme }) => ({
+  '& .textField': {
     width: "100%",
   },
-});
+}));
 
 class DistrictPicker extends Component {
   constructor(props) {
@@ -56,28 +56,30 @@ class DistrictPicker extends Component {
     }
 
     return (
-      <AutoSuggestion
-        module="location"
-        items={items}
-        label={!!withLabel && (label || formatMessage(intl, "location", "DistrictPicker.label"))}
-        lookup={locationLabel}
-        getSuggestionValue={locationLabel}
-        renderSuggestion={(a) => <span>{locationLabel(a)}</span>}
-        onSuggestionSelected={this.onSuggestionSelected}
-        onClear={this.onSuggestionSelected}
-        value={value}
-        reset={reset}
-        readOnly={readOnly}
-        required={required}
-        selectThreshold={this.selectThreshold}
-        withNull={withNull}
-        nullLabel={
-          nullLabel || filterLabels
-            ? formatMessage(intl, "location", "location.DistrictPicker.null")
-            : formatMessage(intl, "location", "location.DistrictPicker.none")
-        }
-        title={title}
-      />
+      <StyledDistrictPicker>
+        <AutoSuggestion
+          module="location"
+          items={items}
+          label={!!withLabel && (label || formatMessage(intl, "location", "DistrictPicker.label"))}
+          lookup={locationLabel}
+          getSuggestionValue={locationLabel}
+          renderSuggestion={(a) => <span>{locationLabel(a)}</span>}
+          onSuggestionSelected={this.onSuggestionSelected}
+          onClear={this.onSuggestionSelected}
+          value={value}
+          reset={reset}
+          readOnly={readOnly}
+          required={required}
+          selectThreshold={this.selectThreshold}
+          withNull={withNull}
+          nullLabel={
+            nullLabel || filterLabels
+              ? formatMessage(intl, "location", "location.DistrictPicker.null")
+              : formatMessage(intl, "location", "location.DistrictPicker.none")
+          }
+          title={title}
+        />
+      </StyledDistrictPicker>
     );
   }
 }
@@ -97,5 +99,5 @@ const mapDispatchToProps = (dispatch) =>
   );
 
 export default withModulesManager(
-  connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(DistrictPicker)))),
+  connect(mapStateToProps, mapDispatchToProps)(injectIntl(DistrictPicker)),
 );

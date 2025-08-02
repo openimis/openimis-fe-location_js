@@ -4,21 +4,21 @@ import _ from "lodash";
 import _debounce from "lodash/debounce";
 
 import { Grid, FormControlLabel, Checkbox } from "@mui/material";
-import { withTheme, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 
 import { withModulesManager, formatMessage, TextInput, PublishedComponent } from "@openimis/fe-core";
 
-const styles = (theme) => ({
-  dialogTitle: theme.dialog.title,
-  dialogContent: theme.dialog.content,
-  form: {
+const StyledHealthFacilityFilter = styled('div')(({ theme }) => ({
+  '& .dialogTitle': theme.dialog.title,
+  '& .dialogContent': theme.dialog.content,
+  '& .form': {
     padding: 0,
   },
-  item: {
+  '& .item': {
     padding: theme.spacing(1),
   },
-  paperDivider: theme.paper.divider,
-});
+  '& .paperDivider': theme.paper.divider,
+}));
 
 class HealthFacilityFilter extends Component {
   state = {
@@ -106,160 +106,162 @@ class HealthFacilityFilter extends Component {
   };
 
   render() {
-    const { intl, classes, modulesManager } = this.props;
+    const { intl, modulesManager } = this.props;
     this.isHealthFacilityStatusEnabled  = modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", false);
     return (
-      <Grid container className={classes.form}>
-        <Grid item xs={2} className={classes.item}>
-          <PublishedComponent
-            pubRef="location.RegionPicker"
-            value={this._filterValue("region")}
-            reset={this.state.reset}
-            withNull={true}
-            onChange={this._onChangeRegion}
-          />
+      <StyledHealthFacilityFilter>
+        <Grid container className="form">
+          <Grid item xs={2} className="item">
+            <PublishedComponent
+              pubRef="location.RegionPicker"
+              value={this._filterValue("region")}
+              reset={this.state.reset}
+              withNull={true}
+              onChange={this._onChangeRegion}
+            />
+          </Grid>
+          <Grid item xs={2} className="item">
+            <PublishedComponent
+              pubRef="location.DistrictPicker"
+              value={this._filterValue("district")}
+              region={this._filterValue("region")}
+              reset={this.state.reset}
+              withNull={true}
+              onChange={this._onChangeDistrict}
+            />
+          </Grid>
+          <Grid item xs={2} className="item">
+            <PublishedComponent
+              pubRef="location.HealthFacilityLegalFormPicker"
+              value={this._filterValue("legalForm_Code")}
+              onChange={(v, s) => this._onChange("legalForm_Code", v, s)}
+            />
+          </Grid>
+          <Grid item xs={2} className="item">
+            <PublishedComponent
+              pubRef="location.HealthFacilityLevelPicker"
+              value={this._filterValue("level")}
+              onChange={(v, s) => this._onChange("level", v, s)}
+            />
+          </Grid>
+          <Grid item xs={2} className="item">
+            <PublishedComponent
+              pubRef="medical.CareTypePicker"
+              value={this._filterValue("careType")}
+              onChange={(v, s) => this._onChange("careType", v, s)}
+            />
+          </Grid>
+          <Grid item xs={2} className="item">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  checked={!!this._filterValue("showHistory")}
+                  onChange={(event) => this._onChangeCheckbox("showHistory", event.target.checked)}
+                />
+              }
+              label={formatMessage(intl, "location", "HealthFacilityFilter.showHistory")}
+            />
+          </Grid>
+          <Grid item xs={2} className="item">
+            <TextInput
+              module="location"
+              label="HealthFacilityFilter.code"
+              name="code"
+              value={this._filterTextFieldValue("code")}
+              onChange={(v) =>
+                this.debouncedOnChangeFilter([
+                  {
+                    id: "code",
+                    value: v,
+                    filter: !!v ? `code_Icontains: "${v}"` : null,
+                  },
+                ])
+              }
+            />
+          </Grid>
+          <Grid item xs={4} className="item">
+            <TextInput
+              module="location"
+              label="HealthFacilityFilter.name"
+              name="name"
+              value={this._filterTextFieldValue("name")}
+              onChange={(v) =>
+                this.debouncedOnChangeFilter([
+                  {
+                    id: "name",
+                    value: v,
+                    filter: !!v ? `name_Icontains: "${v}"` : null,
+                  },
+                ])
+              }
+            />
+          </Grid>
+          <Grid item xs={2} className="item">
+            <TextInput
+              module="location"
+              label="HealthFacilityFilter.phone"
+              name="phone"
+              value={this._filterTextFieldValue("phone")}
+              onChange={(v) =>
+                this.debouncedOnChangeFilter([
+                  {
+                    id: "phone",
+                    value: v,
+                    filter: !!v ? `phone_Icontains: "${v}"` : null,
+                  },
+                ])
+              }
+            />
+          </Grid>
+          <Grid item xs={2} className="item">
+            <TextInput
+              module="location"
+              label="HealthFacilityFilter.fax"
+              name="fax"
+              value={this._filterTextFieldValue("fax")}
+              onChange={(v) =>
+                this.debouncedOnChangeFilter([
+                  {
+                    id: "fax",
+                    value: v,
+                    filter: !!v ? `fax_Icontains: "${v}"` : null,
+                  },
+                ])
+              }
+            />
+          </Grid>
+          <Grid item xs={2} className="item">
+            <TextInput
+              module="location"
+              label="HealthFacilityFilter.email"
+              name="email"
+              value={this._filterTextFieldValue("email")}
+              onChange={(v) =>
+                this.debouncedOnChangeFilter([
+                  {
+                    id: "email",
+                    value: v,
+                    filter: !!v ? `email_Icontains: "${v}"` : null,
+                  },
+                ])
+              }
+            />
+          </Grid>
+          {this.isHealthFacilityStatusEnabled && <Grid item xs={3} className="item">
+            <PublishedComponent
+              module="location"
+              label="HealthFacilityForm.status"
+              pubRef="location.HealthFacilityStatusPicker"
+              value={this._filterValue("status")}
+              onChange={(value, s) => this._onChange("status", value, s)}
+              withNull={true}
+            />
+          </Grid>}
         </Grid>
-        <Grid item xs={2} className={classes.item}>
-          <PublishedComponent
-            pubRef="location.DistrictPicker"
-            value={this._filterValue("district")}
-            region={this._filterValue("region")}
-            reset={this.state.reset}
-            withNull={true}
-            onChange={this._onChangeDistrict}
-          />
-        </Grid>
-        <Grid item xs={2} className={classes.item}>
-          <PublishedComponent
-            pubRef="location.HealthFacilityLegalFormPicker"
-            value={this._filterValue("legalForm_Code")}
-            onChange={(v, s) => this._onChange("legalForm_Code", v, s)}
-          />
-        </Grid>
-        <Grid item xs={2} className={classes.item}>
-          <PublishedComponent
-            pubRef="location.HealthFacilityLevelPicker"
-            value={this._filterValue("level")}
-            onChange={(v, s) => this._onChange("level", v, s)}
-          />
-        </Grid>
-        <Grid item xs={2} className={classes.item}>
-          <PublishedComponent
-            pubRef="medical.CareTypePicker"
-            value={this._filterValue("careType")}
-            onChange={(v, s) => this._onChange("careType", v, s)}
-          />
-        </Grid>
-        <Grid item xs={2} className={classes.item}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                color="primary"
-                checked={!!this._filterValue("showHistory")}
-                onChange={(event) => this._onChangeCheckbox("showHistory", event.target.checked)}
-              />
-            }
-            label={formatMessage(intl, "location", "HealthFacilityFilter.showHistory")}
-          />
-        </Grid>
-        <Grid item xs={2} className={classes.item}>
-          <TextInput
-            module="location"
-            label="HealthFacilityFilter.code"
-            name="code"
-            value={this._filterTextFieldValue("code")}
-            onChange={(v) =>
-              this.debouncedOnChangeFilter([
-                {
-                  id: "code",
-                  value: v,
-                  filter: !!v ? `code_Icontains: "${v}"` : null,
-                },
-              ])
-            }
-          />
-        </Grid>
-        <Grid item xs={4} className={classes.item}>
-          <TextInput
-            module="location"
-            label="HealthFacilityFilter.name"
-            name="name"
-            value={this._filterTextFieldValue("name")}
-            onChange={(v) =>
-              this.debouncedOnChangeFilter([
-                {
-                  id: "name",
-                  value: v,
-                  filter: !!v ? `name_Icontains: "${v}"` : null,
-                },
-              ])
-            }
-          />
-        </Grid>
-        <Grid item xs={2} className={classes.item}>
-          <TextInput
-            module="location"
-            label="HealthFacilityFilter.phone"
-            name="phone"
-            value={this._filterTextFieldValue("phone")}
-            onChange={(v) =>
-              this.debouncedOnChangeFilter([
-                {
-                  id: "phone",
-                  value: v,
-                  filter: !!v ? `phone_Icontains: "${v}"` : null,
-                },
-              ])
-            }
-          />
-        </Grid>
-        <Grid item xs={2} className={classes.item}>
-          <TextInput
-            module="location"
-            label="HealthFacilityFilter.fax"
-            name="fax"
-            value={this._filterTextFieldValue("fax")}
-            onChange={(v) =>
-              this.debouncedOnChangeFilter([
-                {
-                  id: "fax",
-                  value: v,
-                  filter: !!v ? `fax_Icontains: "${v}"` : null,
-                },
-              ])
-            }
-          />
-        </Grid>
-        <Grid item xs={2} className={classes.item}>
-          <TextInput
-            module="location"
-            label="HealthFacilityFilter.email"
-            name="email"
-            value={this._filterTextFieldValue("email")}
-            onChange={(v) =>
-              this.debouncedOnChangeFilter([
-                {
-                  id: "email",
-                  value: v,
-                  filter: !!v ? `email_Icontains: "${v}"` : null,
-                },
-              ])
-            }
-          />
-        </Grid>
-        {this.isHealthFacilityStatusEnabled && <Grid item xs={3} className={classes.item}>
-          <PublishedComponent
-            module="location"
-            label="HealthFacilityForm.status"
-            pubRef="location.HealthFacilityStatusPicker"
-            value={this._filterValue("status")}
-            onChange={(value, s) => this._onChange("status", value, s)}
-            withNull={true}
-          />
-        </Grid>}
-      </Grid>
+      </StyledHealthFacilityFilter>
     );
   }
 }
 
-export default withModulesManager(injectIntl(withTheme(withStyles(styles)(HealthFacilityFilter))));
+export default withModulesManager(injectIntl(HealthFacilityFilter));

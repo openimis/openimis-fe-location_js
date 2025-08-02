@@ -1,5 +1,5 @@
 import React from "react";
-import { withTheme, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 import {
   ControlledField,
   PublishedComponent,
@@ -13,9 +13,9 @@ import { Grid } from "@mui/material";
 import { connect } from "react-redux";
 import { HFCodeValidationCheck, HFCodeValidationClear, HFCodeSetValid } from "../actions";
 
-const styles = (theme) => ({
-  item: theme.paper.item,
-});
+const StyledHealthFacilityMasterPanel = styled('div')(({ theme }) => ({
+  '& .item': theme.paper.item,
+}));
 
 class HealthFacilityMasterPanel extends FormPanel {
   constructor(props) {
@@ -53,7 +53,6 @@ class HealthFacilityMasterPanel extends FormPanel {
 
   render() {
     const {
-      classes,
       edited,
       reset,
       readOnly = false,
@@ -62,286 +61,288 @@ class HealthFacilityMasterPanel extends FormPanel {
       HFCodeValidationError,
     } = this.props;
     return (
-      <Grid container>
-        <ControlledField
-          module="location"
-          id="HealthFacility.region"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <PublishedComponent
-                pubRef="location.RegionPicker"
-                value={edited.parentLocation}
-                withNull={false}
-                readOnly={readOnly}
-                onChange={(v, s) => this.updateRegion(v)}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.district"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <PublishedComponent
-                pubRef="location.DistrictPicker"
-                value={edited.location}
-                readOnly={readOnly}
-                region={edited.parentLocation}
-                withNull={false}
-                required={true}
-                onChange={(v, s) => this.updateDistrict(v)}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.legalForm"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <PublishedComponent
-                pubRef="location.HealthFacilityLegalFormPicker"
-                value={!!edited.legalForm ? edited.legalForm.code : null}
-                reset={reset}
-                readOnly={readOnly}
-                withNull={false}
-                required={true}
-                onChange={(v, s) => this.updateAttribute("legalForm", !!v ? { code: v } : null)}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.level"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <PublishedComponent
-                pubRef="location.HealthFacilityLevelPicker"
-                value={edited.level}
-                reset={reset}
-                readOnly={readOnly}
-                withNull={false}
-                required={true}
-                onChange={(v, s) => this.updateAttribute("level", v)}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.subLevel"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <PublishedComponent
-                pubRef="location.HealthFacilitySubLevelPicker"
-                value={!!edited.subLevel ? edited.subLevel.code : null}
-                reset={reset}
-                withNull={false}
-                readOnly={readOnly}
-                onChange={(v, s) => this.updateAttribute("subLevel", !!v ? { code: v } : null)}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.careType"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <PublishedComponent
-                pubRef="medical.CareTypePicker"
-                value={edited.careType}
-                reset={reset}
-                readOnly={readOnly}
-                withNull={false}
-                required={true}
-                onChange={(v, s) => this.updateAttribute("careType", v)}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.code"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <ValidatedTextInput
-                itemQueryIdentifier="healthFacilityCode"
-                shouldValidate={this.shouldValidate}
-                isValid={isHFCodeValid}
-                isValidating={isHFCodeValidating}
-                validationError={HFCodeValidationError}
-                action={HFCodeValidationCheck}
-                clearAction={HFCodeValidationClear}
-                setValidAction={HFCodeSetValid}
-                module="location"
-                label="location.HealthFacilityForm.code"
-                codeTakenLabel="location.HealthFacilityForm.codeTaken"
-                name="code"
-                value={edited.code}
-                readOnly={readOnly}
-                required={true}
-                onChange={(code, s) => this.updateAttribute("code", code)}
-                inputProps={{
-                  "maxLength": this.codeMaxLength,
-                }}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.accCode"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <TextInput
-                module="location"
-                label="HealthFacilityForm.accCode"
-                name="accCode"
-                value={edited.accCode}
-                readOnly={readOnly}
-                required={this.accCodeMandatory}
-                onChange={(v, s) => this.updateAttribute("accCode", v)}
-                inputProps={{
-                  "maxLength": this.accCodeMaxLength,
-                }}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.name"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <TextInput
-                module="location"
-                label="HealthFacilityForm.name"
-                name="name"
-                value={edited.name}
-                readOnly={readOnly}
-                required={true}
-                onChange={(v, s) => this.updateAttribute("name", v)}
-              />
-            </Grid>
-          }
-        />
-        <Grid item xs={2} className={classes.item}>
-          <TextAreaInput
+      <StyledHealthFacilityMasterPanel>
+        <Grid container>
+          <ControlledField
             module="location"
-            label="HealthFacilityForm.address"
-            value={edited.address}
-            rows="2"
-            readOnly={readOnly}
-            onChange={(v, s) => this.updateAttribute("address", v)}
+            id="HealthFacility.region"
+            field={
+              <Grid item xs={2} className="item">
+                <PublishedComponent
+                  pubRef="location.RegionPicker"
+                  value={edited.parentLocation}
+                  withNull={false}
+                  readOnly={readOnly}
+                  onChange={(v, s) => this.updateRegion(v)}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.district"
+            field={
+              <Grid item xs={2} className="item">
+                <PublishedComponent
+                  pubRef="location.DistrictPicker"
+                  value={edited.location}
+                  readOnly={readOnly}
+                  region={edited.parentLocation}
+                  withNull={false}
+                  required={true}
+                  onChange={(v, s) => this.updateDistrict(v)}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.legalForm"
+            field={
+              <Grid item xs={2} className="item">
+                <PublishedComponent
+                  pubRef="location.HealthFacilityLegalFormPicker"
+                  value={!!edited.legalForm ? edited.legalForm.code : null}
+                  reset={reset}
+                  readOnly={readOnly}
+                  withNull={false}
+                  required={true}
+                  onChange={(v, s) => this.updateAttribute("legalForm", !!v ? { code: v } : null)}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.level"
+            field={
+              <Grid item xs={2} className="item">
+                <PublishedComponent
+                  pubRef="location.HealthFacilityLevelPicker"
+                  value={edited.level}
+                  reset={reset}
+                  readOnly={readOnly}
+                  withNull={false}
+                  required={true}
+                  onChange={(v, s) => this.updateAttribute("level", v)}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.subLevel"
+            field={
+              <Grid item xs={2} className="item">
+                <PublishedComponent
+                  pubRef="location.HealthFacilitySubLevelPicker"
+                  value={!!edited.subLevel ? edited.subLevel.code : null}
+                  reset={reset}
+                  withNull={false}
+                  readOnly={readOnly}
+                  onChange={(v, s) => this.updateAttribute("subLevel", !!v ? { code: v } : null)}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.careType"
+            field={
+              <Grid item xs={2} className="item">
+                <PublishedComponent
+                  pubRef="medical.CareTypePicker"
+                  value={edited.careType}
+                  reset={reset}
+                  readOnly={readOnly}
+                  withNull={false}
+                  required={true}
+                  onChange={(v, s) => this.updateAttribute("careType", v)}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.code"
+            field={
+              <Grid item xs={2} className="item">
+                <ValidatedTextInput
+                  itemQueryIdentifier="healthFacilityCode"
+                  shouldValidate={this.shouldValidate}
+                  isValid={isHFCodeValid}
+                  isValidating={isHFCodeValidating}
+                  validationError={HFCodeValidationError}
+                  action={HFCodeValidationCheck}
+                  clearAction={HFCodeValidationClear}
+                  setValidAction={HFCodeSetValid}
+                  module="location"
+                  label="location.HealthFacilityForm.code"
+                  codeTakenLabel="location.HealthFacilityForm.codeTaken"
+                  name="code"
+                  value={edited.code}
+                  readOnly={readOnly}
+                  required={true}
+                  onChange={(code, s) => this.updateAttribute("code", code)}
+                  inputProps={{
+                    "maxLength": this.codeMaxLength,
+                  }}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.accCode"
+            field={
+              <Grid item xs={2} className="item">
+                <TextInput
+                  module="location"
+                  label="HealthFacilityForm.accCode"
+                  name="accCode"
+                  value={edited.accCode}
+                  readOnly={readOnly}
+                  required={this.accCodeMandatory}
+                  onChange={(v, s) => this.updateAttribute("accCode", v)}
+                  inputProps={{
+                    "maxLength": this.accCodeMaxLength,
+                  }}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.name"
+            field={
+              <Grid item xs={2} className="item">
+                <TextInput
+                  module="location"
+                  label="HealthFacilityForm.name"
+                  name="name"
+                  value={edited.name}
+                  readOnly={readOnly}
+                  required={true}
+                  onChange={(v, s) => this.updateAttribute("name", v)}
+                />
+              </Grid>
+            }
+          />
+          <Grid item xs={2} className="item">
+            <TextAreaInput
+              module="location"
+              label="HealthFacilityForm.address"
+              value={edited.address}
+              rows="2"
+              readOnly={readOnly}
+              onChange={(v, s) => this.updateAttribute("address", v)}
+            />
+          </Grid>
+          <ControlledField
+            module="location"
+            id="HealthFacility.phone"
+            field={
+              <Grid item xs={1} className="item">
+                <TextInput
+                  module="location"
+                  label="HealthFacilityForm.phone"
+                  name="phone"
+                  value={edited.phone}
+                  readOnly={readOnly}
+                  onChange={(v, s) => this.updateAttribute("phone", v)}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.contractStartDate"
+            field={
+              <Grid item xs={2} className="item">
+                <PublishedComponent
+                  pubRef="core.DatePicker"
+                  value={edited.contractStartDate}
+                  module="location"
+                  label="HealthFacilityForm.contractStartDate"
+                  reset={reset}
+                  onChange={(date) => this.updateAttribute("contractStartDate", date)}
+                  readOnly={readOnly}
+                  required={this.isHealthFacilityContractMandatory}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.contractEndDate"
+            field={
+              <Grid item xs={2} className="item">
+                <PublishedComponent
+                  pubRef="core.DatePicker"
+                  value={edited.contractEndDate}
+                  module="location"
+                  label="HealthFacilityForm.contractEndDate"
+                  reset={reset}
+                  onChange={(date) => this.updateAttribute("contractEndDate", date)}
+                  readOnly={readOnly}
+                  required={this.isHealthFacilityContractMandatory}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id="HealthFacility.fax"
+            field={
+              <Grid item xs={1} className="item">
+                <TextInput
+                  module="location"
+                  label="HealthFacilityForm.fax"
+                  name="fax"
+                  value={edited.fax}
+                  readOnly={readOnly}
+                  onChange={(v, s) => this.updateAttribute("fax", v)}
+                />
+              </Grid>
+            }
+          />
+          {!!this.isHealthFacilityStatusEnabled && <ControlledField
+            module="location"
+            id="HealthFacility.status"
+            field={
+              <Grid item xs={1} className="item">
+                <PublishedComponent
+                  pubRef="location.HealthFacilityStatusPicker"
+                  value={edited.status}
+                  module="location"
+                  withNull={false}
+                  label="HealthFacilityForm.status"
+                  reset={reset}
+                  onChange={(value) => this.updateAttribute("status", value)}
+                  readOnly={readOnly}
+                  required={true}
+                />
+              </Grid>
+            }
+          />}
+          <ControlledField
+            module="location"
+            id="HealthFacility.email"
+            field={
+              <Grid item xs={2} className="item">
+                <TextInput
+                  module="location"
+                  label="HealthFacilityForm.email"
+                  name="email"
+                  value={edited.email}
+                  readOnly={readOnly}
+                  onChange={(v, s) => this.updateAttribute("email", v)}
+                />
+              </Grid>
+            }
           />
         </Grid>
-        <ControlledField
-          module="location"
-          id="HealthFacility.phone"
-          field={
-            <Grid item xs={1} className={classes.item}>
-              <TextInput
-                module="location"
-                label="HealthFacilityForm.phone"
-                name="phone"
-                value={edited.phone}
-                readOnly={readOnly}
-                onChange={(v, s) => this.updateAttribute("phone", v)}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.contractStartDate"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <PublishedComponent
-                pubRef="core.DatePicker"
-                value={edited.contractStartDate}
-                module="location"
-                label="HealthFacilityForm.contractStartDate"
-                reset={reset}
-                onChange={(date) => this.updateAttribute("contractStartDate", date)}
-                readOnly={readOnly}
-                required={this.isHealthFacilityContractMandatory}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.contractEndDate"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <PublishedComponent
-                pubRef="core.DatePicker"
-                value={edited.contractEndDate}
-                module="location"
-                label="HealthFacilityForm.contractEndDate"
-                reset={reset}
-                onChange={(date) => this.updateAttribute("contractEndDate", date)}
-                readOnly={readOnly}
-                required={this.isHealthFacilityContractMandatory}
-              />
-            </Grid>
-          }
-        />
-        <ControlledField
-          module="location"
-          id="HealthFacility.fax"
-          field={
-            <Grid item xs={1} className={classes.item}>
-              <TextInput
-                module="location"
-                label="HealthFacilityForm.fax"
-                name="fax"
-                value={edited.fax}
-                readOnly={readOnly}
-                onChange={(v, s) => this.updateAttribute("fax", v)}
-              />
-            </Grid>
-          }
-        />
-        {!!this.isHealthFacilityStatusEnabled && <ControlledField
-          module="location"
-          id="HealthFacility.status"
-          field={
-            <Grid item xs={1} className={classes.item}>
-              <PublishedComponent
-                pubRef="location.HealthFacilityStatusPicker"
-                value={edited.status}
-                module="location"
-                withNull={false}
-                label="HealthFacilityForm.status"
-                reset={reset}
-                onChange={(value) => this.updateAttribute("status", value)}
-                readOnly={readOnly}
-                required={true}
-              />
-            </Grid>
-          }
-        />}
-        <ControlledField
-          module="location"
-          id="HealthFacility.email"
-          field={
-            <Grid item xs={2} className={classes.item}>
-              <TextInput
-                module="location"
-                label="HealthFacilityForm.email"
-                name="email"
-                value={edited.email}
-                readOnly={readOnly}
-                onChange={(v, s) => this.updateAttribute("email", v)}
-              />
-            </Grid>
-          }
-        />
-      </Grid>
+      </StyledHealthFacilityMasterPanel>
     );
   }
 }
@@ -353,4 +354,4 @@ const mapStateToProps = (state) => ({
   savedHFCode: state.loc?.healthFacility?.code,
 });
 
-export default withModulesManager(connect(mapStateToProps)(withTheme(withStyles(styles)(HealthFacilityMasterPanel))));
+export default withModulesManager(connect(mapStateToProps)(HealthFacilityMasterPanel));

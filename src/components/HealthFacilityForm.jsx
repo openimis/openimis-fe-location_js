@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import ReplayIcon from "@mui/icons-material/Replay";
-import { withTheme, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 
 import {
   ProgressOrError,
@@ -23,9 +23,9 @@ import HealthFacilityCatchmentPanel from "../components/HealthFacilityCatchmentP
 
 const HF_FORM_CONTRIBUTION_KEY = "location.HealthFacility";
 
-const styles = (theme) => ({
-  lockedPage: theme.page.locked,
-});
+const StyledHealthFacilityForm = styled('div')(({ theme }) => ({
+  '& .lockedPage': theme.page.locked,
+}));
 
 class HealthFacilityForm extends Component {
   state = {
@@ -176,7 +176,7 @@ class HealthFacilityForm extends Component {
   };
 
   render() {
-    const { fetchingHealthFacility, fetchedHealthFacility, errorHealthFacility, add, save, back, classes } = this.props;
+    const { fetchingHealthFacility, fetchedHealthFacility, errorHealthFacility, add, save, back } = this.props;
     const { healthFacility_uuid, lockNew, healthFacility, newHealthFacility, reset, update, isSaved } = this.state;
     let readOnly = lockNew || !!healthFacility.validityTo || isSaved;
 
@@ -189,38 +189,40 @@ class HealthFacilityForm extends Component {
     ];
 
     return (
-      <div className={readOnly ? classes.lockedPage : null}>
-        <Helmet
-          title={formatMessageWithValues(this.props.intl, "location", "healthFacility.edit.page.title", {
-            code: this.state.healthFacility.code,
-          })}
-        />
-        <ProgressOrError progress={fetchingHealthFacility} error={errorHealthFacility} />
-        {(!!fetchedHealthFacility || !healthFacility_uuid) && (
-          <Fragment>
-            <Form
-              module="location"
-              edited_id={healthFacility_uuid}
-              edited={healthFacility}
-              reset={reset}
-              update={update}
-              title="healthFacility.edit.title"
-              titleParams={{ code: healthFacility.code }}
-              back={back}
-              add={!!add && !newHealthFacility ? this._add : null}
-              save={!!save ? this._save : null}
-              canSave={this.canSave}
-              readOnly={readOnly}
-              HeadPanel={HealthFacilityMasterPanel}
-              Panels={[this.HealthFacilityPriceListsPanel, HealthFacilityCatchmentPanel]}
-              onEditedChanged={this.onEditedChanged}
-              actions={actions}
-              contributedPanelsKey={HF_FORM_CONTRIBUTION_KEY}
-              openDirty={save}
-            />
-          </Fragment>
-        )}
-      </div>
+      <StyledHealthFacilityForm>
+        <div className={readOnly ? "lockedPage" : null}>
+          <Helmet
+            title={formatMessageWithValues(this.props.intl, "location", "healthFacility.edit.page.title", {
+              code: this.state.healthFacility.code,
+            })}
+          />
+          <ProgressOrError progress={fetchingHealthFacility} error={errorHealthFacility} />
+          {(!!fetchedHealthFacility || !healthFacility_uuid) && (
+            <Fragment>
+              <Form
+                module="location"
+                edited_id={healthFacility_uuid}
+                edited={healthFacility}
+                reset={reset}
+                update={update}
+                title="healthFacility.edit.title"
+                titleParams={{ code: healthFacility.code }}
+                back={back}
+                add={!!add && !newHealthFacility ? this._add : null}
+                save={!!save ? this._save : null}
+                canSave={this.canSave}
+                readOnly={readOnly}
+                HeadPanel={HealthFacilityMasterPanel}
+                Panels={[this.HealthFacilityPriceListsPanel, HealthFacilityCatchmentPanel]}
+                onEditedChanged={this.onEditedChanged}
+                actions={actions}
+                contributedPanelsKey={HF_FORM_CONTRIBUTION_KEY}
+                openDirty={save}
+              />
+            </Fragment>
+          )}
+        </div>
+      </StyledHealthFacilityForm>
     );
   }
 }
@@ -243,6 +245,6 @@ const mapDispatchToProps = (dispatch) => {
 
 export default withHistory(
   withModulesManager(
-    connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(HealthFacilityForm)))),
+    connect(mapStateToProps, mapDispatchToProps)(injectIntl(HealthFacilityForm)),
   ),
 );
