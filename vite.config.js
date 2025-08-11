@@ -43,15 +43,12 @@ export default defineConfig({
         "history",
         "@mui/material",
         "@mui/icons-material",
-        "@material-ui/lab",
-        "@material-ui/pickers",
+     
         "@mui/material/styles",
         "@date-io/core",
         "@date-io/moment",
         "zxcvbn",
-        /^@material-ui\/icons\/.*/,
-        /^@material-ui\/core\/.*/,
-        /^@material-ui\/lab\/.*/,
+ 
         /^@babel-.*/,
         /^@date-io\/.*/,
         /^@openimis.*/,
