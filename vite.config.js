@@ -44,7 +44,7 @@ export default defineConfig({
         "@mui/material",
         "@mui/icons-material",
      
-        "@mui/material/styles",
+        "@mui/core/styles",
         "@date-io/core",
         "@date-io/moment",
         "zxcvbn",
