@@ -34,7 +34,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
-    "@vitejs/plugin-react": "^4.5.2",
+    "@vitejs/plugin-react": "^5.0.0",
     "moment": "^2.25.3",
     "prettier": "^2.3.2",
     "prop-types": "^15.7.2",
@@ -44,7 +44,7 @@
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.5",
     "redux-api-middleware": "^3.2.1",
-    "vite": "^6.3.5",
+    "vite": "^7.1.2",
     "vite-plugin-svgr": "^4.3.0"
   },
   "files": [
