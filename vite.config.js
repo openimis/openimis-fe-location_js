@@ -10,7 +10,7 @@ export default defineConfig({
       entry: resolve(__dirname, "src/index.jsx"),
       name: "OpenIMISFeLocation",
       formats: ["es", "cjs"],
-      fileName: (format) => `index.${format === "es" ? "es" : "cjs"}.js`,
+      fileName: (format) => `index.${format === 'es' ? 'es' : 'cjs'}.js`,
     },
     sourcemap: true,
     outDir: "dist",
