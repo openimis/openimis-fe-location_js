@@ -14,6 +14,10 @@ const StyledRegionPicker = styled('div')(({ theme }) => ({
   '& .textField': {
     width: "100%",
   },
+  '& .MuiFormControl-root': {
+    width: '100%',
+    minWidth: 360,
+  },
 }));
 
 let allRegionsFlag = false;

@@ -21,6 +21,9 @@ const StyledDetailedLocationFilter = styled('div')(({ theme }) => ({
     padding: theme.spacing(1),
   },
   '& .paperDivider': theme.paper.divider,
+  '& .MuiAutocomplete-root': {
+    minWidth: 360,
+  },
 }));
 
 class DetailedLocationFilter extends Component {
@@ -96,7 +99,11 @@ class DetailedLocationFilter extends Component {
               id={`DetailedLocationFilter.location_${this.locationTypes.length - 2 + i}`}
               key={`location_${this.locationTypes.length - 2 + i}`}
               field={
-                <Grid item xs={Math.floor(grid / (this.locationTypes.length - 2))} className="item">
+                <Grid
+                  item
+                  xs={(this.locationTypes.length - 2) === 2 ? 6 : Math.floor(grid / (this.locationTypes.length - 2))}
+                  className="item"
+                >
                   <PublishedComponent
                     pubRef="location.LocationPicker"
                     value={this._filterValue(`${this.props.anchor}_${this.locationTypes.length - 2 + i}`)}

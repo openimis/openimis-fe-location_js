@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Autocomplete  from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
+import Popper from "@mui/material/Popper";
 import { styled } from "@mui/material/styles";
 import { withModulesManager, combine, useTranslations, useDebounceCb } from "@openimis/fe-core";
 import _debounce from "lodash/debounce";
@@ -12,6 +13,25 @@ import _ from "lodash";
 const StyledLocationPicker = styled('div')(({ theme }) => ({
   '& .textField': {
     width: "100%",
+  },
+  '& .MuiAutocomplete-root': {
+    width: '100%',
+    minWidth: 360,
+  },
+  '& .MuiFormControl-root': {
+    width: '100%',
+    minWidth: 360,
+  },
+}));
+
+const LocationDropdownPopper = styled(Popper)(({ theme }) => ({
+  width: 'auto',
+  minWidth: 300,
+  '& .MuiAutocomplete-paper': {
+    width: 'max-content',
+  },
+  '& .MuiAutocomplete-listbox': {
+    width: 'max-content',
   },
 }));
 
@@ -105,6 +125,7 @@ const LocationPicker = (props) => {
     <StyledLocationPicker>
       <Autocomplete
         key={resetKey}
+        fullWidth
         loadingText={formatMessage("LocationPicker.loadingText")}
         openText={formatMessage("LocationPicker.openText")}
         closeText={formatMessage("LocationPicker.closeText")}
@@ -125,10 +146,12 @@ const LocationPicker = (props) => {
         filterOptions={filterOptions}
         filterSelectedOptions={filterSelectedOptions}
         onInputChange={(__, searchString) => onInputChange(searchString)}
+        PopperComponent={LocationDropdownPopper}
         renderInput={(inputProps) => (
           <TextField
             {...inputProps}
             variant="standard"
+            fullWidth
             required={required}
             label={withLabel && (label || formatMessage(`Location${locationLevel}Picker.label`))}
             placeholder={

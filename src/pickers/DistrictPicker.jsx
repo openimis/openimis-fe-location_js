@@ -12,6 +12,33 @@ const StyledDistrictPicker = styled('div')(({ theme }) => ({
   '& .textField': {
     width: "100%",
   },
+  '& .MuiFormControl-root': {
+    minWidth: '360px',
+    width: '100%',
+  },
+  '& .MuiInputLabel-root': {
+    fontSize: '1rem',
+    fontWeight: 500,
+  },
+  '& .MuiTextField-root': {
+    minHeight: '56px',
+    '& .MuiInputBase-root': {
+      minHeight: '56px',
+      fontSize: '1rem',
+      padding: theme.spacing(0.5, 1),
+    },
+    '& .MuiInputBase-input': {
+      padding: theme.spacing(1.5, 1),
+      fontSize: '1rem',
+    },
+  },
+  '& .MuiAutocomplete-root': {
+    minWidth: '200px',
+    '& .MuiInputBase-root': {
+      minHeight: '56px',
+      padding: theme.spacing(0.5, 1),
+    },
+  },
 }));
 
 class DistrictPicker extends Component {
