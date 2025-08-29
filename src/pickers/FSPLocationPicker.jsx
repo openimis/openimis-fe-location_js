@@ -12,6 +12,15 @@ import { locationLabel } from "../utils";
 const StyledFSPLocationPicker = styled('div')(({ theme }) => ({
   '& .textField': {
     width: "100%",
+    minWidth: '150px',
+  },
+  '& .MuiAutocomplete-root': {
+    minWidth: '150px',
+    width: "100%",
+  },
+  '& .MuiTextField-root': {
+    minWidth: '150px',
+    width: "100%",
   },
 }));
 

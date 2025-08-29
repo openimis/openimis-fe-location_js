@@ -4,7 +4,9 @@ import { resolve } from "path";
 import svgr from "vite-plugin-svgr";
 
 export default defineConfig({
-  plugins: [react(), svgr()],
+  plugins: [react({
+    jsxRuntime: 'automatic',
+  }), svgr()],
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.jsx"),
