@@ -7,6 +7,7 @@ import AddIcon from "@material-ui/icons/Add";
 import MoveIcon from "@material-ui/icons/Shuffle";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ReplayIcon from "@material-ui/icons/Replay";
+import Tooltip from "@material-ui/core/Tooltip";
 import { formatMessage, formatMessageWithValues, SearcherPane, ProgressOrError } from "@openimis/fe-core";
 import EditLocationDialog from "./EditLocationDialog";
 import MoveLocationDialog from "./MoveLocationDialog";
@@ -162,14 +163,18 @@ class ResultPane extends Component {
                 {!!l.uuid && (
                   <ListItemSecondaryAction>
                     {!!onMove && rights.includes(RIGHT_LOCATION_MOVE) && (
-                      <IconButton onClick={(e) => onMove(l)}>
-                        <MoveIcon />
-                      </IconButton>
+                      <Tooltip title="Move">
+                        <IconButton onClick={(e) => onMove(l)}>
+                          <MoveIcon />
+                        </IconButton>
+                      </Tooltip>
                     )}
                     {!!onDelete && rights.includes(RIGHT_LOCATION_DELETE) && (
-                      <IconButton edge="end" onClick={(e) => onDelete(l, idx)}>
-                        <DeleteIcon />
-                      </IconButton>
+                      <Tooltip title="Delete">
+                        <IconButton edge="end" onClick={(e) => onDelete(l, idx)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
                     )}
                     {!!InlineInput && (
                       <InlineInput location={l} onChange={onChange} inlineValue={inlineValue} readOnly={readOnly} />
