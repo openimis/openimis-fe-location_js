@@ -10,7 +10,7 @@ const styles = (theme) => ({
 
 class HealthFacilityPriceListsPanel extends FormPanel {
   render() {
-    const { classes, edited, readOnly } = this.props;
+    const { classes, edited, readOnly, reload } = this.props;
     return (
       <Paper className={classes.paper}>
         <Grid container>
@@ -20,6 +20,7 @@ class HealthFacilityPriceListsPanel extends FormPanel {
             field={
               <Grid item xs={6} className={classes.item}>
                 <PublishedComponent
+                  reload={reload}
                   pubRef="medical_pricelist.ServicesPriceListPicker"
                   value={edited.servicesPricelist}
                   nullLabel="empty"
@@ -38,6 +39,7 @@ class HealthFacilityPriceListsPanel extends FormPanel {
             field={
               <Grid item xs={6} className={classes.item}>
                 <PublishedComponent
+                  reload={reload}
                   pubRef="medical_pricelist.ItemsPriceListPicker"
                   value={edited.itemsPricelist}
                   nullLabel="empty"
