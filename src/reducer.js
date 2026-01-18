@@ -57,6 +57,10 @@ function reducer(
     fetchingAllL1s: false,
     fetchedAllL1s: false,
     errorAllL1s: null,
+    locationsByUuids: [],
+    fetchingLocationsByUuids: false,
+    fetchedLocationsByUuids: false,
+    errorLocationsByUuids: null,
   },
   action,
 ) {
@@ -514,6 +518,37 @@ function reducer(
       return dispatchMutationResp(state, "updateHealthFacility", action);
     case "LOCATION_DELETE_HEALTH_FACILITY_RESP":
       return dispatchMutationResp(state, "deleteHealthFacility", action);
+    case "LOCATION_LOCATIONS_BY_UUIDS_REQ":
+      return {
+        ...state,
+        fetchingLocationsByUuids: true,
+        fetchedLocationsByUuids: false,
+        locationsByUuids: [],
+        errorLocationsByUuids: null,
+      };
+    case "LOCATION_LOCATIONS_BY_UUIDS_RESP":
+      const fetchedLocations = parseData(action.payload.data.locationsStr);
+      return {
+        ...state,
+        fetchingLocationsByUuids: false,
+        fetchedLocationsByUuids: true,
+        locationsByUuids: fetchedLocations,
+        errorLocationsByUuids: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_LOCATIONS_BY_UUIDS_ERR":
+      return {
+        ...state,
+        fetchingLocationsByUuids: false,
+        errorLocationsByUuids: formatServerError(action.payload),
+      };
+    case "LOCATION_LOCATIONS_BY_UUIDS_EMPTY":
+      return {
+        ...state,
+        fetchingLocationsByUuids: false,
+        fetchedLocationsByUuids: true,
+        locationsByUuids: [],
+        errorLocationsByUuids: null,
+      };
     case "CORE_AUTH_LOGOUT":
       return {
         ...state,

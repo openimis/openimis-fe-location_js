@@ -4,15 +4,31 @@ import AutorenewIcon from '@material-ui/icons/Autorenew';
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cascader from "rc-cascader";
-import { TextField } from "@material-ui/core";
+import { TextField, Chip } from "@material-ui/core";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { useModulesManager, useTranslations } from "@openimis/fe-core";
-import { fetchLocationsStr } from "../actions";
+import { fetchLocationsStr, fetchLocationsByUuids } from "../actions";
 import { locationLabel } from "../utils";
+import _ from "lodash";
 
 const styles = () => ({
   root: {
     width: "100%",
+  },
+  chipsContainer: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "4px",
+    flex: 1,
+    minWidth: 0,
+    margin: "3px",
+  },
+  inputRoot: {
+    flexWrap: "wrap",
+    "& input": {
+      width: 0,
+      minWidth: 0,
+    },
   },
 });
 
@@ -39,6 +55,7 @@ const LocationCascader = ({
   readOnly,
   classes,
   value,
+  multiple = false,
 }) => {
   const modulesManager = useModulesManager();
   const { formatMessage } = useTranslations("location", modulesManager);
@@ -49,7 +66,7 @@ const LocationCascader = ({
   );
 
   const [options, setOptions] = useState([]);
-  const [inputValue, setInputValue] = useState("");
+  const [locations, setLocations] = useState(multiple ? [] : "");
   const [defaultValue, setDefaultValue] = useState([]);
 
   const locationCache = useRef({}); // { [parentUuid]: [childLocations] }
@@ -112,17 +129,53 @@ const LocationCascader = ({
     if (value?.uuid) {
       const { names, uuids } = extractPathFromValue(value);
       setDefaultValue(uuids);
-      setInputValue(locationLabel(value));
+      setLocations(locationLabel(value));
+    } else if (multiple && value?.length) {
+      if(!_.isEqual(_.sortBy(value.map(v => v.uuid)), _.sortBy((locations || []).map(v => v.uuid)))) {
+        const hasPartialLocations = value.some(loc => loc.uuid && !loc.name);
+        if (hasPartialLocations) {
+          const uuidsToFetch = value.filter(loc => loc.uuid && !loc.name).map(loc => loc.uuid);
+          if (uuidsToFetch.length > 0) {
+            dispatch(fetchLocationsByUuids(uuidsToFetch, maxLevel));
+          }
+        } else {
+          setDefaultValue(value.map(v => v.uuid));
+          setLocations(value)
+        }
+      }
     } else {
       setDefaultValue([]);
-      setInputValue("");
+      setLocations("");
     }
-  }, [value]);
+  }, [value, multiple]);
+
+  useEffect(() => {
+    if (locState.fetchedLocationsByUuids && locState.locationsByUuids?.length > 0) {
+      const fetchedLocationsMap = new Map(
+        locState.locationsByUuids.map(loc => [loc.uuid, loc])
+      );
+
+      if (multiple && Array.isArray(value) && value.length > 0) {
+        const enrichedLocations = value.map(loc => {
+          if (loc.uuid && !loc.name) {
+            return fetchedLocationsMap.get(loc.uuid) || loc;
+          }
+          return loc;
+        });
+
+        setDefaultValue(enrichedLocations.map(v => v.uuid));
+        setLocations(enrichedLocations);
+      }
+    }
+  }, [locState.fetchedLocationsByUuids, locState.locationsByUuids]);
 
   const handleCascaderChange = (uuids, selectedOptions) => {
-    const selected = selectedOptions[selectedOptions.length - 1];
-    setInputValue(selected?.label || "");
-    onChange?.(selected.raw, locationLabel(selected.raw));
+    // selectedOptions contains the selected location and all its parent levels for each selection
+    // unwrap to keep only the lowest level for each selection
+    const unnestedOptions = (multiple ? selectedOptions : [selectedOptions]).map(opts => opts[opts.length - 1])
+    const rawVals = unnestedOptions.map(selected => selected.raw)
+    setLocations(rawVals);
+    onChange?.(multiple ? rawVals : rawVals[0]);
   };
 
   return (
@@ -134,17 +187,32 @@ const LocationCascader = ({
         onChange={handleCascaderChange}
         changeOnSelect={true}
         disabled={readOnly}
+        checkable={multiple}
         expandIcon={<KeyboardArrowRightIcon fontSize="small" />}
         loadingIcon={<AutorenewIcon fontSize="small" className="spin" />}
       >
         <TextField
           label={label || formatMessage("LocationPicker.label")}
-          value={inputValue}
+          value={multiple ? "" : locations}
           fullWidth
           disabled={readOnly}
           InputProps={{
             readOnly: true,
-            endAdornment: (<ArrowDropDownIcon 
+            classes: multiple && Array.isArray(locations) && locations.length > 0 ? {
+              root: classes.inputRoot,
+            } : undefined,
+            startAdornment: multiple && Array.isArray(locations) && locations.length > 0 ? (
+              <div className={classes.chipsContainer}>
+                {locations.map((location) => (
+                  <Chip
+                    key={location.uuid}
+                    label={locationLabel(location)}
+                    disabled={readOnly}
+                  />
+                ))}
+              </div>
+            ) : null,
+            endAdornment: (<ArrowDropDownIcon
               style={{ color: "rgba(0, 0, 0, 0.54)" }}
             />),
           }}
