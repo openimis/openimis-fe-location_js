@@ -20,7 +20,7 @@
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-intl": "^5.25.1"
+    "react-intl": "^7.1.11"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
