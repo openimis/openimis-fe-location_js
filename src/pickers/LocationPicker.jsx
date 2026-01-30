@@ -141,7 +141,7 @@ const LocationPicker = (props) => {
         autoComplete
         value={value}
         getOptionLabel={(option) => locationLabel(option)}
-        getOptionSelected={(option, value) => option.id === value.id}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
         onChange={handleChange}
         filterOptions={filterOptions}
         filterSelectedOptions={filterSelectedOptions}
@@ -167,4 +167,5 @@ const LocationPicker = (props) => {
 
 const enhance = combine(withModulesManager);
 
+export { StyledLocationPicker };
 export default enhance(LocationPicker);

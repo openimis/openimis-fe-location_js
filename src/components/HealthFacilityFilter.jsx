@@ -111,7 +111,7 @@ class HealthFacilityFilter extends Component {
     return (
       <StyledHealthFacilityFilter>
         <Grid container className="form">
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <PublishedComponent
               pubRef="location.RegionPicker"
               value={this._filterValue("region")}
@@ -120,7 +120,7 @@ class HealthFacilityFilter extends Component {
               onChange={this._onChangeRegion}
             />
           </Grid>
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <PublishedComponent
               pubRef="location.DistrictPicker"
               value={this._filterValue("district")}
@@ -130,28 +130,28 @@ class HealthFacilityFilter extends Component {
               onChange={this._onChangeDistrict}
             />
           </Grid>
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <PublishedComponent
               pubRef="location.HealthFacilityLegalFormPicker"
               value={this._filterValue("legalForm_Code")}
               onChange={(v, s) => this._onChange("legalForm_Code", v, s)}
             />
           </Grid>
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <PublishedComponent
               pubRef="location.HealthFacilityLevelPicker"
               value={this._filterValue("level")}
               onChange={(v, s) => this._onChange("level", v, s)}
             />
           </Grid>
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <PublishedComponent
               pubRef="medical.CareTypePicker"
               value={this._filterValue("careType")}
               onChange={(v, s) => this._onChange("careType", v, s)}
             />
           </Grid>
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <FormControlLabel
               control={
                 <Checkbox
@@ -163,7 +163,7 @@ class HealthFacilityFilter extends Component {
               label={formatMessage(intl, "location", "HealthFacilityFilter.showHistory")}
             />
           </Grid>
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <TextInput
               module="location"
               label="HealthFacilityFilter.code"
@@ -180,7 +180,7 @@ class HealthFacilityFilter extends Component {
               }
             />
           </Grid>
-          <Grid item xs={4} className="item">
+          <Grid size={4} className="item">
             <TextInput
               module="location"
               label="HealthFacilityFilter.name"
@@ -197,7 +197,7 @@ class HealthFacilityFilter extends Component {
               }
             />
           </Grid>
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <TextInput
               module="location"
               label="HealthFacilityFilter.phone"
@@ -214,7 +214,7 @@ class HealthFacilityFilter extends Component {
               }
             />
           </Grid>
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <TextInput
               module="location"
               label="HealthFacilityFilter.fax"
@@ -231,7 +231,7 @@ class HealthFacilityFilter extends Component {
               }
             />
           </Grid>
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <TextInput
               module="location"
               label="HealthFacilityFilter.email"
@@ -248,7 +248,7 @@ class HealthFacilityFilter extends Component {
               }
             />
           </Grid>
-          {this.isHealthFacilityStatusEnabled && <Grid item xs={3} className="item">
+          {this.isHealthFacilityStatusEnabled && <Grid size={3} className="item">
             <PublishedComponent
               module="location"
               label="HealthFacilityForm.status"
@@ -264,4 +264,5 @@ class HealthFacilityFilter extends Component {
   }
 }
 
+export { StyledHealthFacilityFilter };
 export default withModulesManager(injectIntl(HealthFacilityFilter));

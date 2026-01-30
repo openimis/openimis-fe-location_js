@@ -75,7 +75,7 @@ class CoarseLocation extends Component {
             module="location"
             id={`CoarseLocation.location_0`}
             field={
-              <Grid item xs={6} className="item">
+              <Grid size={6} className="item">
                 <PublishedComponent
                   pubRef="location.RegionPicker"
                   readOnly={readOnly}
@@ -94,7 +94,7 @@ class CoarseLocation extends Component {
             module="location"
             id={`CoarseLocation.location_1`}
             field={
-              <Grid item xs={6} className="item">
+              <Grid size={6} className="item">
                 <PublishedComponent
                   pubRef="location.DistrictPicker"
                   readOnly={readOnly}
@@ -115,4 +115,5 @@ class CoarseLocation extends Component {
   }
 }
 
+export { StyledCoarseLocation };
 export default CoarseLocation;

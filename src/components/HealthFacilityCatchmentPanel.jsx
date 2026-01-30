@@ -159,9 +159,9 @@ class HealthFacilityCatchmentPanel extends FormPanel {
     return (
       <StyledHealthFacilityCatchmentPanel>
         <Grid container spacing={1} className="item">
-          <Grid item xl={8} lg={12}>
+          <Grid xl={8} lg={12}>
             <Grid container spacing={1}>
-              <Grid item xs={4}>
+              <Grid size={4}>
                 <TypeLocationsPaper
                   type={0}
                   onRefresh={() => this.props.fetchLocations(this.locationTypes, 0, null)}
@@ -178,7 +178,7 @@ class HealthFacilityCatchmentPanel extends FormPanel {
                   readOnly={readOnly}
                 />
               </Grid>
-              <Grid item xs={4}>
+              <Grid size={4}>
                 <TypeLocationsPaper
                   type={1}
                   onRefresh={() => this.props.fetchLocations(this.locationTypes, 1, this.state.l0)}
@@ -195,7 +195,7 @@ class HealthFacilityCatchmentPanel extends FormPanel {
                   readOnly={readOnly}
                 />
               </Grid>
-              <Grid item xs={4}>
+              <Grid size={4}>
                 <TypeLocationsPaper
                   type={2}
                   onRefresh={() => this.props.fetchLocations(this.locationTypes, 2, this.state.l1)}
@@ -214,7 +214,7 @@ class HealthFacilityCatchmentPanel extends FormPanel {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xl={4} lg={12} xs={12}>
+          <Grid xl={4} lg={12} size={12}>
             <TypeLocationsPaper
               type={3}
               title={`locations.searcher.title.3.catchments`}
@@ -270,6 +270,8 @@ const mapDispatchToProps = (dispatch) => {
   );
 };
 
+export { StyledHealthFacilityCatchmentPanel };
+export { CatchmentInput };
 export default withModulesManager(
   injectIntl(connect(mapStateToProps, mapDispatchToProps)(HealthFacilityCatchmentPanel)),
 );

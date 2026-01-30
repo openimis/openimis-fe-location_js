@@ -37,7 +37,7 @@ class CoarseLocationFilter extends Component {
             module="location"
             id={`CoarseLocationFilter.location_0`}
             field={
-              <Grid item xs={6} className="item">
+              <Grid size={6} className="item">
                 <PublishedComponent
                   pubRef="location.RegionPicker"
                   value={this._filterValue(`${this.props.anchor}_0`)}
@@ -51,7 +51,7 @@ class CoarseLocationFilter extends Component {
             module="location"
             id={`CoarseLocationFilter.location_1`}
             field={
-              <Grid item xs={6} className="item">
+              <Grid size={6} className="item">
                 <PublishedComponent
                   pubRef="location.DistrictPicker"
                   value={this._filterValue(`${this.props.anchor}_1`)}
@@ -69,4 +69,5 @@ class CoarseLocationFilter extends Component {
   }
 }
 
+export { StyledCoarseLocationFilter };
 export default CoarseLocationFilter;

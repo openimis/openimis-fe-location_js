@@ -40,14 +40,14 @@ class HealthFacilityFullPath extends Component {
             id="HealthFacilityFullPath.region"
             field={
               <Fragment>
-                <Grid item xs={2}>
+                <Grid size={2}>
                   <FieldLabel module="location" id="HealthFacilityFullPath.region" />
                 </Grid>
                 <ControlledField
                   module="location"
                   id="HealthFacilityFullPath.region.code"
                   field={
-                    <Grid item xs={modulesManager.hideField("location", "HealthFacilityFullPath.region.name") ? 10 : 3}>
+                    <Grid size={modulesManager.hideField("location", "HealthFacilityFullPath.region.name") ? 10 : 3}>
                       {healthFacilityFullPath.location.parent.code}
                     </Grid>
                   }
@@ -56,7 +56,7 @@ class HealthFacilityFullPath extends Component {
                   module="location"
                   id="HealthFacilityFullPath.region.name"
                   field={
-                    <Grid item xs={modulesManager.hideField("location", "HealthFacilityFullPath.region.code") ? 10 : 7}>
+                    <Grid size={modulesManager.hideField("location", "HealthFacilityFullPath.region.code") ? 10 : 7}>
                       {healthFacilityFullPath.location.parent.name}
                     </Grid>
                   }
@@ -69,14 +69,14 @@ class HealthFacilityFullPath extends Component {
             id="HealthFacilityFullPath.district"
             field={
               <Fragment>
-                <Grid item xs={2}>
+                <Grid size={2}>
                   <FieldLabel module="location" id="HealthFacilityFullPath.district" />
                 </Grid>
                 <ControlledField
                   module="location"
                   id="HealthFacilityFullPath.district.code"
                   field={
-                    <Grid item xs={modulesManager.hideField("location", "HealthFacilityFullPath.district.name") ? 10 : 3}>
+                    <Grid size={modulesManager.hideField("location", "HealthFacilityFullPath.district.name") ? 10 : 3}>
                       {healthFacilityFullPath.location.code}
                     </Grid>
                   }
@@ -85,7 +85,7 @@ class HealthFacilityFullPath extends Component {
                   module="location"
                   id="HealthFacilityFullPath.district.name"
                   field={
-                    <Grid item xs={modulesManager.hideField("location", "HealthFacilityFullPath.dictrict.code") ? 10 : 7}>
+                    <Grid size={modulesManager.hideField("location", "HealthFacilityFullPath.dictrict.code") ? 10 : 7}>
                       {healthFacilityFullPath.location.name}
                     </Grid>
                   }
@@ -98,7 +98,7 @@ class HealthFacilityFullPath extends Component {
             id="HealthFacilityFullPath.healthFacility"
             field={
               <Fragment>
-                <Grid item xs={2}>
+                <Grid size={2}>
                   <FieldLabel module="location" id="HealthFacilityFullPath.healthFacility" />
                 </Grid>
                 <ControlledField
@@ -107,7 +107,7 @@ class HealthFacilityFullPath extends Component {
                   field={
                     <Grid
                       item
-                      xs={
+                      size={
                         modulesManager.hideField("location", "HealthFacilityFullPath.healthFacility.nameAndLevel")
                           ? 10
                           : 3
@@ -121,7 +121,7 @@ class HealthFacilityFullPath extends Component {
                   module="location"
                   id="HealthFacilityFullPath.healthFacility.nameAndLevel"
                   field={
-                    <Grid item xs={7}>
+                    <Grid size={7}>
                       <ControlledField
                         module="location"
                         id="HealthFacilityFullPath.healthFacility.name"
@@ -155,6 +155,7 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ fetchHealthFacilityFullPath }, dispatch);
 };
 
+export { StyledHealthFacilityFullPath };
 export default withModulesManager(
   connect(mapStateToProps, mapDispatchToProps)(injectIntl(HealthFacilityFullPath)),
 );

@@ -105,7 +105,7 @@ class DetailedLocation extends Component {
     return (
       <StyledDetailedLocation>
         <Grid container className="form">
-          <Grid item xs={grid}>
+          <Grid size={grid}>
             <CoarseLocation
               region={this.state[`location_-2`]}
               district={this.state[`location_-1`]}
@@ -122,11 +122,11 @@ class DetailedLocation extends Component {
               id={`DetailedLocation.location_${this.locationTypes.length - 2 + i}`}
               key={`location_${this.locationTypes.length - 2 + i}`}
               field={
-                <Grid item xs={Math.floor(grid / (this.locationTypes.length - 2))} className="item">
+                <Grid size={Math.floor(grid / (this.locationTypes.length - 2))} className="item">
                   <PublishedComponent
                     pubRef="location.LocationPicker"
-                    value={this.state[`location_${i}`]}
-                    parentLocation={this.state[`location_${i - 1}`]}
+                    value={this.state[`location_${i}`] ?? null}
+                    parentLocation={this.state[`location_${i - 1}`] ?? null}
                     readOnly={readOnly}
                     required={required}
                     withNull={true}
@@ -151,6 +151,7 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ selectLocation }, dispatch);
 };
 
+export { StyledDetailedLocation };
 export default withModulesManager(
   connect(mapStateToProps, mapDispatchToProps)(DetailedLocation),
 );

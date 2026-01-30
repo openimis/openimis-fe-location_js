@@ -139,7 +139,7 @@ class EditLocationDialog extends Component {
               />
               {withCaptation && (
                 <Grid container>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.male"
@@ -148,7 +148,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("malePopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.female"
@@ -157,7 +157,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("femalePopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.other"
@@ -166,7 +166,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("otherPopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.family"
@@ -222,7 +222,7 @@ class EditLocationDialog extends Component {
               />
               {withCaptation && (
                 <Grid container>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.male"
@@ -231,7 +231,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("malePopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.female"
@@ -240,7 +240,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("femalePopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.other"
@@ -249,7 +249,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("otherPopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.family"
@@ -281,4 +281,5 @@ const mapStateToProps = (store) => ({
   codeValidationError: store.loc.validationFields?.locationCode?.validationError,
 });
 
+export { EditLocationDialog };
 export default withModulesManager(injectIntl(connect(mapStateToProps)(EditLocationDialog)));

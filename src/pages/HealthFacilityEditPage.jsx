@@ -55,6 +55,7 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ createOrUpdateHealthFacility }, dispatch);
 };
 
+export { StyledHealthFacilityEditPage };
 export default withHistory(
   withModulesManager(
     connect(mapStateToProps, mapDispatchToProps)(injectIntl(HealthFacilityEditPage)),

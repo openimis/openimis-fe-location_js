@@ -19,7 +19,7 @@ class HealthFacilityPriceListsPanel extends FormPanel {
               module="location"
               id="HealthFacility.servicesPricelist"
               field={
-                <Grid item xs={6} className="item">
+                <Grid size={6} className="item">
                   <PublishedComponent
                     pubRef="medical_pricelist.ServicesPriceListPicker"
                     value={edited.servicesPricelist}
@@ -37,7 +37,7 @@ class HealthFacilityPriceListsPanel extends FormPanel {
               module="location"
               id="HealthFacility.itemsPricelist"
               field={
-                <Grid item xs={6} className="item">
+                <Grid size={6} className="item">
                   <PublishedComponent
                     pubRef="medical_pricelist.ItemsPriceListPicker"
                     value={edited.itemsPricelist}

@@ -243,6 +243,8 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ fetchHealthFacility, clearHealthFacility, journalize }, dispatch);
 };
 
+export { HF_FORM_CONTRIBUTION_KEY };
+export { HealthFacilityForm };
 export default withHistory(
   withModulesManager(
     connect(mapStateToProps, mapDispatchToProps)(injectIntl(HealthFacilityForm)),

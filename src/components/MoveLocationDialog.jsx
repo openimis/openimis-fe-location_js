@@ -113,13 +113,13 @@ class MoveLocationDialog extends Component {
         <DialogContent>
           <DialogContentText>
             <Grid container>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 {formatMessage(intl, "location", "MoveDialog.new")}
               </Grid>
               {[0, 1, 2].map((i) => {
                 return (
                   (i === 0 || !!this.state[`l${i - 1}`]) && (
-                    <Grid key={`select-${i}`} item xs={12}>
+                    <Grid key={`select-${i}`} size={12}>
                       <FormControl fullWidth>
                         <InputLabel id={`reassign-to-label-${i}`}>
                           {formatMessage(intl, "location", `location.locationType.${i}`)}
@@ -186,4 +186,5 @@ const mapDispatchToProps = (dispatch) => {
   );
 };
 
+export { MoveLocationDialog };
 export default withModulesManager(injectIntl(connect(mapStateToProps, mapDispatchToProps)(MoveLocationDialog)));

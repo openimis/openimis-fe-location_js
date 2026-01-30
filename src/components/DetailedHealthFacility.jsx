@@ -70,4 +70,5 @@ const DetailedHealthFacility = (props) => {
   );
 };
 
+export { StyledDetailedHealthFacility };
 export default withModulesManager(DetailedHealthFacility);

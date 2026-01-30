@@ -67,7 +67,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.region"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <PublishedComponent
                   pubRef="location.RegionPicker"
                   value={edited.parentLocation}
@@ -82,7 +82,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.district"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <PublishedComponent
                   pubRef="location.DistrictPicker"
                   value={edited.location}
@@ -99,7 +99,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.legalForm"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <PublishedComponent
                   pubRef="location.HealthFacilityLegalFormPicker"
                   value={!!edited.legalForm ? edited.legalForm.code : null}
@@ -116,7 +116,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.level"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <PublishedComponent
                   pubRef="location.HealthFacilityLevelPicker"
                   value={edited.level}
@@ -133,7 +133,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.subLevel"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <PublishedComponent
                   pubRef="location.HealthFacilitySubLevelPicker"
                   value={!!edited.subLevel ? edited.subLevel.code : null}
@@ -149,7 +149,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.careType"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <PublishedComponent
                   pubRef="medical.CareTypePicker"
                   value={edited.careType}
@@ -166,7 +166,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.code"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <ValidatedTextInput
                   itemQueryIdentifier="healthFacilityCode"
                   shouldValidate={this.shouldValidate}
@@ -195,7 +195,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.accCode"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <TextInput
                   module="location"
                   label="HealthFacilityForm.accCode"
@@ -215,7 +215,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.name"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <TextInput
                   module="location"
                   label="HealthFacilityForm.name"
@@ -228,7 +228,7 @@ class HealthFacilityMasterPanel extends FormPanel {
               </Grid>
             }
           />
-          <Grid item xs={2} className="item">
+          <Grid size={2} className="item">
             <TextAreaInput
               module="location"
               label="HealthFacilityForm.address"
@@ -242,7 +242,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.phone"
             field={
-              <Grid item xs={1} className="item">
+              <Grid size={1} className="item">
                 <TextInput
                   module="location"
                   label="HealthFacilityForm.phone"
@@ -258,7 +258,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.contractStartDate"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <PublishedComponent
                   pubRef="core.DatePicker"
                   value={edited.contractStartDate}
@@ -276,7 +276,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.contractEndDate"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <PublishedComponent
                   pubRef="core.DatePicker"
                   value={edited.contractEndDate}
@@ -294,7 +294,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.fax"
             field={
-              <Grid item xs={1} className="item">
+              <Grid size={1} className="item">
                 <TextInput
                   module="location"
                   label="HealthFacilityForm.fax"
@@ -310,7 +310,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.status"
             field={
-              <Grid item xs={1} className="item">
+              <Grid size={1} className="item">
                 <PublishedComponent
                   pubRef="location.HealthFacilityStatusPicker"
                   value={edited.status}
@@ -329,7 +329,7 @@ class HealthFacilityMasterPanel extends FormPanel {
             module="location"
             id="HealthFacility.email"
             field={
-              <Grid item xs={2} className="item">
+              <Grid size={2} className="item">
                 <TextInput
                   module="location"
                   label="HealthFacilityForm.email"
@@ -354,4 +354,5 @@ const mapStateToProps = (state) => ({
   savedHFCode: state.loc?.healthFacility?.code,
 });
 
+export { StyledHealthFacilityMasterPanel };
 export default withModulesManager(connect(mapStateToProps)(HealthFacilityMasterPanel));

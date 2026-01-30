@@ -82,7 +82,7 @@ class FSPCoarseLocation extends Component {
             module="location"
             id={`FSPCoarseLocation.location_0`}
             field={
-              <Grid item xs={6} className="item">
+              <Grid size={6} className="item">
                 <PublishedComponent
                   pubRef="location.FSPLocationPicker"
                   locationLevel={0}
@@ -98,7 +98,7 @@ class FSPCoarseLocation extends Component {
             module="location"
             id={`FSPCoarseLocation.location_1`}
             field={
-              <Grid item xs={6} className="item">
+              <Grid size={6} className="item">
                 <PublishedComponent
                   pubRef="location.FSPLocationPicker"
                   locationLevel={1}

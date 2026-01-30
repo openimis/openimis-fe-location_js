@@ -90,7 +90,7 @@ class DetailedLocationFilter extends Component {
     return (
       <StyledDetailedLocationFilter>
         <Grid container className="form">
-          <Grid item xs={grid}>
+          <Grid size={grid}>
             <CoarseLocationFilter reset={this.state.reset} {...this.props} onChange={this.onChange} />
           </Grid>
           {_.times(this.locationTypes.length - 2, (i) => (
@@ -100,8 +100,7 @@ class DetailedLocationFilter extends Component {
               key={`location_${this.locationTypes.length - 2 + i}`}
               field={
                 <Grid
-                  item
-                  xs={(this.locationTypes.length - 2) === 2 ? 6 : Math.floor(grid / (this.locationTypes.length - 2))}
+                  size={(this.locationTypes.length - 2) === 2 ? 6 : Math.floor(grid / (this.locationTypes.length - 2))}
                   className="item"
                 >
                   <PublishedComponent
@@ -129,6 +128,7 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ selectLocation }, dispatch);
 };
 
+export { StyledDetailedLocationFilter };
 export default withModulesManager(
   connect(mapStateToProps, mapDispatchToProps)(DetailedLocationFilter),
 );

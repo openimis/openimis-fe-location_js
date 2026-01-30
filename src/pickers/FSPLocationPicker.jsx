@@ -65,9 +65,9 @@ const FSPLocationPicker = ({
         open={open}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
-        value={value}
+        value={value ?? null}
         getOptionLabel={(option) => locationLabel(option)}
-        getOptionSelected={(option, value) => option?.id === value?.id}
+        isOptionEqualToValue={(option, value) => option?.id === value?.id}
         onChange={handleChange}
         filterOptions={filterOptions}
         filterSelectedOptions={filterSelectedOptions}
@@ -89,4 +89,5 @@ const FSPLocationPicker = ({
 
 const enhance = combine(withModulesManager);
 
+export { StyledFSPLocationPicker };
 export default enhance(FSPLocationPicker);

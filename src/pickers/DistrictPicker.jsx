@@ -125,6 +125,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch,
   );
 
+export { StyledDistrictPicker };
 export default withModulesManager(
   connect(mapStateToProps, mapDispatchToProps)(injectIntl(DistrictPicker)),
 );

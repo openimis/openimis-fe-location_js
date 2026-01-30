@@ -114,6 +114,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch,
   );
 
+export { StyledRegionPicker };
 export default withModulesManager(
   connect(mapStateToProps, mapDispatchToProps)(injectIntl(RegionPicker)),
 );

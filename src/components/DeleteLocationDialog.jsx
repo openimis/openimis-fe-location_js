@@ -102,4 +102,5 @@ class DeleteLocationDialog extends Component {
   }
 }
 
+export { ACTION_DROP };
 export default injectIntl(DeleteLocationDialog);

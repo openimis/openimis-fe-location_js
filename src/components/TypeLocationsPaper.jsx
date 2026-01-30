@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import { styled } from "@mui/material/styles";
-import { Paper, List, ListItem, ListItemText, IconButton, ListItemSecondaryAction } from "@mui/material";
+import { Paper, List, ListItem, ListItemText, ListItemButton, IconButton, ListItemSecondaryAction } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MoveIcon from "@mui/icons-material/Shuffle";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -147,17 +147,16 @@ class ResultPane extends Component {
         {!!fetched && !!locations && !error && (
           <List component="nav">
             {locations.map((l, idx) => (
-              <ListItem
-                key={`location-${type}-${idx}`}
-                button
-                selected={location && location.id === l.id}
-                onClick={(e) => !!l.uuid && !!onSelect && !readOnly && onSelect(l)}
-                onDoubleClick={(e) => !!l.uuid && !readOnly && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
-                className={!l.uuid || !!l.clientMutationId ? "lockedRow" : null}
-              >
-                <ListItemText>
-                  {l.code} - {l.name}
-                </ListItemText>
+              <ListItem key={`location-${type}-${idx}`} className={!l.uuid || !!l.clientMutationId ? "lockedRow" : null}>
+                <ListItemButton
+                  selected={location && location.id === l.id}
+                  onClick={(e) => !!l.uuid && !!onSelect && !readOnly && onSelect(l)}
+                  onDoubleClick={(e) => !!l.uuid && !readOnly && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
+                >
+                  <ListItemText>
+                    {l.code} - {l.name}
+                  </ListItemText>
+                </ListItemButton>
                 {!!l.uuid && (
                   <ListItemSecondaryAction>
                     {!!onMove && rights.includes(RIGHT_LOCATION_MOVE) && (
@@ -235,4 +234,6 @@ const mapStateToProps = (state) => ({
   rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
 });
 
+export { StyledTypeLocationsPaper };
+export { ActionDialogs };
 export default connect(mapStateToProps)(TypeLocationsPaper);

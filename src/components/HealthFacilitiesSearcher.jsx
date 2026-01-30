@@ -201,4 +201,5 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ fetchHealthFacilitySummaries, deleteHealthFacility, coreConfirm, journalize }, dispatch);
 };
 
+export { HealthFacilitiesSearcher };
 export default withModulesManager(injectIntl(connect(mapStateToProps, mapDispatchToProps)(HealthFacilitiesSearcher)));
