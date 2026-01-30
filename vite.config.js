@@ -6,6 +6,7 @@ import svgr from "vite-plugin-svgr";
 export default defineConfig({
   plugins: [react({
     jsxRuntime: 'automatic',
+    jsxImportSource: '@emotion/react',
   }), svgr()],
   build: {
     lib: {
