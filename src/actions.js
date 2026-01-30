@@ -63,6 +63,7 @@ export const HEALTH_FACILITY_PICKER_PROJECTION = [
   "contractStartDate",
   "contractEndDate",
   `location{${LOCATION_SUMMARY_PROJECTION.join(",")}, parent{${LOCATION_SUMMARY_PROJECTION.join(",")}}}`,
+  "program{edges{node{idProgram nameProgram}}}",
 ];
 
 export const HEALTH_FACILITY_REFER_PICKER_PROJECTION = [
@@ -117,6 +118,7 @@ export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) 
     "status",
     "validityFrom",
     "validityTo",
+    "program { edges{ node{id idProgram nameProgram validityDateFrom}}}",
   ];
   const payload = formatPageQuery("healthFacilities", filters, projections);
   return graphql(payload, "LOCATION_HEALTH_FACILITY");
@@ -323,6 +325,7 @@ function formatHealthFacilityGQL(hf) {
     ${!!hf.contractEndDate ? `contractEndDate: "${hf.contractEndDate}"` : ""}
     ${!!hf.status ? `status: "${hf.status}"` : ""}
     ${formatCatchments(hf.catchments)}
+    ${!!hf.programs ? `program: [${hf.programs.map((p) => decodeId(p.id)+"\n")}]`:""}
   `;
 }
 
