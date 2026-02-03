@@ -8,15 +8,15 @@ import { Grid } from "@mui/material";
 import { ControlledField, PublishedComponent } from "@openimis/fe-core";
 
 const StyledCoarseLocation = styled('div')(({ theme }) => ({
-  '& .dialogTitle': theme.dialog.title,
-  '& .dialogContent': theme.dialog.content,
+  '& .dialogTitle': theme?.dialog?.title ?? {},
+  '& .dialogContent': theme?.dialog?.content ?? {},
   '& .form': {
     padding: 0,
   },
   '& .item': {
     padding: theme.spacing(1),
   },
-  '& .paperDivider': theme.paper.divider,
+  '& .paperDivider': theme?.paper?.divider ?? {},
 }));
 
 class CoarseLocation extends Component {

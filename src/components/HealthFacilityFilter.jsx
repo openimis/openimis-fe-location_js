@@ -9,15 +9,15 @@ import { styled } from "@mui/material/styles";
 import { withModulesManager, formatMessage, TextInput, PublishedComponent } from "@openimis/fe-core";
 
 const StyledHealthFacilityFilter = styled('div')(({ theme }) => ({
-  '& .dialogTitle': theme.dialog.title,
-  '& .dialogContent': theme.dialog.content,
+  '& .dialogTitle': theme?.dialog?.title ?? {},
+  '& .dialogContent': theme?.dialog?.content ?? {},
   '& .form': {
     padding: 0,
   },
   '& .item': {
     padding: theme.spacing(1),
   },
-  '& .paperDivider': theme.paper.divider,
+  '& .paperDivider': theme?.paper?.divider ?? {},
 }));
 
 class HealthFacilityFilter extends Component {

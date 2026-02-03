@@ -11,15 +11,15 @@ import { DEFAULT_LOCATION_TYPES } from "../constants";
 import CoarseLocation from "./CoarseLocation";
 
 const StyledDetailedLocation = styled('div')(({ theme }) => ({
-  '& .dialogTitle': theme.dialog.title,
-  '& .dialogContent': theme.dialog.content,
+  '& .dialogTitle': theme?.dialog?.title ?? {},
+  '& .dialogContent': theme?.dialog?.content ?? {},
   '& .form': {
     padding: 0,
   },
   '& .item': {
     padding: theme.spacing(1),
   },
-  '& .paperDivider': theme.paper.divider,
+  '& .paperDivider': theme?.paper?.divider ?? {},
 }));
 
 class DetailedLocation extends Component {

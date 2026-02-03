@@ -8,15 +8,15 @@ import { ControlledField, PublishedComponent } from "@openimis/fe-core";
 import { locationLabel } from "../utils";
 
 const StyledFSPCoarseLocation = styled('div')(({ theme }) => ({
-  '& .dialogTitle': theme.dialog.title,
-  '& .dialogContent': theme.dialog.content,
+  '& .dialogTitle': theme?.dialog?.title ?? {},
+  '& .dialogContent': theme?.dialog?.content ?? {},
   '& .form': {
     padding: 0,
   },
   '& .item': {
     padding: theme.spacing(1),
   },
-  '& .paperDivider': theme.paper.divider,
+  '& .paperDivider': theme?.paper?.divider ?? {},
 }));
 
 class FSPCoarseLocation extends Component {

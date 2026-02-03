@@ -12,15 +12,15 @@ import CoarseLocationFilter from "./CoarseLocationFilter";
 import { DEFAULT_LOCATION_TYPES } from "../constants";
 
 const StyledDetailedLocationFilter = styled('div')(({ theme }) => ({
-  '& .dialogTitle': theme.dialog.title,
-  '& .dialogContent': theme.dialog.content,
+  '& .dialogTitle': theme?.dialog?.title ?? {},
+  '& .dialogContent': theme?.dialog?.content ?? {},
   '& .form': {
     padding: 0,
   },
   '& .item': {
     padding: theme.spacing(1),
   },
-  '& .paperDivider': theme.paper.divider,
+  '& .paperDivider': theme?.paper?.divider ?? {},
   '& .MuiAutocomplete-root': {
     minWidth: 360,
   },
