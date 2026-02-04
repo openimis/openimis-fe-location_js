@@ -7,16 +7,16 @@ import _ from "lodash";
 import { Grid } from "@mui/material";
 import { ControlledField, PublishedComponent } from "@openimis/fe-core";
 
-const StyledCoarseLocationFilter = styled('div')(({ theme }) => ({
-  '& .dialogTitle': theme?.dialog?.title ?? {},
-  '& .dialogContent': theme?.dialog?.content ?? {},
-  '& .form': {
+const StyledCoarseLocationFilter = styled("div")(({ theme }) => ({
+  "& .dialogTitle": theme?.dialog?.title ?? {},
+  "& .dialogContent": theme?.dialog?.content ?? {},
+  "& .form": {
     padding: 0,
   },
-  '& .item': {
-    padding: theme.spacing(1),
+  "& .item": {
+    padding: theme.spacing(0),
   },
-  '& .paperDivider': theme?.paper?.divider ?? {},
+  "& .paperDivider": theme?.paper?.divider ?? {},
 }));
 
 class CoarseLocationFilter extends Component {
@@ -32,7 +32,7 @@ class CoarseLocationFilter extends Component {
   render() {
     return (
       <StyledCoarseLocationFilter>
-        <Grid container className="form">
+        <Grid container className="form" spacing={2}>
           <ControlledField
             module="location"
             id={`CoarseLocationFilter.location_0`}

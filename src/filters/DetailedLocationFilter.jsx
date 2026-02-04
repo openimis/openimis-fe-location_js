@@ -18,11 +18,11 @@ const StyledDetailedLocationFilter = styled('div')(({ theme }) => ({
     padding: 0,
   },
   '& .item': {
-    padding: theme.spacing(1),
+    padding: theme.spacing(0),
   },
   '& .paperDivider': theme?.paper?.divider ?? {},
   '& .MuiAutocomplete-root': {
-    minWidth: 360,
+    minWidth: 200,
   },
 }));
 
@@ -58,10 +58,10 @@ class DetailedLocationFilter extends Component {
       return {
         id: `${this.props.anchor}_${l}`,
         value: v,
-        filter: null,
+        filter: "",
       };
     } else {
-      return { id: `${this.props.anchor}_${l}`, value: null, filter: null };
+      return { id: `${this.props.anchor}_${l}`, value: null, filter: "" };
     }
   };
 
@@ -78,9 +78,6 @@ class DetailedLocationFilter extends Component {
       filters.push(this._levelFilter(i, null));
     }
     this.props.onChangeFilters(filters);
-    this.setState((state) => ({
-      reset: state.reset + 1,
-    }));
     this.props.selectLocation(v, l, this.locationTypes.length);
   };
 
@@ -89,7 +86,7 @@ class DetailedLocationFilter extends Component {
     let grid = split ? 12 : 6;
     return (
       <StyledDetailedLocationFilter>
-        <Grid container className="form">
+        <Grid container className="form" spacing={2}>
           <Grid size={grid}>
             <CoarseLocationFilter reset={this.state.reset} {...this.props} onChange={this.onChange} />
           </Grid>
