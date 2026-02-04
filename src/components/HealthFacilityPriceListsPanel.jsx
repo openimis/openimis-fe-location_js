@@ -4,8 +4,8 @@ import { FormPanel, PublishedComponent, ControlledField } from "@openimis/fe-cor
 import { Paper, Grid } from "@mui/material";
 
 const StyledHealthFacilityPriceListsPanel = styled('div')(({ theme }) => ({
-  '& .item': theme.paper.item,
-  '& .paper': theme.paper.paper,
+  '& .item': theme.paper?.item ?? {},
+  '& .paper': theme.paper?.paper ?? {},
 }));
 
 class HealthFacilityPriceListsPanel extends FormPanel {

@@ -9,7 +9,7 @@ import { RIGHT_HEALTH_FACILITY_ADD, RIGHT_HEALTH_FACILITY_EDIT } from "../consta
 import HealthFacilityForm from "../components/HealthFacilityForm";
 
 const StyledHealthFacilityEditPage = styled('div')(({ theme }) => ({
-  '& .page': theme.page,
+  '& .page': theme.page ?? {},
 }));
 
 class HealthFacilityEditPage extends Component {

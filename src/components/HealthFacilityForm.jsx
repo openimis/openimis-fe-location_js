@@ -24,7 +24,7 @@ import HealthFacilityCatchmentPanel from "../components/HealthFacilityCatchmentP
 const HF_FORM_CONTRIBUTION_KEY = "location.HealthFacility";
 
 const StyledHealthFacilityForm = styled('div')(({ theme }) => ({
-  '& .lockedPage': theme.page.locked,
+  '& .lockedPage': theme.page?.locked ?? {},
 }));
 
 class HealthFacilityForm extends Component {

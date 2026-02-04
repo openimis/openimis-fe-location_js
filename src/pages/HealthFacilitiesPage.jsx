@@ -10,8 +10,8 @@ import HealthFacilitiesSearcher from "../components/HealthFacilitiesSearcher";
 import { RIGHT_HEALTH_FACILITY_ADD, MODULE_NAME } from "../constants";
 
 const StyledHealthFacilitiesPage = styled('div')(({ theme }) => ({
-  '& .page': theme.page,
-  '& .fab': theme.fab,
+  '& .page': theme.page ?? {},
+  '& .fab': theme.fab ?? {},
 }));
 
 class HealthFacilitiesPage extends Component {

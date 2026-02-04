@@ -10,7 +10,7 @@ import { styled } from "@mui/material/styles";
 import _ from "lodash";
 
 const StyledHealthFacilityCatchmentPanel = styled('div')(({ theme }) => ({
-  '& .item': theme.paper.item,
+  '& .item': theme.paper?.item ?? {},
 }));
 
 class CatchmentInput extends Component {

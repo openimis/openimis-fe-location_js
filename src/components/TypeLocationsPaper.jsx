@@ -20,12 +20,12 @@ import {
 } from "../constants";
 
 const StyledTypeLocationsPaper = styled('div')(({ theme }) => ({
-  '& .paper': theme.paper.body,
-  '& .paperHeader': theme.paper.header,
-  '& .paperHeaderTitle': theme.paper.title,
-  '& .paperHeaderMessage': theme.paper.message,
-  '& .paperHeaderAction': theme.paper.action,
-  '& .lockedRow': theme.table.lockedRow,
+  '& .paper': theme.paper?.body ?? {},
+  '& .paperHeader': theme.paper?.header ?? {},
+  '& .paperHeaderTitle': theme.paper?.title ?? {},
+  '& .paperHeaderMessage': theme.paper?.message ?? {},
+  '& .paperHeaderAction': theme.paper?.action ?? {},
+  '& .lockedRow': theme.table?.lockedRow ?? {},
 }));
 
 class ActionDialogs extends Component {

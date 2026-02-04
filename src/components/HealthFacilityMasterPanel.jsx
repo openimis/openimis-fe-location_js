@@ -14,7 +14,7 @@ import { connect } from "react-redux";
 import { HFCodeValidationCheck, HFCodeValidationClear, HFCodeSetValid } from "../actions";
 
 const StyledHealthFacilityMasterPanel = styled('div')(({ theme }) => ({
-  '& .item': theme.paper.item,
+  '& .item': theme.paper?.item ?? {},
 }));
 
 class HealthFacilityMasterPanel extends FormPanel {

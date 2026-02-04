@@ -23,7 +23,7 @@ import { RIGHT_REGION_LOCATION_ADD } from "../constants";
 import _ from "lodash";
 
 const StyledLocationsPage = styled('div')(({ theme }) => ({
-  '& .page': theme.page,
+  '& .page': theme.page ?? {},
 }));
 
 const ACTION_SAVE = "save";
