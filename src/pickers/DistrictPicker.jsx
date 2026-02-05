@@ -13,7 +13,6 @@ const StyledDistrictPicker = styled('div')(({ theme }) => ({
     width: "100%",
   },
   '& .MuiFormControl-root': {
-    minWidth: '360px',
     width: '100%',
   },
   '& .MuiInputLabel-root': {

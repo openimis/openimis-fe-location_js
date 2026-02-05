@@ -16,7 +16,6 @@ const StyledRegionPicker = styled('div')(({ theme }) => ({
   },
   '& .MuiFormControl-root': {
     width: '100%',
-    minWidth: 360,
   },
 }));
 

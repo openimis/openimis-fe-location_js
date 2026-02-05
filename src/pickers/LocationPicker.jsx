@@ -16,11 +16,9 @@ const StyledLocationPicker = styled('div')(({ theme }) => ({
   },
   '& .MuiAutocomplete-root': {
     width: '100%',
-    minWidth: 360,
   },
   '& .MuiFormControl-root': {
     width: '100%',
-    minWidth: 360,
   },
 }));
 
