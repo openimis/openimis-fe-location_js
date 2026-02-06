@@ -27,7 +27,8 @@
     "@mui/icons-material": "^7.2.0",
     "redux": "^4.0.5",
     "react-router-dom": "^5.2.0",
-    "moment": "^2.25.3"
+    "moment": "^2.25.3",
+    "rc-cascader": "^3.34.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -47,8 +48,5 @@
   },
   "files": [
     "dist"
-  ],
-  "dependencies": {
-    "rc-cascader": "^3.34.0"
-  }
+  ]
 }
