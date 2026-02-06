@@ -74,7 +74,6 @@ const FSPLocationPicker = ({
         renderInput={(inputProps) => (
           <TextField
             {...inputProps}
-            variant="standard"
             required={required}
             label={withLabel ? label || formatMessage(`location.locationType.${locationLevel}`) : null}
             placeholder={

@@ -148,7 +148,6 @@ const LocationPicker = (props) => {
         renderInput={(inputProps) => (
           <TextField
             {...inputProps}
-            variant="standard"
             fullWidth
             required={required}
             label={withLabel && (label || formatMessage(`Location${locationLevel}Picker.label`))}
