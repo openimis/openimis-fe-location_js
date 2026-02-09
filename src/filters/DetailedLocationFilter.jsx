@@ -18,7 +18,7 @@ const StyledDetailedLocationFilter = styled('div')(({ theme }) => ({
     padding: 0,
   },
   '& .item': {
-    padding: theme.spacing(0),
+    padding: theme.spacing(1),
   },
   '& .paperDivider': theme?.paper?.divider ?? {},
   '& .MuiAutocomplete-root': {
@@ -86,8 +86,8 @@ class DetailedLocationFilter extends Component {
     let grid = split ? 12 : 6;
     return (
       <StyledDetailedLocationFilter>
-        <Grid container className="form" spacing={2}>
-          <Grid size={grid}>
+        <Grid container className="form">
+          <Grid size={12}>
             <CoarseLocationFilter reset={this.state.reset} {...this.props} onChange={this.onChange} />
           </Grid>
           {_.times(this.locationTypes.length - 2, (i) => (

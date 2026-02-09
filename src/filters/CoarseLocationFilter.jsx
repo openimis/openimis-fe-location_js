@@ -14,7 +14,7 @@ const StyledCoarseLocationFilter = styled("div")(({ theme }) => ({
     padding: 0,
   },
   "& .item": {
-    padding: theme.spacing(0),
+    padding: theme.spacing(1),
   },
   "& .paperDivider": theme?.paper?.divider ?? {},
 }));
@@ -32,7 +32,7 @@ class CoarseLocationFilter extends Component {
   render() {
     return (
       <StyledCoarseLocationFilter>
-        <Grid container className="form" spacing={2}>
+        <Grid container className="form">
           <ControlledField
             module="location"
             id={`CoarseLocationFilter.location_0`}
