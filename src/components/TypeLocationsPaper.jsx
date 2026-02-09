@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import { styled } from "@mui/material/styles";
-import { Paper, List, ListItem, ListItemText, ListItemButton, IconButton, ListItemSecondaryAction } from "@mui/material";
+import { Paper, List, ListItem, ListItemText, ListItemButton, IconButton, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MoveIcon from "@mui/icons-material/Shuffle";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -16,16 +16,16 @@ import {
   RIGHT_LOCATION_EDIT,
   RIGHT_LOCATION_DELETE,
   RIGHT_LOCATION_MOVE,
-  RIGHT_REGION_LOCATION_ADD
+  RIGHT_REGION_LOCATION_ADD,
 } from "../constants";
 
-const StyledTypeLocationsPaper = styled('div')(({ theme }) => ({
-  '& .paper': theme.paper?.body ?? {},
-  '& .paperHeader': theme.paper?.header ?? {},
-  '& .paperHeaderTitle': theme.paper?.title ?? {},
-  '& .paperHeaderMessage': theme.paper?.message ?? {},
-  '& .paperHeaderAction': theme.paper?.action ?? {},
-  '& .lockedRow': theme.table?.lockedRow ?? {},
+const StyledTypeLocationsPaper = styled("div")(({ theme }) => ({
+  "& .paper": theme.paper?.body ?? {},
+  "& .paperHeader": theme.paper?.header ?? {},
+  "& .paperHeaderTitle": theme.paper?.title ?? {},
+  "& .paperHeaderMessage": theme.paper?.message ?? {},
+  "& .paperHeaderAction": theme.paper?.action ?? {},
+  "& .lockedRow": theme.table?.lockedRow ?? {},
 }));
 
 class ActionDialogs extends Component {
@@ -96,9 +96,9 @@ class ActionDialogs extends Component {
           confirm={
             !!reassignLocations
               ? formatMessageWithValues(intl, "location", "DeleteDialog.confirm", {
-                ...args,
-                children,
-              })
+                  ...args,
+                  children,
+                })
               : formatMessageWithValues(intl, "location", "DeleteDialog.confirmSimple", args)
           }
           drop={formatMessageWithValues(intl, "location", "DeleteDialog.drop", {
@@ -145,20 +145,24 @@ class ResultPane extends Component {
       <Fragment>
         <ProgressOrError progress={fetching} error={error} />
         {!!fetched && !!locations && !error && (
-          <List component="nav">
+          <List component="nav" sx={{ width: "100%" }}>
             {locations.map((l, idx) => (
-              <ListItem key={`location-${type}-${idx}`} className={!l.uuid || !!l.clientMutationId ? "lockedRow" : null}>
+              <ListItem
+                key={`location-${type}-${idx}`}
+                disablePadding
+                className={!l.uuid || !!l.clientMutationId ? "lockedRow" : null}
+                sx={{ display: "flex", width: "100%" }}
+              >
                 <ListItemButton
                   selected={location && location.id === l.id}
                   onClick={(e) => !!l.uuid && !!onSelect && !readOnly && onSelect(l)}
                   onDoubleClick={(e) => !!l.uuid && !readOnly && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
+                  sx={{ flexGrow: 1 }}
                 >
-                  <ListItemText>
-                    {l.code} - {l.name}
-                  </ListItemText>
+                  <ListItemText primary={`${l.code} - ${l.name}`} />
                 </ListItemButton>
                 {!!l.uuid && (
-                  <ListItemSecondaryAction>
+                  <Box sx={{ flexShrink: 0, display: "flex", alignItems: "center", pr: 1 }}>
                     {!!onMove && rights.includes(RIGHT_LOCATION_MOVE) && (
                       <IconButton onClick={(e) => onMove(l)}>
                         <MoveIcon />
@@ -172,7 +176,7 @@ class ResultPane extends Component {
                     {!!InlineInput && (
                       <InlineInput location={l} onChange={onChange} inlineValue={inlineValue} readOnly={readOnly} />
                     )}
-                  </ListItemSecondaryAction>
+                  </Box>
                 )}
               </ListItem>
             ))}
@@ -185,26 +189,14 @@ class ResultPane extends Component {
 
 class TypeLocationsPaper extends Component {
   render() {
-    const {
-      rights,
-      title,
-      onRefresh,
-      onEdit,
-      readOnly,
-      location,
-      ...others
-    } = this.props;
+    const { rights, title, onRefresh, onEdit, readOnly, location, ...others } = this.props;
     const createRegionLocationRight = this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD);
     let actions = [];
     const isNotRegionOrDistrict = ![0, 1].includes(this.props.type);
     if (
       !readOnly &&
       Boolean(onEdit) &&
-      (
-        createRegionLocationRight ||
-        rights.includes(RIGHT_LOCATION_ADD) &&
-        isNotRegionOrDistrict
-      )
+      (createRegionLocationRight || (rights.includes(RIGHT_LOCATION_ADD) && isNotRegionOrDistrict))
     ) {
       actions.push({
         action: (e) => onEdit(null),

@@ -16,6 +16,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Box,
 } from "@mui/material";
 import { formatMessage, withModulesManager, TextInput } from "@openimis/fe-core";
 import { fetchLocations, clearLocations } from "../actions";
@@ -98,23 +99,25 @@ class MoveLocationDialog extends Component {
         {!!parent && (
           <Fragment>
             <DialogContent>
-              <DialogContentText>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
                 <TextInput
                   readOnly
                   module="location"
                   label="MoveDialog.current"
                   value={`${parent.code} - ${parent.name}`}
                 />
-              </DialogContentText>
+              </Box>
             </DialogContent>
             <Divider />
           </Fragment>
         )}
         <DialogContent>
-          <DialogContentText>
-            <Grid container>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
+            <Grid container spacing={2}>
               <Grid size={12}>
-                {formatMessage(intl, "location", "MoveDialog.new")}
+                <Box sx={{ mb: 1 }}>
+                  {formatMessage(intl, "location", "MoveDialog.new")}
+                </Box>
               </Grid>
               {[0, 1, 2].map((i) => {
                 return (
@@ -148,7 +151,7 @@ class MoveLocationDialog extends Component {
                 );
               })}
             </Grid>
-          </DialogContentText>
+          </Box>
         </DialogContent>
         <Divider />
         <DialogActions>

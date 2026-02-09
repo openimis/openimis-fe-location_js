@@ -14,6 +14,7 @@ import {
   Select,
   InputLabel,
   MenuItem,
+  Box,
 } from "@mui/material";
 import { injectIntl } from "react-intl";
 import { formatMessage } from "@openimis/fe-core";
@@ -54,7 +55,7 @@ class DeleteLocationDialog extends Component {
         <DialogTitle>{title}</DialogTitle>
         <Divider />
         <DialogContent>
-          <DialogContentText>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
             {!reassignLocations && confirm}
             {!!reassignLocations && !reassignLocations.length && drop}
             {!!reassignLocations && !!reassignLocations.length && (
@@ -70,7 +71,7 @@ class DeleteLocationDialog extends Component {
                   label={reassign}
                 />
                 {this.state.action === ACTION_REASSIGN && (
-                  <FormControl>
+                  <FormControl sx={{ mt: 2, width: '100%' }}>
                     <InputLabel id="reassign-to-label">{type}</InputLabel>
                     <Select
                       labelId="reassign-to-label"
@@ -88,7 +89,7 @@ class DeleteLocationDialog extends Component {
                 )}
               </RadioGroup>
             )}
-          </DialogContentText>
+          </Box>
         </DialogContent>
         <Divider />
         <DialogActions>

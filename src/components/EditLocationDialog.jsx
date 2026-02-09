@@ -12,6 +12,7 @@ import {
   DialogTitle,
   Divider,
   Grid,
+  Box,
 } from "@mui/material";
 
 import { withModulesManager, formatMessage, TextInput, ValidatedTextInput, NumberInput } from "@openimis/fe-core";
@@ -112,7 +113,7 @@ class EditLocationDialog extends Component {
           <DialogTitle>{title}</DialogTitle>
           <Divider />
           <DialogContent>
-            <DialogContentText>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
               <ValidatedTextInput
                 action={locationCodeValidationCheck}
                 clearAction={locationCodeValidationClear}
@@ -128,7 +129,7 @@ class EditLocationDialog extends Component {
                 autoFocus={true}
                 value={!!this.state.data ? this.state.data.code : null}
                 inputProps={{
-                  "maxLength": this.codeMaxLength,
+                  maxLength: this.codeMaxLength,
                 }}
               />
               <TextInput
@@ -138,7 +139,7 @@ class EditLocationDialog extends Component {
                 onChange={(v) => this.changeData("name", v)}
               />
               {withCaptation && (
-                <Grid container>
+                <Grid container spacing={2}>
                   <Grid size={6}>
                     <NumberInput
                       module="location"
@@ -177,7 +178,7 @@ class EditLocationDialog extends Component {
                   </Grid>
                 </Grid>
               )}
-            </DialogContentText>
+            </Box>
           </DialogContent>
           <Divider />
           <DialogActions>
@@ -194,7 +195,7 @@ class EditLocationDialog extends Component {
           <DialogTitle>{title}</DialogTitle>
           <Divider />
           <DialogContent>
-            <DialogContentText>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
               <ValidatedTextInput
                 action={locationCodeValidationCheck}
                 clearAction={locationCodeValidationClear}
@@ -221,7 +222,7 @@ class EditLocationDialog extends Component {
                 onChange={(v) => this.changeData("name", v)}
               />
               {withCaptation && (
-                <Grid container>
+                <Grid container spacing={2}>
                   <Grid size={6}>
                     <NumberInput
                       module="location"
@@ -260,7 +261,7 @@ class EditLocationDialog extends Component {
                   </Grid>
                 </Grid>
               )}
-            </DialogContentText>
+            </Box>
           </DialogContent>
           <Divider />
           <DialogActions>
