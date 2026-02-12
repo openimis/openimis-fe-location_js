@@ -37,6 +37,7 @@ export default defineConfig({
         'moment',
         /^lodash$/,
         /^lodash\/.*$/,
+        /^rc-cascader$/,
         'lodash-uuid',
         'classnames',
         'clsx',
