@@ -86,6 +86,7 @@ class CoarseLocation extends Component {
                   onChange={this.onChangeRegion}
                   allRegions={allRegions}
                   title={title}
+                  inputProps={{"data-cy": "location-region-picker"}}
                 />
               </Grid>
             }
@@ -105,6 +106,7 @@ class CoarseLocation extends Component {
                   filterLabels={filterLabels}
                   onChange={this.onChangeDistrict}
                   title={title}
+                  inputProps={{"data-cy": "location-district-picker"}}
                 />
               </Grid>
             }

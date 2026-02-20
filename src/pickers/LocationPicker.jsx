@@ -52,6 +52,7 @@ const LocationPicker = (props) => {
     withPlaceholder,
     restrictedOptions,
     title = '',
+    dataCy
   } = props;
   const [open, setOpen] = useState(false);
   const [resetKey, setResetKey] = useState();
@@ -145,6 +146,7 @@ const LocationPicker = (props) => {
         filterSelectedOptions={filterSelectedOptions}
         onInputChange={(__, searchString) => onInputChange(searchString)}
         PopperComponent={LocationDropdownPopper}
+        data-cy={dataCy}
         renderInput={(inputProps) => (
           <TextField
             {...inputProps}

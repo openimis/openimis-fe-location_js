@@ -134,6 +134,7 @@ class DetailedLocation extends Component {
                     locationLevel={this.locationTypes.length - 2 + i}
                     onChange={(v) => this.onLocationChange(i, v)}
                     title={title}
+                    dataCy={`location-${this.locationTypes[this.locationTypes.length - 2 + i]}-picker`}
                   />
                 </Grid>
               }

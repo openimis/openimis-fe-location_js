@@ -59,6 +59,7 @@ class RegionPicker extends Component {
       required = false,
       allRegions,
       title,
+      inputProps
     } = this.props;
 
     allRegionsFlag = allRegions;
@@ -92,6 +93,7 @@ class RegionPicker extends Component {
               : formatMessage(intl, "location", "location.RegionPicker.none")
           }
           title={title}
+          inputProps={inputProps}
         />
       </StyledRegionPicker>
     );
