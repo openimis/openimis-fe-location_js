@@ -5,10 +5,9 @@ import { bindActionCreators } from "redux";
 import { Grid, InputAdornment } from "@mui/material";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
 import { fetchLocations, clearLocations } from "../actions";
-import { withModulesManager, FormPanel, NumberInput } from "@openimis/fe-core";
+import { withModulesManager, FormPanel, NumberInput, GRID_RESPONSIVE_FULL } from "@openimis/fe-core";
 import { styled } from "@mui/material/styles";
 import _ from "lodash";
-import { GRID_RESPONSIVE_FULL, GRID_RESPONSIVE_STANDARD } from "../../../CoreModule/src";
 
 const StyledHealthFacilityCatchmentPanel = styled('div')(({ theme }) => ({
   '& .item': theme.paper?.item ?? {},
