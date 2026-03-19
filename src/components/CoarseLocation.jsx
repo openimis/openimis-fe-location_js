@@ -27,7 +27,7 @@ class CoarseLocation extends Component {
 
   computeState = () => {
     this.setState({
-      region: this.props.region || this.state.region,
+      region: this.props.region ?? null,
       district: this.props.district,
     });
   };
@@ -48,7 +48,7 @@ class CoarseLocation extends Component {
         region,
         district: null,
       },
-      (e) => this.props.onChange(null),
+      (e) => this.props.onChange(null, "region"),
     );
   };
 
@@ -56,7 +56,7 @@ class CoarseLocation extends Component {
     if (!!d) {
       this.setState({ region: d.parent });
     }
-    this.props.onChange(d);
+    this.props.onChange(d, "district");
   };
 
   render() {

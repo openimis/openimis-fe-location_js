@@ -28,7 +28,7 @@ class RegionPicker extends Component {
   }
 
   onSuggestionSelected = (v) => {
-    if (v && this.props.value !== v) this.props.selectRegionLocation(v);
+    if (this.props.value !== v) this.props.selectRegionLocation(v ?? null);
     this.props.onChange(v, locationLabel(v));
   };
 
@@ -79,7 +79,7 @@ class RegionPicker extends Component {
           renderSuggestion={(a) => <span>{locationLabel(a)}</span>}
           getSuggestionValue={locationLabel}
           onSuggestionSelected={this.onSuggestionSelected}
-          onClear={this.onSuggestionSelected}
+          onClear={() => this.onSuggestionSelected(null)}
           value={value}
           reset={reset}
           readOnly={readOnly}

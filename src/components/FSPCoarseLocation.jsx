@@ -27,7 +27,7 @@ class FSPCoarseLocation extends Component {
 
   computeState = () => {
     this.setState({
-      region: this.props.region || this.state.region,
+      region: this.props.region ?? null,
       district: this.props.district,
     });
   };

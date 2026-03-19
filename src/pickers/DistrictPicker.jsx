@@ -47,7 +47,7 @@ class DistrictPicker extends Component {
   }
 
   onSuggestionSelected = (v) => {
-    if (v && this.props.value !== v) this.props.selectDistrictLocation(v);
+    if (this.props.value !== v) this.props.selectDistrictLocation(v ?? null);
     this.props.onChange(v, locationLabel(v));
   };
 
@@ -91,7 +91,7 @@ class DistrictPicker extends Component {
           getSuggestionValue={locationLabel}
           renderSuggestion={(a) => <span>{locationLabel(a)}</span>}
           onSuggestionSelected={this.onSuggestionSelected}
-          onClear={this.onSuggestionSelected}
+          onClear={() => this.onSuggestionSelected(null)}
           value={value}
           reset={reset}
           readOnly={readOnly}
