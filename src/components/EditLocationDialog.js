@@ -144,6 +144,7 @@ class EditLocationDialog extends Component {
                       module="location"
                       label="EditDialog.male"
                       max={MAX_INT_NUMBER}
+                      numberOfDecimals={0}
                       value={!!this.state.data ? this.state.data.malePopulation : null}
                       onChange={(v) => this.changeData("malePopulation", v)}
                     />
@@ -153,6 +154,7 @@ class EditLocationDialog extends Component {
                       module="location"
                       label="EditDialog.female"
                       max={MAX_INT_NUMBER}
+                      numberOfDecimals={0}
                       value={!!this.state.data ? this.state.data.femalePopulation : null}
                       onChange={(v) => this.changeData("femalePopulation", v)}
                     />
@@ -162,6 +164,7 @@ class EditLocationDialog extends Component {
                       module="location"
                       label="EditDialog.other"
                       max={MAX_INT_NUMBER}
+                      numberOfDecimals={0}
                       value={!!this.state.data ? this.state.data.otherPopulation : null}
                       onChange={(v) => this.changeData("otherPopulation", v)}
                     />
@@ -171,6 +174,7 @@ class EditLocationDialog extends Component {
                       module="location"
                       label="EditDialog.family"
                       max={MAX_INT_NUMBER}
+                      numberOfDecimals={0}
                       value={!!this.state.data ? this.state.data.families : null}
                       onChange={(v) => this.changeData("families", v)}
                     />
@@ -227,6 +231,7 @@ class EditLocationDialog extends Component {
                       module="location"
                       label="EditDialog.male"
                       max={MAX_INT_NUMBER}
+                      numberOfDecimals={0}
                       value={!!this.state.data ? this.state.data.malePopulation : null}
                       onChange={(v) => this.changeData("malePopulation", v)}
                     />
@@ -236,6 +241,7 @@ class EditLocationDialog extends Component {
                       module="location"
                       label="EditDialog.female"
                       max={MAX_INT_NUMBER}
+                      numberOfDecimals={0}
                       value={!!this.state.data ? this.state.data.femalePopulation : null}
                       onChange={(v) => this.changeData("femalePopulation", v)}
                     />
@@ -245,6 +251,7 @@ class EditLocationDialog extends Component {
                       module="location"
                       label="EditDialog.other"
                       max={MAX_INT_NUMBER}
+                      numberOfDecimals={0}
                       value={!!this.state.data ? this.state.data.otherPopulation : null}
                       onChange={(v) => this.changeData("otherPopulation", v)}
                     />
@@ -254,6 +261,7 @@ class EditLocationDialog extends Component {
                       module="location"
                       label="EditDialog.family"
                       max={MAX_INT_NUMBER}
+                      numberOfDecimals={0}
                       value={!!this.state.data ? this.state.data.families : null}
                       onChange={(v) => this.changeData("families", v)}
                     />
