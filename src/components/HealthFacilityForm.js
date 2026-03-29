@@ -53,6 +53,7 @@ class HealthFacilityForm extends Component {
       "healthFacilityForm.isHealthFacilityContractMandatory",
       false,
     );
+    this.isProgramAvailable = props.modulesManager.getConf("fe-core", "isProgramAvailable", false);
   }
 
   _newHealthFacility() {
@@ -73,7 +74,11 @@ class HealthFacilityForm extends Component {
       !!this.props.healthFacility
     ) {
       this.setState((state, props) => ({
-        healthFacility: { ...props.healthFacility, parentLocation: props.healthFacility.location.parent },
+        healthFacility: { 
+          ...props.healthFacility, 
+          parentLocation: props.healthFacility.location.parent,
+          programs: props.healthFacility.program.edges.map((p) => p.node),
+        },
         healthFacility_uuid: props.healthFacility.uuid,
         lockNew: false,
         newHealthFacility: false,

@@ -25,6 +25,7 @@ class HealthFacilityMasterPanel extends FormPanel {
     this.accCodeMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.accCodeMandatory", false);
     this.isHealthFacilityStatusEnabled  = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityStatusEnabled", false);
     this.isHealthFacilityContractMandatory = props.modulesManager.getConf("fe-location", "healthFacilityForm.isHealthFacilityContractMandatory", false);
+    this.isProgramAvailable = props.modulesManager.getConf("fe-core", "isProgramAvailable", false);
   }
 
   updateRegion = (region) => {
@@ -60,6 +61,7 @@ class HealthFacilityMasterPanel extends FormPanel {
       isHFCodeValid,
       isHFCodeValidating,
       HFCodeValidationError,
+      onEditedChanged,
     } = this.props;
     return (
       <Grid container>
@@ -341,6 +343,25 @@ class HealthFacilityMasterPanel extends FormPanel {
             </Grid>
           }
         />
+        { this.isProgramAvailable && (<ControlledField
+          module="location"
+          id="HealthFacility.program"
+          field={
+            <Grid item xs={4} className={classes.item}>
+              <PublishedComponent
+                pubRef="program.ProgramPicker"
+                name="program"
+                label="programPicker.label"
+                placeholder="programPicker.placeholder"
+                value={edited?.programs ?? []}
+                reset={reset}
+                multiple={true}
+                readOnly={readOnly}
+                onChange={(programs) => onEditedChanged({ ...edited, programs })}
+              />
+            </Grid>
+          }
+        />)}
       </Grid>
     );
   }
