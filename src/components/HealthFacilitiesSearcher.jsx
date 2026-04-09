@@ -88,15 +88,7 @@ class HealthFacilitiesSearcher extends Component {
           ? formatMessage(this.props.intl, "location", `healthFacilityLegalForm.${hf.legalForm.code}`)
           : null,
       (hf) => (!!hf.level ? formatMessage(this.props.intl, "location", `healthFacilityLevel.${hf.level}`) : null),
-      (hf) => (
-        <PublishedComponent
-          readOnly={true}
-          nullLabel="empty"
-          pubRef="medical.CareTypePicker"
-          withLabel={false}
-          value={hf.careType}
-        />
-      ),
+      (hf) => formatMessage(this.props.intl, "medical", `careType.${hf.careType}`),
       (hf) => hf.phone,
       (hf) => hf.fax,
       (hf) => hf.email,
