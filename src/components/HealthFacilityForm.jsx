@@ -3,7 +3,6 @@ import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import ReplayIcon from "@mui/icons-material/Replay";
 import { styled } from "@mui/material/styles";
 
 import {
@@ -16,10 +15,12 @@ import {
   Helmet,
   parseData,
   historyPush,
+  GetIconComponent,
 } from "@openimis/fe-core";
 import { fetchHealthFacility, clearHealthFacility } from "../actions";
 import HealthFacilityMasterPanel from "../components/HealthFacilityMasterPanel";
 import HealthFacilityCatchmentPanel from "../components/HealthFacilityCatchmentPanel";
+const ReplayIcon = GetIconComponent("Replay")
 
 const HF_FORM_CONTRIBUTION_KEY = "location.HealthFacility";
 

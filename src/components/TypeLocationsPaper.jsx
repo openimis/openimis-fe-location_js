@@ -3,11 +3,8 @@ import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import { styled } from "@mui/material/styles";
 import { Paper, List, ListItem, ListItemText, ListItemButton, IconButton, Box, Tooltip } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import MoveIcon from "@mui/icons-material/Shuffle";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ReplayIcon from "@mui/icons-material/Replay";
-import { formatMessage, formatMessageWithValues, SearcherPane, ProgressOrError } from "@openimis/fe-core";
+
+import { GetIconComponent, formatMessage, formatMessageWithValues, SearcherPane, ProgressOrError } from "@openimis/fe-core";
 import EditLocationDialog from "./EditLocationDialog";
 import MoveLocationDialog from "./MoveLocationDialog";
 import DeleteLocationDialog from "../components/DeleteLocationDialog";
@@ -18,7 +15,10 @@ import {
   RIGHT_LOCATION_MOVE,
   RIGHT_REGION_LOCATION_ADD,
 } from "../constants";
-
+const AddIcon = GetIconComponent("Add")
+const MoveIcon = GetIconComponent("Shuffle")
+const DeleteIcon = GetIconComponent("Delete")
+const ReplayIcon = GetIconComponent("Replay")
 const StyledTypeLocationsPaper = styled("div")(({ theme }) => ({
   "& .paper": theme.paper?.body ?? {},
   "& .paperHeader": theme.paper?.header ?? {},

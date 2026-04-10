@@ -3,7 +3,6 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import _ from "lodash";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {
   withModulesManager,
   formatMessage,
@@ -13,11 +12,13 @@ import {
   journalize,
   coreConfirm,
   Searcher,
+  GetIconComponent,
 } from "@openimis/fe-core";
 import HealthFacilityFilter from "./HealthFacilityFilter";
 import { fetchHealthFacilitySummaries, deleteHealthFacility } from "../actions";
 import { Button } from "@mui/material";
 import { RIGHT_HEALTH_FACILITY_DELETE } from "../constants";
+const DeleteIcon = GetIconComponent("Delete")
 
 class HealthFacilitiesSearcher extends Component {
   state = { reset: 0, confirmedAction: null };
