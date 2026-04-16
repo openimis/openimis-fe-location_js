@@ -25,7 +25,12 @@ import FSPLocationPicker from "./pickers/FSPLocationPicker";
 import LocationTypePicker from "./pickers/LocationTypePicker";
 import messages_en from "./translations/en.json";
 import reducer from "./reducer";
+import {
+  RIGHT_LOCATIONS,
+  RIGHT_HEALTH_FACILITY_ADD,
+  RIGHT_HEALTH_FACILITIES,
 
+} from "./constants";
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
 import { HEALTH_FACILITY_PICKER_PROJECTION, HEALTH_FACILITY_REFER_PICKER_PROJECTION } from "./actions";
 
@@ -73,10 +78,37 @@ const DEFAULT_CONFIG = {
     { key: "location.route.healthFacility", ref: ROUTE_HEALTH_FACILITY_EDIT },
   ],
   "core.Router": [
-    { path: ROUTE_LOCATIONS, component: LocationsPage },
-    { path: ROUTE_HEALTH_FACILITIES, component: HealthFacilitiesPage },
-    { path: ROUTE_HEALTH_FACILITY_EDIT, component: HealthFacilityEditPage },
-    { path: ROUTE_HEALTH_FACILITY_EDIT + "/:healthFacility_uuid?", component: HealthFacilityEditPage },
+    { path: ROUTE_LOCATIONS,
+      component: LocationsPage,
+      rights: [RIGHT_LOCATIONS],
+      icon: "LocationOn",
+      text: "location.locations.page.title",
+    },
+    { 
+      path: ROUTE_HEALTH_FACILITIES,
+      component: HealthFacilitiesPage,
+      rights: [RIGHT_HEALTH_FACILITIES],
+      icon: "LocalHospital",
+      text: "location.healthFacilities.page.title",
+    },
+    { 
+      path: ROUTE_HEALTH_FACILITY_EDIT,
+      component: HealthFacilityEditPage,
+      rights: [RIGHT_HEALTH_FACILITY_ADD],
+      icon: "LocalHospital",
+     
+    },
+    { path: ROUTE_HEALTH_FACILITY_EDIT + "/:healthFacility_uuid?", component: HealthFacilityEditPage, rights: [RIGHT_LOCATIONS], icon: "LocalHospital" },
+  ],
+  "admin.MainMenu": [
+    {
+      route:  ROUTE_LOCATIONS,
+      
+    },
+    {
+      route:  ROUTE_HEALTH_FACILITIES,
+      withDivider: true,
+    },
   ],
   "core.Boot": [UserHealthFacilityLoader, UserDistrictsLoader],
   "invoice.SubjectAndThirdpartyPicker": [
