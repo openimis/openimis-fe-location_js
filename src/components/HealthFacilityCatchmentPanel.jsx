@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import { Grid, InputAdornment } from "@mui/material";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
 import { fetchLocations, clearLocations } from "../actions";
-import { withModulesManager, FormPanel, NumberInput } from "@openimis/fe-core";
+import { withModulesManager, FormPanel, NumberInput, GRID_RESPONSIVE_FULL } from "@openimis/fe-core";
 import { styled } from "@mui/material/styles";
 import _ from "lodash";
 
@@ -158,9 +158,9 @@ class HealthFacilityCatchmentPanel extends FormPanel {
     const { l0s, l1s, l2s, l3s } = this.state;
     return (
       <StyledHealthFacilityCatchmentPanel>
-        <Grid container spacing={1} className="item">
-          <Grid xl={8} lg={12}>
-            <Grid container spacing={1}>
+        <Grid container >
+          <Grid size={GRID_RESPONSIVE_FULL}>
+            <Grid container >
               <Grid size={4}>
                 <TypeLocationsPaper
                   type={0}
@@ -214,7 +214,7 @@ class HealthFacilityCatchmentPanel extends FormPanel {
               </Grid>
             </Grid>
           </Grid>
-          <Grid xl={4} lg={12} size={12}>
+          <Grid size={6}>
             <TypeLocationsPaper
               type={3}
               title={`locations.searcher.title.3.catchments`}

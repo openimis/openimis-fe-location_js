@@ -1,15 +1,15 @@
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import AutorenewIcon from '@mui/icons-material/Autorenew';
+
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cascader from "rc-cascader";
 import { TextField } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useModulesManager, useTranslations } from "@openimis/fe-core";
+import { GetIconComponent, useModulesManager, useTranslations } from "@openimis/fe-core";
 import { fetchLocationsStr } from "../actions";
 import { locationLabel } from "../utils";
-
+const ArrowDropDownIcon = GetIconComponent("ArrowDropDown")
+const KeyboardArrowRightIcon = GetIconComponent("KeyboardArrowRight");
+const AutorenewIcon = GetIconComponent("Autorenew");
 const StyledLocationCascader = styled('div')(({ theme }) => ({
   '& .root': {
     width: "100%",

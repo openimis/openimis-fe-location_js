@@ -3,7 +3,6 @@ import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import ReplayIcon from "@mui/icons-material/Replay";
 import { styled } from "@mui/material/styles";
 
 import {
@@ -16,10 +15,12 @@ import {
   Helmet,
   parseData,
   historyPush,
+  GetIconComponent,
 } from "@openimis/fe-core";
 import { fetchHealthFacility, clearHealthFacility } from "../actions";
 import HealthFacilityMasterPanel from "../components/HealthFacilityMasterPanel";
 import HealthFacilityCatchmentPanel from "../components/HealthFacilityCatchmentPanel";
+const ReplayIcon = GetIconComponent("Replay")
 
 const HF_FORM_CONTRIBUTION_KEY = "location.HealthFacility";
 
@@ -29,6 +30,7 @@ const StyledHealthFacilityForm = styled('div')(({ theme }) => ({
 
 class HealthFacilityForm extends Component {
   state = {
+    reload: false,
     lockNew: false,
     reset: 0,
     update: 0,
@@ -133,6 +135,7 @@ class HealthFacilityForm extends Component {
     const { modulesManager, history, fetchHealthFacility } = this.props;
     const {
       isSaved,
+      reload,
       healthFacility_uuid: healthFacilityUuid,
       healthFacility: { code: healthFacilityCode },
     } = this.state;
@@ -143,7 +146,7 @@ class HealthFacilityForm extends Component {
       } catch (error) {
         console.error(`[RELOAD_HEALTH_FACILITY]: Fetching HF's details failed. ${error}`);
       }
-      this.setState((prevState) => ({ ...prevState, isSaved: false }));
+      this.setState((prevState) => ({ ...prevState, isSaved: false, reload: !reload }));
       return;
     }
 
@@ -156,11 +159,12 @@ class HealthFacilityForm extends Component {
       } catch (error) {
         console.error(`[RELOAD_HEALTH_FACILITY]: Fetching HF's details failed. ${error}`);
       }
-      this.setState((prevState) => ({ ...prevState, isSaved: false }));
+      this.setState((prevState) => ({ ...prevState, isSaved: false, reload: !reload }));
       return;
     }
 
     this.setState({
+      reload: !reload,
       lockNew: false,
       reset: 0,
       update: 0,
@@ -177,7 +181,7 @@ class HealthFacilityForm extends Component {
 
   render() {
     const { fetchingHealthFacility, fetchedHealthFacility, errorHealthFacility, add, save, back } = this.props;
-    const { healthFacility_uuid, lockNew, healthFacility, newHealthFacility, reset, update, isSaved } = this.state;
+    const { healthFacility_uuid, lockNew, healthFacility, newHealthFacility, reset, update, isSaved, reload } = this.state;
     let readOnly = lockNew || !!healthFacility.validityTo || isSaved;
 
     let actions = [
@@ -200,7 +204,8 @@ class HealthFacilityForm extends Component {
           {(!!fetchedHealthFacility || !healthFacility_uuid) && (
             <Fragment>
               <Form
-                module="location"
+                reload={reload}
+              module="location"
                 edited_id={healthFacility_uuid}
                 edited={healthFacility}
                 reset={reset}

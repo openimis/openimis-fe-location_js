@@ -4,10 +4,10 @@ import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { styled } from "@mui/material/styles";
 import { Fab } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import { withHistory, historyPush, formatMessage, Helmet, clearCurrentPaginationPage } from "@openimis/fe-core";
+import { GetIconComponent, withHistory, historyPush, formatMessage, Helmet, clearCurrentPaginationPage } from "@openimis/fe-core";
 import HealthFacilitiesSearcher from "../components/HealthFacilitiesSearcher";
 import { RIGHT_HEALTH_FACILITY_ADD, MODULE_NAME } from "../constants";
+const AddIcon = GetIconComponent("Add")
 
 const StyledHealthFacilitiesPage = styled('div')(({ theme }) => ({
   '& .page': theme.page ?? {},

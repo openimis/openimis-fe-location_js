@@ -6,7 +6,14 @@ import _debounce from "lodash/debounce";
 import { Grid, FormControlLabel, Checkbox } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-import { withModulesManager, formatMessage, TextInput, PublishedComponent } from "@openimis/fe-core";
+import {
+  withModulesManager,
+  formatMessage,
+  TextInput,
+  PublishedComponent,
+  GRID_RESPONSIVE_STANDARD,
+  GRID_RESPONSIVE_SMALL,
+} from "@openimis/fe-core";
 
 const StyledHealthFacilityFilter = styled('div')(({ theme }) => ({
   '& .dialogTitle': theme?.dialog?.title ?? {},
@@ -111,7 +118,7 @@ class HealthFacilityFilter extends Component {
     return (
       <StyledHealthFacilityFilter>
         <Grid container className="form">
-          <Grid size={2} className="item">
+          <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <PublishedComponent
               pubRef="location.RegionPicker"
               value={this._filterValue("region")}
@@ -120,7 +127,7 @@ class HealthFacilityFilter extends Component {
               onChange={this._onChangeRegion}
             />
           </Grid>
-          <Grid size={2} className="item">
+          <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <PublishedComponent
               pubRef="location.DistrictPicker"
               value={this._filterValue("district")}
@@ -130,40 +137,28 @@ class HealthFacilityFilter extends Component {
               onChange={this._onChangeDistrict}
             />
           </Grid>
-          <Grid size={2} className="item">
+          <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <PublishedComponent
               pubRef="location.HealthFacilityLegalFormPicker"
               value={this._filterValue("legalForm_Code")}
               onChange={(v, s) => this._onChange("legalForm_Code", v, s)}
             />
           </Grid>
-          <Grid size={2} className="item">
+          <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <PublishedComponent
               pubRef="location.HealthFacilityLevelPicker"
               value={this._filterValue("level")}
               onChange={(v, s) => this._onChange("level", v, s)}
             />
           </Grid>
-          <Grid size={2} className="item">
+          <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <PublishedComponent
               pubRef="medical.CareTypePicker"
               value={this._filterValue("careType")}
               onChange={(v, s) => this._onChange("careType", v, s)}
             />
           </Grid>
-          <Grid size={2} className="item">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  checked={!!this._filterValue("showHistory")}
-                  onChange={(event) => this._onChangeCheckbox("showHistory", event.target.checked)}
-                />
-              }
-              label={formatMessage(intl, "location", "HealthFacilityFilter.showHistory")}
-            />
-          </Grid>
-          <Grid size={2} className="item">
+          <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <TextInput
               module="location"
               label="HealthFacilityFilter.code"
@@ -180,7 +175,7 @@ class HealthFacilityFilter extends Component {
               }
             />
           </Grid>
-          <Grid size={4} className="item">
+          <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <TextInput
               module="location"
               label="HealthFacilityFilter.name"
@@ -197,7 +192,7 @@ class HealthFacilityFilter extends Component {
               }
             />
           </Grid>
-          <Grid size={2} className="item">
+          <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <TextInput
               module="location"
               label="HealthFacilityFilter.phone"
@@ -214,7 +209,7 @@ class HealthFacilityFilter extends Component {
               }
             />
           </Grid>
-          <Grid size={2} className="item">
+          <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <TextInput
               module="location"
               label="HealthFacilityFilter.fax"
@@ -231,7 +226,7 @@ class HealthFacilityFilter extends Component {
               }
             />
           </Grid>
-          <Grid size={2} className="item">
+          <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <TextInput
               module="location"
               label="HealthFacilityFilter.email"
@@ -248,7 +243,7 @@ class HealthFacilityFilter extends Component {
               }
             />
           </Grid>
-          {this.isHealthFacilityStatusEnabled && <Grid size={3} className="item">
+          {this.isHealthFacilityStatusEnabled && <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <PublishedComponent
               module="location"
               label="HealthFacilityForm.status"
@@ -258,6 +253,18 @@ class HealthFacilityFilter extends Component {
               withNull={true}
             />
           </Grid>}
+          <Grid size={GRID_RESPONSIVE_SMALL} className="item">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  checked={!!this._filterValue("showHistory")}
+                  onChange={(event) => this._onChangeCheckbox("showHistory", event.target.checked)}
+                />
+              }
+              label={formatMessage(intl, "location", "HealthFacilityFilter.showHistory")}
+            />
+          </Grid>
         </Grid>
       </StyledHealthFacilityFilter>
     );

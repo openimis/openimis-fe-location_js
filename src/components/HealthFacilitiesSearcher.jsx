@@ -3,7 +3,6 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import _ from "lodash";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {
   withModulesManager,
   formatMessage,
@@ -13,11 +12,13 @@ import {
   journalize,
   coreConfirm,
   Searcher,
+  GetIconComponent,
 } from "@openimis/fe-core";
 import HealthFacilityFilter from "./HealthFacilityFilter";
 import { fetchHealthFacilitySummaries, deleteHealthFacility } from "../actions";
-import { IconButton } from "@mui/material";
+import { Button } from "@mui/material";
 import { RIGHT_HEALTH_FACILITY_DELETE } from "../constants";
+const DeleteIcon = GetIconComponent("Delete")
 
 class HealthFacilitiesSearcher extends Component {
   state = { reset: 0, confirmedAction: null };
@@ -114,9 +115,12 @@ class HealthFacilitiesSearcher extends Component {
     if (this.props.rights.includes(RIGHT_HEALTH_FACILITY_DELETE)) {
       formatters.push((hf) =>
         hf.validityTo ? null : (
-          <IconButton disabled={!!hf.clientMutationId} onClick={(e) => this.onDelete(hf)}>
-            <DeleteIcon />
-          </IconButton>
+          <Button 
+            startIcon={<DeleteIcon />}
+            disabled={!!hf.clientMutationId}
+            onClick={(e) => this.onDelete(hf)}>
+            {formatMessage(this.props.intl, "location", "deleteHealthFacility.buttonText")}
+          </Button>
         ),
       );
     }
