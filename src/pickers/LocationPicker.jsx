@@ -47,6 +47,8 @@ const LocationPicker = (props) => {
     filterOptions,
     parentLocation,
     parentLocations,
+    regionLocation,
+    districtLocation,
     required,
     filterSelectedOptions = true,
     withPlaceholder,
@@ -66,6 +68,25 @@ const LocationPicker = (props) => {
 
   const regions = useSelector((state) => state.loc[`l0s`]);
   const districts = useSelector((state) => state.loc[`l1s`]);
+  const activeRegion = regionLocation || regions?.[0] || null;
+  const activeDistrict = districtLocation || districts?.[0] || null;
+
+  const hasAncestor = (node, targetUuid) => {
+    let current = node;
+    while (current) {
+      if (current.uuid === targetUuid) return true;
+      current = current.parent || null;
+    }
+    return false;
+  };
+
+  const filteredOptions = (restrictedOptions ? restricted : options).filter((option) => {
+    if (parentLocation?.uuid) return hasAncestor(option, parentLocation.uuid);
+    if (parentLocations?.length) return parentLocations.some((uuid) => hasAncestor(option, uuid));
+    if (activeDistrict?.uuid) return hasAncestor(option, activeDistrict.uuid);
+    if (activeRegion?.uuid) return hasAncestor(option, activeRegion.uuid);
+    return true;
+  });
 
   const dispatch = useDispatch();
   const handleChange = (__, value) => {
@@ -91,8 +112,8 @@ const LocationPicker = (props) => {
         dispatch(fetchLocationsStr(
           modulesManager,
           locationLevel,
-          regions?.[0]?.uuid,
-          districts?.[0]?.uuid,
+          activeRegion?.uuid,
+          activeDistrict?.uuid,
           parentLocation,
           searchString,
         ));
@@ -106,8 +127,8 @@ const LocationPicker = (props) => {
         dispatch(fetchParentLocationsStr(modulesManager, locationLevel, parentLocations, searchString, 20));
       } else {
         dispatch(fetchLocationsStr(
-          modulesManager, locationLevel, regions?.[0]?.uuid,
-          districts?.[0]?.uuid, parentLocation, searchString,
+          modulesManager, locationLevel, activeRegion?.uuid,
+          activeDistrict?.uuid, parentLocation, searchString,
         ));
       }
     } else {
@@ -131,7 +152,7 @@ const LocationPicker = (props) => {
         openOnFocus
         multiple={multiple}
         disabled={readOnly}
-        options={restrictedOptions ? restricted : options}
+        options={filteredOptions}
         loading={isLoading}
         open={open}
         onOpen={() => setOpen(true)}

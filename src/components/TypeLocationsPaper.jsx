@@ -157,7 +157,13 @@ class ResultPane extends Component {
                   selected={location && location.id === l.id}
                   onClick={(e) => !!l.uuid && !!onSelect && !readOnly && onSelect(l)}
                   onDoubleClick={(e) => !!l.uuid && !readOnly && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
-                  sx={{ flexGrow: 1 }}
+                  sx={{ 
+                    flexGrow: 1,
+                    '&.Mui-selected': {
+                      backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                      borderLeft: '3px solid #1976d2',
+                    }
+                  }}
                 >
                   <ListItemText primary={`${l.code} - ${l.name}`} />
                 </ListItemButton>
@@ -218,7 +224,7 @@ class TypeLocationsPaper extends Component {
             SearchIcon={ReplayIcon}
             actions={actions}
             readOnly={readOnly}
-            resultsPane={<ResultPane onEdit={onEdit} rights={rights} readOnly={readOnly} {...others} />}
+            resultsPane={<ResultPane onEdit={onEdit} location={location} rights={rights} readOnly={readOnly} {...others} />}
           />
         </Paper>
       </StyledTypeLocationsPaper>

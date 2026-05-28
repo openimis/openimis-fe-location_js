@@ -32,20 +32,18 @@ class DetailedLocation extends Component {
 
   computeState = () => {
     const { value } = this.props;
-    let region = !!value ? value.parent : null;
-    let district = value;
-    while (!!region && !!region.parent) {
-      district = region;
-      region = region.parent;
+    const lineage = [];
+    let current = value || null;
+    while (current) {
+      lineage.unshift(current);
+      current = current.parent || null;
     }
     let state = {
-      "location_-2": region,
-      "location_-1": district,
+      "location_-2": lineage[0] || null,
+      "location_-1": lineage[1] || null,
     };
-    let v = !!value ? { ...value } : null;
     _.times(this.locationTypes.length - 2, (i) => {
-      state[`location_${this.locationTypes.length - 3 - i}`] = v;
-      v = !!v ? v.parent : null;
+      state[`location_${i}`] = lineage[i + 2] || null;
     });
     this.setState({ ...state });
   };
@@ -60,8 +58,11 @@ class DetailedLocation extends Component {
     }
   }
 
-  onDistrictChange = (d) => {
+  onDistrictChange = (d, source) => {
     let state = { ...this.state };
+    if (!d && source === "region") {
+      state[`location_-2`] = null;
+    }
     if (!state[`location_-2`] && !!d) {
       state[`location_-2`] = d.parent;
     }
@@ -70,6 +71,8 @@ class DetailedLocation extends Component {
       state[`location_${i}`] = null;
     }
     this.setState({ ...state }, (e) => {
+      const nextValue = d ?? state[`location_-2`] ?? null;
+      this.props.onChange(nextValue);
       this.props.selectLocation(d, 1, this.locationTypes.length);
     });
   };
@@ -87,7 +90,8 @@ class DetailedLocation extends Component {
     }
     this.setState({ ...state }, (e) => {
       if (l === this.locationTypes.length - 3) {
-        this.props.onChange(v);
+        const fallback = l > 0 ? state[`location_${l - 1}`] : state[`location_-1`];
+        this.props.onChange(v ?? fallback ?? null);
       }
       this.props.selectLocation(v, l, this.locationTypes.length);
     });
@@ -127,6 +131,8 @@ class DetailedLocation extends Component {
                     pubRef="location.LocationPicker"
                     value={this.state[`location_${i}`] ?? null}
                     parentLocation={this.state[`location_${i - 1}`] ?? null}
+                    regionLocation={this.state[`location_-2`] ?? null}
+                    districtLocation={this.state[`location_-1`] ?? null}
                     readOnly={readOnly}
                     required={required}
                     withNull={true}
