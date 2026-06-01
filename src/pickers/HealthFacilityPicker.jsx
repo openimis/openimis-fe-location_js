@@ -20,6 +20,7 @@ const HealthFacilityPicker = (props) => {
     region,
     district,
     level,
+    dataCy="health-facility-picker"
   } = props;
 
   const modulesManager = useModulesManager();
@@ -68,6 +69,7 @@ const HealthFacilityPicker = (props) => {
       filterOptions={filterOptions}
       filterSelectedOptions={filterSelectedOptions}
       onInputChange={setSearchString}
+      dataCy={dataCy}
     />
   );
 };

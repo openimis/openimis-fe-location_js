@@ -16,6 +16,7 @@ const HealthFacilityReferPicker = (props) => {
     placeholder,
     multiple,
     level,
+    dataCy="hf-referer-picker"
   } = props;
 
   const modulesManager = useModulesManager();
@@ -61,6 +62,7 @@ const HealthFacilityReferPicker = (props) => {
       filterOptions={filterOptions}
       filterSelectedOptions={filterSelectedOptions}
       onInputChange={setSearchString}
+      dataCy={dataCy}
     />
   );
 };
