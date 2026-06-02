@@ -8,6 +8,7 @@ import { GetIconComponent, formatMessage, formatMessageWithValues, SearcherPane,
 import EditLocationDialog from "./EditLocationDialog";
 import MoveLocationDialog from "./MoveLocationDialog";
 import DeleteLocationDialog from "../components/DeleteLocationDialog";
+import FilterLocationDialog from "./FilterLocationDialog";
 import {
   RIGHT_LOCATION_ADD,
   RIGHT_LOCATION_EDIT,
@@ -141,9 +142,11 @@ class ResultPane extends Component {
       onChange,
       readOnly,
     } = this.props;
+
     return (
       <Fragment>
         <ProgressOrError progress={fetching} error={error} />
+
         {!!fetched && !!locations && !error && (
           <List component="nav" sx={{ width: "100%" }}>
             {locations.map((l, idx) => (
@@ -198,11 +201,41 @@ class ResultPane extends Component {
 }
 
 class TypeLocationsPaper extends Component {
+  state = {
+    filterDialogOpen: false,
+    filters: {},
+  };
+
+  handleFilterClick = () => {
+    this.setState({ filterDialogOpen: true });
+  };
+
+  handleFilterClose = () => {
+    this.setState({ filterDialogOpen: false });
+  };
+
+  handleFilterApply = (filters) => {
+    this.setState({ filters, filterDialogOpen: false });
+    if (this.props.onRefresh) {
+      this.props.onRefresh(filters);
+    }
+  };
+
   render() {
-    const { rights, title, onRefresh, onEdit, readOnly, location, ...others } = this.props;
+    const {
+      rights,
+      title,
+      onRefresh,
+      onEdit,
+      readOnly,
+      location,
+      reset,
+      ...others
+    } = this.props;
     const createRegionLocationRight = this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD);
     let actions = [];
     const isNotRegionOrDistrict = ![0, 1].includes(this.props.type);
+
     if (
       !readOnly &&
       Boolean(onEdit) &&
@@ -211,18 +244,37 @@ class TypeLocationsPaper extends Component {
       actions.push({
         action: (e) => onEdit(null),
         icon: <AddIcon />,
+        label: formatMessage(this.props.intl, "location", "addLocation"),
       });
     }
+
+    const LocationActionButton = ({ onClick, startIcon }) => (
+      <IconButton size="small" onClick={onClick} color="inherit" sx={{ padding: "4px" }}>
+        {startIcon}
+      </IconButton>
+    );
+
     return (
       <StyledTypeLocationsPaper>
         <Paper className="paper">
           {!readOnly && <StyledActionDialogs {...others} />}
           <SearcherPane
             module="location"
+            filterPane={
+              <FilterLocationDialog
+                title={formatMessage(this.props.intl, "location", `locationType.${this.props.type}`)}
+                open={this.state.filterDialogOpen}
+                onCancel={this.handleFilterClose}
+                onApply={this.handleFilterApply}
+                filters={this.state.filters}
+              />
+            }
+            ActionButton={LocationActionButton}
             title={title || `locations.searcher.title.${this.props.type}`}
-            refresh={onRefresh}
+            refresh={this.handleFilterClick}
             SearchIcon={ReplayIcon}
             actions={actions}
+            reset={reset}
             readOnly={readOnly}
             resultsPane={<ResultPane onEdit={onEdit} location={location} rights={rights} readOnly={readOnly} {...others} />}
           />
@@ -238,4 +290,4 @@ const mapStateToProps = (state) => ({
 
 export { StyledTypeLocationsPaper };
 export { ActionDialogs };
-export default connect(mapStateToProps)(TypeLocationsPaper);
+export default injectIntl(connect(mapStateToProps)(TypeLocationsPaper));
