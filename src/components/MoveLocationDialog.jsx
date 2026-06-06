@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl } from "react-intl";
+import _ from "lodash";
 import {
   Button,
   Dialog,
@@ -15,7 +16,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from "@material-ui/core";
+  Box,
+} from "@mui/material";
 import { formatMessage, withModulesManager, TextInput } from "@openimis/fe-core";
 import { fetchLocations, clearLocations } from "../actions";
 
@@ -97,28 +99,30 @@ class MoveLocationDialog extends Component {
         {!!parent && (
           <Fragment>
             <DialogContent>
-              <DialogContentText>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
                 <TextInput
                   readOnly
                   module="location"
                   label="MoveDialog.current"
                   value={`${parent.code} - ${parent.name}`}
                 />
-              </DialogContentText>
+              </Box>
             </DialogContent>
             <Divider />
           </Fragment>
         )}
         <DialogContent>
-          <DialogContentText>
-            <Grid container>
-              <Grid item xs={12}>
-                {formatMessage(intl, "location", "MoveDialog.new")}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
+            <Grid container spacing={2}>
+              <Grid size={12}>
+                <Box sx={{ mb: 1 }}>
+                  {formatMessage(intl, "location", "MoveDialog.new")}
+                </Box>
               </Grid>
               {[0, 1, 2].map((i) => {
                 return (
                   (i === 0 || !!this.state[`l${i - 1}`]) && (
-                    <Grid key={`select-${i}`} item xs={12}>
+                    <Grid key={`select-${i}`} size={12}>
                       <FormControl fullWidth>
                         <InputLabel id={`reassign-to-label-${i}`}>
                           {formatMessage(intl, "location", `location.locationType.${i}`)}
@@ -147,7 +151,7 @@ class MoveLocationDialog extends Component {
                 );
               })}
             </Grid>
-          </DialogContentText>
+          </Box>
         </DialogContent>
         <Divider />
         <DialogActions>
@@ -185,4 +189,5 @@ const mapDispatchToProps = (dispatch) => {
   );
 };
 
+export { MoveLocationDialog };
 export default withModulesManager(injectIntl(connect(mapStateToProps, mapDispatchToProps)(MoveLocationDialog)));

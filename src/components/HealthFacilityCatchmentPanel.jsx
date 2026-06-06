@@ -2,16 +2,17 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import { bindActionCreators } from "redux";
-import { Grid, InputAdornment } from "@material-ui/core";
+import { Grid, InputAdornment } from "@mui/material";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
 import { fetchLocations, clearLocations } from "../actions";
-import { withModulesManager, FormPanel, NumberInput } from "@openimis/fe-core";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { withModulesManager, FormPanel, NumberInput, GRID_RESPONSIVE_FULL } from "@openimis/fe-core";
+import { styled } from "@mui/material/styles";
 import _ from "lodash";
 
-const styles = (theme) => ({
-  item: theme.paper.item,
-});
+const StyledHealthFacilityCatchmentPanel = styled('div')(({ theme }) => ({
+  '& .item': theme.paper?.item ?? {},
+}));
+
 class CatchmentInput extends Component {
   render() {
     const { onChange, inlineValue, location, readOnly } = this.props;
@@ -140,7 +141,6 @@ class HealthFacilityCatchmentPanel extends FormPanel {
 
   render() {
     const {
-      classes,
       fetchingL0s,
       fetchedL0s,
       errorL0s,
@@ -157,83 +157,85 @@ class HealthFacilityCatchmentPanel extends FormPanel {
     } = this.props;
     const { l0s, l1s, l2s, l3s } = this.state;
     return (
-      <Grid container spacing={1} className={classes.item}>
-        <Grid item xl={8} lg={12}>
-          <Grid container spacing={1}>
-            <Grid item xs={4}>
-              <TypeLocationsPaper
-                type={0}
-                onRefresh={() => this.props.fetchLocations(this.locationTypes, 0, null)}
-                changeState={(state) => this.setState(state)}
-                onSelect={(l0) => this.setState({ l0 })}
-                fetching={fetchingL0s}
-                fetched={fetchedL0s}
-                error={errorL0s}
-                location={this.state.l0}
-                locations={this.state.userL0s}
-                currentParents={this.state.currentParents}
-                stateLocation={this.state.location}
-                reassign={true}
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TypeLocationsPaper
-                type={1}
-                onRefresh={() => this.props.fetchLocations(this.locationTypes, 1, this.state.l0)}
-                changeState={(state) => this.setState(state)}
-                onSelect={(l1) => this.setState({ l1 })}
-                fetching={fetchingL1s}
-                fetched={fetchedL1s}
-                error={errorL1s}
-                location={this.state.l1}
-                locations={l1s}
-                currentParents={this.state.currentParents}
-                stateLocation={this.state.location}
-                reassign={true}
-                readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TypeLocationsPaper
-                type={2}
-                onRefresh={() => this.props.fetchLocations(this.locationTypes, 2, this.state.l1)}
-                changeState={(state) => this.setState(state)}
-                onSelect={(l2) => this.setState({ l2 })}
-                fetching={fetchingL2s}
-                fetched={fetchedL2s}
-                error={errorL2s}
-                location={this.state.l2}
-                locations={l2s}
-                currentParents={this.state.currentParents}
-                stateLocation={this.state.location}
-                reassign={true}
-                readOnly={readOnly}
-              />
+      <StyledHealthFacilityCatchmentPanel>
+        <Grid container >
+          <Grid size={GRID_RESPONSIVE_FULL}>
+            <Grid container >
+              <Grid size={4}>
+                <TypeLocationsPaper
+                  type={0}
+                  onRefresh={() => this.props.fetchLocations(this.locationTypes, 0, null)}
+                  changeState={(state) => this.setState(state)}
+                  onSelect={(l0) => this.setState({ l0 })}
+                  fetching={fetchingL0s}
+                  fetched={fetchedL0s}
+                  error={errorL0s}
+                  location={this.state.l0}
+                  locations={this.state.userL0s}
+                  currentParents={this.state.currentParents}
+                  stateLocation={this.state.location}
+                  reassign={true}
+                  readOnly={readOnly}
+                />
+              </Grid>
+              <Grid size={4}>
+                <TypeLocationsPaper
+                  type={1}
+                  onRefresh={() => this.props.fetchLocations(this.locationTypes, 1, this.state.l0)}
+                  changeState={(state) => this.setState(state)}
+                  onSelect={(l1) => this.setState({ l1 })}
+                  fetching={fetchingL1s}
+                  fetched={fetchedL1s}
+                  error={errorL1s}
+                  location={this.state.l1}
+                  locations={l1s}
+                  currentParents={this.state.currentParents}
+                  stateLocation={this.state.location}
+                  reassign={true}
+                  readOnly={readOnly}
+                />
+              </Grid>
+              <Grid size={4}>
+                <TypeLocationsPaper
+                  type={2}
+                  onRefresh={() => this.props.fetchLocations(this.locationTypes, 2, this.state.l1)}
+                  changeState={(state) => this.setState(state)}
+                  onSelect={(l2) => this.setState({ l2 })}
+                  fetching={fetchingL2s}
+                  fetched={fetchedL2s}
+                  error={errorL2s}
+                  location={this.state.l2}
+                  locations={l2s}
+                  currentParents={this.state.currentParents}
+                  stateLocation={this.state.location}
+                  reassign={true}
+                  readOnly={readOnly}
+                />
+              </Grid>
             </Grid>
           </Grid>
+          <Grid size={6}>
+            <TypeLocationsPaper
+              type={3}
+              title={`locations.searcher.title.3.catchments`}
+              onRefresh={() => this.props.fetchLocations(this.locationTypes, 3, this.state.l2)}
+              changeState={(state) => this.setState(state)}
+              onSelect={(l3) => this.setState({ l3 })}
+              InlineInput={CatchmentInput}
+              inlineValue={this.inlineValue}
+              onChange={this.onCatchmentChanged}
+              fetching={fetchingL3s}
+              fetched={fetchedL3s}
+              error={errorL3s}
+              location={this.state.l3}
+              locations={l3s}
+              currentParents={this.state.currentParents}
+              stateLocation={this.state.location}
+              readOnly={readOnly}
+            />
+          </Grid>
         </Grid>
-        <Grid item xl={4} lg={12} xs={12}>
-          <TypeLocationsPaper
-            type={3}
-            title={`locations.searcher.title.3.catchments`}
-            onRefresh={() => this.props.fetchLocations(this.locationTypes, 3, this.state.l2)}
-            changeState={(state) => this.setState(state)}
-            onSelect={(l3) => this.setState({ l3 })}
-            InlineInput={CatchmentInput}
-            inlineValue={this.inlineValue}
-            onChange={this.onCatchmentChanged}
-            fetching={fetchingL3s}
-            fetched={fetchedL3s}
-            error={errorL3s}
-            location={this.state.l3}
-            locations={l3s}
-            currentParents={this.state.currentParents}
-            stateLocation={this.state.location}
-            readOnly={readOnly}
-          />
-        </Grid>
-      </Grid>
+      </StyledHealthFacilityCatchmentPanel>
     );
   }
 }
@@ -268,6 +270,8 @@ const mapDispatchToProps = (dispatch) => {
   );
 };
 
+export { StyledHealthFacilityCatchmentPanel };
+export { CatchmentInput };
 export default withModulesManager(
-  injectIntl(connect(mapStateToProps, mapDispatchToProps)(withTheme(withStyles(styles)(HealthFacilityCatchmentPanel)))),
+  injectIntl(connect(mapStateToProps, mapDispatchToProps)(HealthFacilityCatchmentPanel)),
 );

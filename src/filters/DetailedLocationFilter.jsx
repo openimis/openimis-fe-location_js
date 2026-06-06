@@ -2,26 +2,29 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import _debounce from "lodash/debounce";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { styled } from "@mui/material/styles";
 import _ from "lodash";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { withModulesManager, ControlledField, PublishedComponent } from "@openimis/fe-core";
 import { selectLocation } from "../actions";
 import CoarseLocationFilter from "./CoarseLocationFilter";
 
 import { DEFAULT_LOCATION_TYPES } from "../constants";
 
-const styles = (theme) => ({
-  dialogTitle: theme.dialog.title,
-  dialogContent: theme.dialog.content,
-  form: {
+const StyledDetailedLocationFilter = styled('div')(({ theme }) => ({
+  '& .dialogTitle': theme?.dialog?.title ?? {},
+  '& .dialogContent': theme?.dialog?.content ?? {},
+  '& .form': {
     padding: 0,
   },
-  item: {
+  '& .item': {
     padding: theme.spacing(1),
   },
-  paperDivider: theme.paper.divider,
-});
+  '& .paperDivider': theme?.paper?.divider ?? {},
+  '& .MuiAutocomplete-root': {
+    minWidth: 200,
+  },
+}));
 
 class DetailedLocationFilter extends Component {
   state = {
@@ -55,10 +58,10 @@ class DetailedLocationFilter extends Component {
       return {
         id: `${this.props.anchor}_${l}`,
         value: v,
-        filter: null,
+        filter: "",
       };
     } else {
-      return { id: `${this.props.anchor}_${l}`, value: null, filter: null };
+      return { id: `${this.props.anchor}_${l}`, value: null, filter: "" };
     }
   };
 
@@ -75,41 +78,43 @@ class DetailedLocationFilter extends Component {
       filters.push(this._levelFilter(i, null));
     }
     this.props.onChangeFilters(filters);
-    this.setState((state) => ({
-      reset: state.reset + 1,
-    }));
     this.props.selectLocation(v, l, this.locationTypes.length);
   };
 
   render() {
-    const { classes, split = false } = this.props;
+    const { split = false } = this.props;
     let grid = split ? 12 : 6;
     return (
-      <Grid container className={classes.form}>
-        <Grid item xs={grid}>
-          <CoarseLocationFilter reset={this.state.reset} {...this.props} onChange={this.onChange} />
+      <StyledDetailedLocationFilter>
+        <Grid container className="form">
+          <Grid size={12}>
+            <CoarseLocationFilter reset={this.state.reset} {...this.props} onChange={this.onChange} />
+          </Grid>
+          {_.times(this.locationTypes.length - 2, (i) => (
+            <ControlledField
+              module="location"
+              id={`DetailedLocationFilter.location_${this.locationTypes.length - 2 + i}`}
+              key={`location_${this.locationTypes.length - 2 + i}`}
+              field={
+                <Grid
+                  size={(this.locationTypes.length - 2) === 2 ? 6 : Math.floor(grid / (this.locationTypes.length - 2))}
+                  className="item"
+                >
+                  <PublishedComponent
+                    pubRef="location.LocationPicker"
+                    value={this._filterValue(`${this.props.anchor}_${this.locationTypes.length - 2 + i}`)}
+                    withNull={true}
+                    reset={this.state.reset}
+                    onChange={(v, s) => this.onChange(this.locationTypes.length - 2 + i, v, s)}
+                    parentLocation={this._filterValue(`${this.props.anchor}_${this.locationTypes.length - 3 + i}`)}
+                    locationLevel={this.locationTypes.length - 2 + i}
+                  />
+                </Grid>
+              }
+            />
+          ))}
         </Grid>
-        {_.times(this.locationTypes.length - 2, (i) => (
-          <ControlledField
-            module="location"
-            id={`DetailedLocationFilter.location_${this.locationTypes.length - 2 + i}`}
-            key={`location_${this.locationTypes.length - 2 + i}`}
-            field={
-              <Grid item xs={Math.floor(grid / (this.locationTypes.length - 2))} className={classes.item}>
-                <PublishedComponent
-                  pubRef="location.LocationPicker"
-                  value={this._filterValue(`${this.props.anchor}_${this.locationTypes.length - 2 + i}`)}
-                  withNull={true}
-                  reset={this.state.reset}
-                  onChange={(v, s) => this.onChange(this.locationTypes.length - 2 + i, v, s)}
-                  parentLocation={this._filterValue(`${this.props.anchor}_${this.locationTypes.length - 3 + i}`)}
-                  locationLevel={this.locationTypes.length - 2 + i}
-                />
-              </Grid>
-            }
-          />
-        ))}
-      </Grid>
+      </StyledDetailedLocationFilter>
     );
   }
 }
@@ -120,6 +125,7 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ selectLocation }, dispatch);
 };
 
+export { StyledDetailedLocationFilter };
 export default withModulesManager(
-  connect(mapStateToProps, mapDispatchToProps)(withTheme(withStyles(styles)(DetailedLocationFilter))),
+  connect(mapStateToProps, mapDispatchToProps)(DetailedLocationFilter),
 );

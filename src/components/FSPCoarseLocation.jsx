@@ -1,0 +1,120 @@
+import React, { Component } from "react";
+import _ from "lodash";
+
+import { styled } from "@mui/material/styles";
+import { Grid } from "@mui/material";
+
+import { ControlledField, PublishedComponent } from "@openimis/fe-core";
+import { locationLabel } from "../utils";
+
+const StyledFSPCoarseLocation = styled('div')(({ theme }) => ({
+  '& .dialogTitle': theme?.dialog?.title ?? {},
+  '& .dialogContent': theme?.dialog?.content ?? {},
+  '& .form': {
+    padding: 0,
+  },
+  '& .item': {
+    padding: theme.spacing(1),
+  },
+  '& .paperDivider': theme?.paper?.divider ?? {},
+}));
+
+class FSPCoarseLocation extends Component {
+  state = {
+    region: null,
+    district: null,
+  };
+
+  computeState = () => {
+    this.setState({
+      region: this.props.region ?? null,
+      district: this.props.district,
+    });
+  };
+
+  componentDidMount() {
+    this.computeState();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!_.isEqual(prevProps.region, this.props.region) || !_.isEqual(prevProps.district, this.props.district)) {
+      this.computeState();
+    }
+  }
+
+  onChangeRegion = (region) => {
+    this.setState(
+      {
+        region,
+        district: null,
+      },
+      (e) => this.props.onChange(null),
+    );
+  };
+
+  filterDistrict = (options, { inputValue }) => {
+    if (this.state.region) {
+      const filteredOptions = options.filter((district) => this.state.region?.uuid === district.parent.uuid);
+      return !!inputValue
+        ? filteredOptions.filter((option) => locationLabel(option).includes(inputValue))
+        : filteredOptions;
+    }
+
+    if (inputValue) {
+      return options.filter((option) => locationLabel(option).includes(inputValue));
+    } else return options;
+  };
+
+  onChangeDistrict = (district) => {
+    if (!!district) {
+      this.setState({ region: district.parent });
+    }
+    this.props.onChange(district);
+  };
+
+  render() {
+    const { readOnly, required = false } = this.props;
+    const { region, district } = this.state;
+    return (
+      <StyledFSPCoarseLocation>
+        <Grid container className="form">
+          <ControlledField
+            module="location"
+            id={`FSPCoarseLocation.location_0`}
+            field={
+              <Grid size={6} className="item">
+                <PublishedComponent
+                  pubRef="location.FSPLocationPicker"
+                  locationLevel={0}
+                  value={region}
+                  onChange={this.onChangeRegion}
+                  readOnly={readOnly}
+                  required={required}
+                />
+              </Grid>
+            }
+          />
+          <ControlledField
+            module="location"
+            id={`FSPCoarseLocation.location_1`}
+            field={
+              <Grid size={6} className="item">
+                <PublishedComponent
+                  pubRef="location.FSPLocationPicker"
+                  locationLevel={1}
+                  value={district}
+                  onChange={this.onChangeDistrict}
+                  filterOptions={this.filterDistrict}
+                  readOnly={readOnly}
+                  required={required}
+                />
+              </Grid>
+            }
+          />
+        </Grid>
+      </StyledFSPCoarseLocation>
+    );
+  }
+}
+
+export default FSPCoarseLocation;

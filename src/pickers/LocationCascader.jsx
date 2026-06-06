@@ -1,36 +1,40 @@
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import AutorenewIcon from '@material-ui/icons/Autorenew';
+
 import React, { useEffect, useState, useRef } from "react";
+import { injectIntl } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
 import Cascader from "rc-cascader";
-import { TextField, Chip } from "@material-ui/core";
-import { withTheme, withStyles } from "@material-ui/core/styles";
-import { useModulesManager, useTranslations } from "@openimis/fe-core";
-import { fetchLocationsStr, fetchLocationsByUuids } from "../actions";
+import { TextField, Chip } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { GetIconComponent, useModulesManager, useTranslations } from "@openimis/fe-core";
 import { locationLabel } from "../utils";
+import { fetchLocationsStr, fetchLocationsByUuids } from "../actions";
 import _ from "lodash";
 
-const styles = () => ({
-  root: {
+const ArrowDropDownIcon = GetIconComponent("ArrowDropDown")
+const KeyboardArrowRightIcon = GetIconComponent("KeyboardArrowRight");
+const AutorenewIcon = GetIconComponent("Autorenew");
+const StyledLocationCascader = styled('div')(({ theme }) => ({
+  '& .root': {
     width: "100%",
-  },
-  chipsContainer: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "4px",
-    flex: 1,
-    minWidth: 0,
-    margin: "3px",
-  },
-  inputRoot: {
-    flexWrap: "wrap",
-    "& input": {
-      width: 0,
+   '.chipsContainer': {
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "4px",
+      flex: 1,
       minWidth: 0,
+      margin: "3px",
+    },
+    '.inputRoot': {
+      flexWrap: "wrap",
+      "& input": {
+        width: 0,
+        minWidth: 0,
+      },
     },
   },
-});
+}));
+
+
 
 const extractPathFromValue = (location) => {
   const names = [];
@@ -53,7 +57,6 @@ const LocationCascader = ({
   label = "Location",
   onChange,
   readOnly,
-  classes,
   value,
   multiple = false,
 }) => {
@@ -179,47 +182,48 @@ const LocationCascader = ({
   };
 
   return (
-    <div className={classes.root}>
-      <Cascader
-        options={options}
-        defaultValue={defaultValue}
-        loadData={loadData}
-        onChange={handleCascaderChange}
-        changeOnSelect={true}
-        disabled={readOnly}
-        checkable={multiple}
-        expandIcon={<KeyboardArrowRightIcon fontSize="small" />}
-        loadingIcon={<AutorenewIcon fontSize="small" className="spin" />}
-      >
-        <TextField
-          label={label || formatMessage("LocationPicker.label")}
-          value={multiple ? "" : locations}
-          fullWidth
+    <StyledLocationCascader>
+      <div className="root">
+        <Cascader
+          options={options}
+          defaultValue={defaultValue}
+          loadData={loadData}
+          onChange={handleCascaderChange}
+          changeOnSelect={true}
           disabled={readOnly}
-          InputProps={{
-            readOnly: true,
-            classes: multiple && Array.isArray(locations) && locations.length > 0 ? {
-              root: classes.inputRoot,
-            } : undefined,
-            startAdornment: multiple && Array.isArray(locations) && locations.length > 0 ? (
-              <div className={classes.chipsContainer}>
-                {locations.map((location) => (
-                  <Chip
-                    key={location.uuid}
-                    label={locationLabel(location)}
-                    disabled={readOnly}
-                  />
-                ))}
-              </div>
-            ) : null,
-            endAdornment: (<ArrowDropDownIcon
-              style={{ color: "rgba(0, 0, 0, 0.54)" }}
-            />),
-          }}
-        />
-      </Cascader>
-    </div>
+          expandIcon={<KeyboardArrowRightIcon fontSize="small" />}
+          loadingIcon={<AutorenewIcon fontSize="small" className="spin" />}
+        >
+          <TextField
+            label={label || formatMessage("LocationPicker.label")}
+            value={multiple ? "" : locations}
+            fullWidth
+            disabled={readOnly}
+            InputProps={{
+              readOnly: true,
+              classes: multiple && Array.isArray(locations) && locations.length > 0 ? {
+                root: "inputRoot",
+              } : undefined,
+              startAdornment: multiple && Array.isArray(locations) && locations.length > 0 ? (
+                <div className="chipsContainer">
+                  {locations.map((location) => (
+                    <Chip
+                      key={location.uuid}
+                      label={locationLabel(location)}
+                      disabled={readOnly}
+                    />
+                  ))}
+                </div>
+              ) : null,
+              endAdornment: (<ArrowDropDownIcon
+                style={{ color: "rgba(0, 0, 0, 0.54)" }}
+              />),
+            }}
+          />
+        </Cascader>
+      </div>
+    </StyledLocationCascader>
   );
 };
 
-export default withStyles(styles)(withTheme(LocationCascader));
+export default injectIntl(LocationCascader);

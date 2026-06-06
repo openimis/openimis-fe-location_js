@@ -2,15 +2,15 @@ import React, { Component } from "react";
 import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { styled } from "@mui/material/styles";
 import { formatMessageWithValues, withModulesManager, withHistory, historyPush } from "@openimis/fe-core";
 import { createOrUpdateHealthFacility } from "../actions";
 import { RIGHT_HEALTH_FACILITY_ADD, RIGHT_HEALTH_FACILITY_EDIT } from "../constants";
 import HealthFacilityForm from "../components/HealthFacilityForm";
 
-const styles = (theme) => ({
-  page: theme.page,
-});
+const StyledHealthFacilityEditPage = styled('div')(({ theme }) => ({
+  '& .page': theme.page ?? {},
+}));
 
 class HealthFacilityEditPage extends Component {
   add = () => {
@@ -30,16 +30,18 @@ class HealthFacilityEditPage extends Component {
   };
 
   render() {
-    const { modulesManager, history, classes, rights, healthFacility_uuid } = this.props;
+    const { modulesManager, history, rights, healthFacility_uuid } = this.props;
     return (
-      <div className={classes.page}>
-        <HealthFacilityForm
-          healthFacility_uuid={healthFacility_uuid}
-          back={(e) => historyPush(modulesManager, history, "location.route.healthFacilities")}
-          add={rights.includes(RIGHT_HEALTH_FACILITY_ADD) ? this.add : null}
-          save={rights.includes(RIGHT_HEALTH_FACILITY_EDIT) ? this.save : null}
-        />
-      </div>
+      <StyledHealthFacilityEditPage>
+        <div className="page">
+          <HealthFacilityForm
+            healthFacility_uuid={healthFacility_uuid}
+            back={(e) => historyPush(modulesManager, history, "location.route.healthFacilities")}
+            add={rights.includes(RIGHT_HEALTH_FACILITY_ADD) ? this.add : null}
+            save={rights.includes(RIGHT_HEALTH_FACILITY_EDIT) ? this.save : null}
+          />
+        </div>
+      </StyledHealthFacilityEditPage>
     );
   }
 }
@@ -53,8 +55,9 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ createOrUpdateHealthFacility }, dispatch);
 };
 
+export { StyledHealthFacilityEditPage };
 export default withHistory(
   withModulesManager(
-    connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(HealthFacilityEditPage)))),
+    connect(mapStateToProps, mapDispatchToProps)(injectIntl(HealthFacilityEditPage)),
   ),
 );

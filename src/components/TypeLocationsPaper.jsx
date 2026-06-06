@@ -1,33 +1,33 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
-import { withTheme, withStyles } from "@material-ui/core/styles";
-import { Paper, List, ListItem, ListItemText, IconButton, ListItemSecondaryAction } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import MoveIcon from "@material-ui/icons/Shuffle";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ReplayIcon from "@material-ui/icons/Replay";
-import Tooltip from "@material-ui/core/Tooltip";
-import { formatMessage, formatMessageWithValues, SearcherPane, ProgressOrError } from "@openimis/fe-core";
+import { styled } from "@mui/material/styles";
+import { Paper, List, ListItem, ListItemText, ListItemButton, IconButton, Box, Tooltip } from "@mui/material";
+
+import { GetIconComponent, formatMessage, formatMessageWithValues, SearcherPane, ProgressOrError } from "@openimis/fe-core";
 import EditLocationDialog from "./EditLocationDialog";
 import MoveLocationDialog from "./MoveLocationDialog";
 import DeleteLocationDialog from "../components/DeleteLocationDialog";
+import FilterLocationDialog from "./FilterLocationDialog";
 import {
   RIGHT_LOCATION_ADD,
   RIGHT_LOCATION_EDIT,
   RIGHT_LOCATION_DELETE,
   RIGHT_LOCATION_MOVE,
-  RIGHT_REGION_LOCATION_ADD
+  RIGHT_REGION_LOCATION_ADD,
 } from "../constants";
-
-const styles = (theme) => ({
-  paper: theme.paper.body,
-  paperHeader: theme.paper.header,
-  paperHeaderTitle: theme.paper.title,
-  paperHeaderMessage: theme.paper.message,
-  paperHeaderAction: theme.paper.action,
-  lockedRow: theme.table.lockedRow,
-});
+const AddIcon = GetIconComponent("Add")
+const MoveIcon = GetIconComponent("Shuffle")
+const DeleteIcon = GetIconComponent("Delete")
+const ReplayIcon = GetIconComponent("Replay")
+const StyledTypeLocationsPaper = styled("div")(({ theme }) => ({
+  "& .paper": theme.paper?.body ?? {},
+  "& .paperHeader": theme.paper?.header ?? {},
+  "& .paperHeaderTitle": theme.paper?.title ?? {},
+  "& .paperHeaderMessage": theme.paper?.message ?? {},
+  "& .paperHeaderAction": theme.paper?.action ?? {},
+  "& .lockedRow": theme.table?.lockedRow ?? {},
+}));
 
 class ActionDialogs extends Component {
   render() {
@@ -97,9 +97,9 @@ class ActionDialogs extends Component {
           confirm={
             !!reassignLocations
               ? formatMessageWithValues(intl, "location", "DeleteDialog.confirm", {
-                ...args,
-                children,
-              })
+                  ...args,
+                  children,
+                })
               : formatMessageWithValues(intl, "location", "DeleteDialog.confirmSimple", args)
           }
           drop={formatMessageWithValues(intl, "location", "DeleteDialog.drop", {
@@ -126,7 +126,6 @@ const StyledActionDialogs = injectIntl(ActionDialogs);
 class ResultPane extends Component {
   render() {
     const {
-      classes,
       rights,
       type,
       fetching,
@@ -143,25 +142,36 @@ class ResultPane extends Component {
       onChange,
       readOnly,
     } = this.props;
+
     return (
       <Fragment>
         <ProgressOrError progress={fetching} error={error} />
+
         {!!fetched && !!locations && !error && (
-          <List component="nav">
+          <List component="nav" sx={{ width: "100%" }}>
             {locations.map((l, idx) => (
               <ListItem
                 key={`location-${type}-${idx}`}
-                button
-                selected={location && location.id === l.id}
-                onClick={(e) => !!l.uuid && !!onSelect && !readOnly && onSelect(l)}
-                onDoubleClick={(e) => !!l.uuid && !readOnly && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
-                className={!l.uuid || !!l.clientMutationId ? classes.lockedRow : null}
+                disablePadding
+                className={!l.uuid || !!l.clientMutationId ? "lockedRow" : null}
+                sx={{ display: "flex", width: "100%" }}
               >
-                <ListItemText>
-                  {l.code} - {l.name}
-                </ListItemText>
+                <ListItemButton
+                  selected={location && location.id === l.id}
+                  onClick={(e) => !!l.uuid && !!onSelect && !readOnly && onSelect(l)}
+                  onDoubleClick={(e) => !!l.uuid && !readOnly && rights.includes(RIGHT_LOCATION_EDIT) && onEdit(l)}
+                  sx={{ 
+                    flexGrow: 1,
+                    '&.Mui-selected': {
+                      backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                      borderLeft: '3px solid #1976d2',
+                    }
+                  }}
+                >
+                  <ListItemText primary={`${l.code} - ${l.name}`} />
+                </ListItemButton>
                 {!!l.uuid && (
-                  <ListItemSecondaryAction>
+                  <Box sx={{ flexShrink: 0, display: "flex", alignItems: "center", pr: 1 }}>
                     {!!onMove && rights.includes(RIGHT_LOCATION_MOVE) && (
                       <Tooltip title="Move">
                         <IconButton onClick={(e) => onMove(l)}>
@@ -179,7 +189,7 @@ class ResultPane extends Component {
                     {!!InlineInput && (
                       <InlineInput location={l} onChange={onChange} inlineValue={inlineValue} readOnly={readOnly} />
                     )}
-                  </ListItemSecondaryAction>
+                  </Box>
                 )}
               </ListItem>
             ))}
@@ -190,50 +200,86 @@ class ResultPane extends Component {
   }
 }
 
-const StyledResultPane = withTheme(withStyles(styles)(ResultPane));
-
 class TypeLocationsPaper extends Component {
+  state = {
+    filterDialogOpen: false,
+    filters: {},
+  };
+
+  handleFilterClick = () => {
+    this.setState({ filterDialogOpen: true });
+  };
+
+  handleFilterClose = () => {
+    this.setState({ filterDialogOpen: false });
+  };
+
+  handleFilterApply = (filters) => {
+    this.setState({ filters, filterDialogOpen: false });
+    if (this.props.onRefresh) {
+      this.props.onRefresh(filters);
+    }
+  };
+
   render() {
     const {
-      classes,
       rights,
       title,
       onRefresh,
       onEdit,
       readOnly,
       location,
+      reset,
       ...others
     } = this.props;
     const createRegionLocationRight = this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD);
     let actions = [];
     const isNotRegionOrDistrict = ![0, 1].includes(this.props.type);
+
     if (
       !readOnly &&
       Boolean(onEdit) &&
-      (
-        createRegionLocationRight ||
-        rights.includes(RIGHT_LOCATION_ADD) &&
-        isNotRegionOrDistrict
-      )
+      (createRegionLocationRight || (rights.includes(RIGHT_LOCATION_ADD) && isNotRegionOrDistrict))
     ) {
       actions.push({
         action: (e) => onEdit(null),
         icon: <AddIcon />,
+        label: formatMessage(this.props.intl, "location", "addLocation"),
       });
     }
+
+    const LocationActionButton = ({ onClick, startIcon }) => (
+      <IconButton size="small" onClick={onClick} color="inherit" sx={{ padding: "4px" }}>
+        {startIcon}
+      </IconButton>
+    );
+
     return (
-      <Paper className={classes.paper}>
-        {!readOnly && <StyledActionDialogs {...others} />}
-        <SearcherPane
-          module="location"
-          title={title || `locations.searcher.title.${this.props.type}`}
-          refresh={onRefresh}
-          SearchIcon={ReplayIcon}
-          actions={actions}
-          readOnly={readOnly}
-          resultsPane={<StyledResultPane onEdit={onEdit} rights={rights} readOnly={readOnly} {...others} />}
-        />
-      </Paper>
+      <StyledTypeLocationsPaper>
+        <Paper className="paper">
+          {!readOnly && <StyledActionDialogs {...others} />}
+          <SearcherPane
+            module="location"
+            filterPane={
+              <FilterLocationDialog
+                title={formatMessage(this.props.intl, "location", `locationType.${this.props.type}`)}
+                open={this.state.filterDialogOpen}
+                onCancel={this.handleFilterClose}
+                onApply={this.handleFilterApply}
+                filters={this.state.filters}
+              />
+            }
+            ActionButton={LocationActionButton}
+            title={title || `locations.searcher.title.${this.props.type}`}
+            refresh={this.handleFilterClick}
+            SearchIcon={ReplayIcon}
+            actions={actions}
+            reset={reset}
+            readOnly={readOnly}
+            resultsPane={<ResultPane onEdit={onEdit} location={location} rights={rights} readOnly={readOnly} {...others} />}
+          />
+        </Paper>
+      </StyledTypeLocationsPaper>
     );
   }
 }
@@ -242,4 +288,6 @@ const mapStateToProps = (state) => ({
   rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
 });
 
-export default withTheme(connect(mapStateToProps)(withStyles(styles)(TypeLocationsPaper)));
+export { StyledTypeLocationsPaper };
+export { ActionDialogs };
+export default injectIntl(connect(mapStateToProps)(TypeLocationsPaper));

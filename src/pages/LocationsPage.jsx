@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import { bindActionCreators } from "redux";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
 import {
   fetchLocations,
@@ -18,13 +18,13 @@ import {
   journalize,
   formatMessage
 } from "@openimis/fe-core";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { styled } from "@mui/material/styles";
 import { RIGHT_REGION_LOCATION_ADD } from "../constants";
 import _ from "lodash";
 
-const styles = (theme) => ({
-  page: theme.page,
-});
+const StyledLocationsPage = styled('div')(({ theme }) => ({
+  '& .page': theme.page ?? {},
+}));
 
 const ACTION_SAVE = "save";
 const ACTION_MOVE = "move";
@@ -227,7 +227,6 @@ class LocationsPage extends Component {
 
   render() {
     const {
-      classes,
       fetchingL0s,
       fetchedL0s,
       errorL0s,
@@ -244,115 +243,122 @@ class LocationsPage extends Component {
     const { l0s, l1s, l2s, l3s } = this.state;
     const createRegionLocationRight = this.props?.rights.includes(RIGHT_REGION_LOCATION_ADD);
     return (
-      <div className={classes.page}>
-        <Helmet title={formatMessage(this.props.intl, "location", "location.locations.page.title")} />
-        <Grid container spacing={1}>
-          <Grid item xs={8}>
-            <Grid container spacing={1}>
-              <Grid item xs={4}>
-                <TypeLocationsPaper
-                  type={0}
-                  onRefresh={() => this.props.fetchLocations(this.locationTypes, 0, null)}
-                  onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 0) : null}
-                  onSelect={(l0) => this.setState({ l0 })}
-                  onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 0) : null}
-                  onMove={createRegionLocationRight ? (l) => this.onMove(l, 0) : null}
-                  editOpen={this.state.editOpen}
-                  moveOpen={this.state.moveOpen}
-                  delOpen={this.state.delOpen}
-                  changeState={(state) => this.setState(state)}
-                  save={this.save}
-                  move={this.move}
-                  del={this.delete}
-                  fetching={fetchingL0s}
-                  fetched={fetchedL0s}
-                  error={errorL0s}
-                  location={this.state.l0}
-                  locations={l0s}
-                  currentParents={this.state.currentParents}
-                  stateLocation={this.state.location}
-                  reassign={true}
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <TypeLocationsPaper
-                  type={1}
-                  onRefresh={() => this.props.fetchLocations(this.locationTypes, 1, this.state.l0)}
-                  onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 1) : null}
-                  onSelect={(l1) => this.setState({ l1 })}
-                  onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 1) : null}
-                  onMove={createRegionLocationRight ? (l, idx) => this.onMove(l, 1, idx) : null}
-                  editOpen={this.state.editOpen}
-                  moveOpen={this.state.moveOpen}
-                  delOpen={this.state.delOpen}
-                  changeState={(state) => this.setState(state)}
-                  save={this.save}
-                  move={this.move}
-                  del={this.delete}
-                  fetching={fetchingL1s}
-                  fetched={fetchedL1s}
-                  error={errorL1s}
-                  location={this.state.l1}
-                  locations={l1s}
-                  currentParents={this.state.currentParents}
-                  stateLocation={this.state.location}
-                  reassign={true}
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <TypeLocationsPaper
-                  type={2}
-                  onRefresh={() => this.props.fetchLocations(this.locationTypes, 2, this.state.l1)}
-                  onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 2) : null}
-                  onSelect={(l2) => this.setState({ l2 })}
-                  onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 2) : null}
-                  onMove={createRegionLocationRight ? (l, idx) => this.onMove(l, 2, idx) : null}
-                  editOpen={this.state.editOpen}
-                  moveOpen={this.state.moveOpen}
-                  delOpen={this.state.delOpen}
-                  changeState={(state) => this.setState(state)}
-                  save={this.save}
-                  move={this.move}
-                  del={this.delete}
-                  fetching={fetchingL2s}
-                  fetched={fetchedL2s}
-                  error={errorL2s}
-                  location={this.state.l2}
-                  locations={l2s}
-                  currentParents={this.state.currentParents}
-                  stateLocation={this.state.location}
-                  reassign={true}
-                />
+      <StyledLocationsPage>
+        <div className="page">
+          <Helmet title={formatMessage(this.props.intl, "location", "location.locations.page.title")} />
+          <Grid container spacing={1}>
+            <Grid size={12}>
+              <Grid container spacing={1}>
+                <Grid size={3}>
+                  <TypeLocationsPaper
+                    type={0}
+                    onRefresh={(filters) => this.props.fetchLocations(this.locationTypes, 0, null, filters)}
+                    reset={() => this.props.fetchLocations(this.locationTypes, 0, null, {})}
+                    onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 0) : null}
+                    onSelect={(l0) => this.setState({ l0 })}
+                    onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 0) : null}
+                    onMove={createRegionLocationRight ? (l) => this.onMove(l, 0) : null}
+                    editOpen={this.state.editOpen}
+                    moveOpen={this.state.moveOpen}
+                    delOpen={this.state.delOpen}
+                    changeState={(state) => this.setState(state)}
+                    save={this.save}
+                    move={this.move}
+                    del={this.delete}
+                    fetching={fetchingL0s}
+                    fetched={fetchedL0s}
+                    error={errorL0s}
+                    location={this.state.l0}
+                    locations={l0s}
+                    currentParents={this.state.currentParents}
+                    stateLocation={this.state.location}
+                    reassign={true}
+                  />
+                </Grid>
+                <Grid size={3}>
+                  <TypeLocationsPaper
+                    type={1}
+                    onRefresh={(filters) => this.props.fetchLocations(this.locationTypes, 1, this.state.l0, filters)}
+                    reset={() => this.props.fetchLocations(this.locationTypes, 1, this.state.l0, {})}
+                    onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 1) : null}
+                    onSelect={(l1) => this.setState({ l1 })}
+                    onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 1) : null}
+                    onMove={createRegionLocationRight ? (l, idx) => this.onMove(l, 1, idx) : null}
+                    editOpen={this.state.editOpen}
+                    moveOpen={this.state.moveOpen}
+                    delOpen={this.state.delOpen}
+                    changeState={(state) => this.setState(state)}
+                    save={this.save}
+                    move={this.move}
+                    del={this.delete}
+                    fetching={fetchingL1s}
+                    fetched={fetchedL1s}
+                    error={errorL1s}
+                    location={this.state.l1}
+                    locations={l1s}
+                    currentParents={this.state.currentParents}
+                    stateLocation={this.state.location}
+                    reassign={true}
+                  />
+                </Grid>
+                <Grid size={3}>
+                  <TypeLocationsPaper
+                    type={2}
+                    onRefresh={(filters) => this.props.fetchLocations(this.locationTypes, 2, this.state.l1, filters)}
+                    reset={() => this.props.fetchLocations(this.locationTypes, 2, this.state.l1, {})}
+                    onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 2) : null}
+                    onSelect={(l2) => this.setState({ l2 })}
+                    onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 2) : null}
+                    onMove={createRegionLocationRight ? (l, idx) => this.onMove(l, 2, idx) : null}
+                    editOpen={this.state.editOpen}
+                    moveOpen={this.state.moveOpen}
+                    delOpen={this.state.delOpen}
+                    changeState={(state) => this.setState(state)}
+                    save={this.save}
+                    move={this.move}
+                    del={this.delete}
+                    fetching={fetchingL2s}
+                    fetched={fetchedL2s}
+                    error={errorL2s}
+                    location={this.state.l2}
+                    locations={l2s}
+                    currentParents={this.state.currentParents}
+                    stateLocation={this.state.location}
+                    reassign={true}
+                  />
+                </Grid>
+                <Grid size={3}>
+                  <TypeLocationsPaper
+                    type={3}
+                    onRefresh={(filters) => this.props.fetchLocations(this.locationTypes, 3, this.state.l2, filters)}
+                    reset={() => this.props.fetchLocations(this.locationTypes, 3, this.state.l2, {})}
+                    onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 3) : null}
+                    onSelect={(l3) => this.setState({ l3 })}
+                    onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 3) : null}
+                    onMove={createRegionLocationRight ? (l, idx) => this.onMove(l, 3, idx) : null}
+                    editOpen={this.state.editOpen}
+                    moveOpen={this.state.moveOpen}
+                    delOpen={this.state.delOpen}
+                    changeState={(state) => this.setState(state)}
+                    save={this.save}
+                    move={this.move}
+                    del={this.delete}
+                    fetching={fetchingL3s}
+                    fetched={fetchedL3s}
+                    error={errorL3s}
+                    location={this.state.l3}
+                    locations={l3s}
+                    currentParents={this.state.currentParents}
+                    stateLocation={this.state.location}
+                    withCaptation={true}
+                  />
+                </Grid>
               </Grid>
             </Grid>
+
           </Grid>
-          <Grid item xs={4}>
-            <TypeLocationsPaper
-              type={3}
-              onRefresh={() => this.props.fetchLocations(this.locationTypes, 3, this.state.l2)}
-              onDelete={createRegionLocationRight ? (l, idx) => this.onDelete(l, idx, 3) : null}
-              onSelect={(l3) => this.setState({ l3 })}
-              onEdit={createRegionLocationRight ? (l) => this.onEdit(l, 3) : null}
-              onMove={createRegionLocationRight ? (l, idx) => this.onMove(l, 3, idx) : null}
-              editOpen={this.state.editOpen}
-              moveOpen={this.state.moveOpen}
-              delOpen={this.state.delOpen}
-              changeState={(state) => this.setState(state)}
-              save={this.save}
-              move={this.move}
-              del={this.delete}
-              fetching={fetchingL3s}
-              fetched={fetchedL3s}
-              error={errorL3s}
-              location={this.state.l3}
-              locations={l3s}
-              currentParents={this.state.currentParents}
-              stateLocation={this.state.location}
-              withCaptation={true}
-            />
-          </Grid>
-        </Grid>
-      </div>
+        </div>
+      </StyledLocationsPage>
     );
   }
 }
@@ -393,6 +399,7 @@ const mapDispatchToProps = (dispatch) => {
   );
 };
 
+export { StyledLocationsPage };
 export default withModulesManager(
-  injectIntl(connect(mapStateToProps, mapDispatchToProps)(withTheme(withStyles(styles)(LocationsPage)))),
+  injectIntl(connect(mapStateToProps, mapDispatchToProps)(LocationsPage)),
 );

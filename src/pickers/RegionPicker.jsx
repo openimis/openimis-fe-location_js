@@ -5,16 +5,19 @@ import { injectIntl } from "react-intl";
 import _debounce from "lodash/debounce";
 
 import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { styled } from "@mui/material/styles";
 
 import { fetchAllRegions, selectRegionLocation, clearLocations } from "../actions.js";
 import { locationLabel } from "../utils";
 
-const styles = (theme) => ({
-  textField: {
+const StyledRegionPicker = styled('div')(({ theme }) => ({
+  '& .textField': {
     width: "100%",
   },
-});
+  '& .MuiFormControl-root': {
+    width: '100%',
+  },
+}));
 
 let allRegionsFlag = false;
 
@@ -25,7 +28,7 @@ class RegionPicker extends Component {
   }
 
   onSuggestionSelected = (v) => {
-    if (v && this.props.value !== v) this.props.selectRegionLocation(v);
+    if (this.props.value !== v) this.props.selectRegionLocation(v ?? null);
     this.props.onChange(v, locationLabel(v));
   };
 
@@ -56,6 +59,7 @@ class RegionPicker extends Component {
       required = false,
       allRegions,
       title,
+      inputProps
     } = this.props;
 
     allRegionsFlag = allRegions;
@@ -63,32 +67,35 @@ class RegionPicker extends Component {
     let items = userHealthFacilityFullPath && [userHealthFacilityFullPath.location.parent] || regions || [];
 
     return (
-      <AutoSuggestion
-        module="location"
-        items={items}
-        preValues={preValues}
-        label={!!withLabel && (label || formatMessage(intl, "location", "RegionPicker.label"))}
-        placeholder={
-          !!withPlaceholder ? placeholder || formatMessage(intl, "location", "RegionPicker.placehoder") : null
-        }
-        lookup={locationLabel}
-        renderSuggestion={(a) => <span>{locationLabel(a)}</span>}
-        getSuggestionValue={locationLabel}
-        onSuggestionSelected={this.onSuggestionSelected}
-        onClear={this.onSuggestionSelected}
-        value={value}
-        reset={reset}
-        readOnly={readOnly}
-        required={required}
-        selectThreshold={this.selectThreshold}
-        withNull={withNull}
-        nullLabel={
-          nullLabel || filterLabels
-            ? formatMessage(intl, "location", "location.RegionPicker.null")
-            : formatMessage(intl, "location", "location.RegionPicker.none")
-        }
-        title={title}
-      />
+      <StyledRegionPicker>
+        <AutoSuggestion
+          module="location"
+          items={items}
+          preValues={preValues}
+          label={!!withLabel && (label || formatMessage(intl, "location", "RegionPicker.label"))}
+          placeholder={
+            !!withPlaceholder ? placeholder || formatMessage(intl, "location", "RegionPicker.placehoder") : null
+          }
+          lookup={locationLabel}
+          renderSuggestion={(a) => <span>{locationLabel(a)}</span>}
+          getSuggestionValue={locationLabel}
+          onSuggestionSelected={this.onSuggestionSelected}
+          onClear={() => this.onSuggestionSelected(null)}
+          value={value}
+          reset={reset}
+          readOnly={readOnly}
+          required={required}
+          selectThreshold={this.selectThreshold}
+          withNull={withNull}
+          nullLabel={
+            nullLabel || filterLabels
+              ? formatMessage(intl, "location", "location.RegionPicker.null")
+              : formatMessage(intl, "location", "location.RegionPicker.none")
+          }
+          title={title}
+          inputProps={inputProps}
+        />
+      </StyledRegionPicker>
     );
   }
 }
@@ -108,6 +115,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch,
   );
 
+export { StyledRegionPicker };
 export default withModulesManager(
-  connect(mapStateToProps, mapDispatchToProps)(injectIntl(withTheme(withStyles(styles)(RegionPicker)))),
+  connect(mapStateToProps, mapDispatchToProps)(injectIntl(RegionPicker)),
 );

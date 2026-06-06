@@ -1,9 +1,11 @@
 export function healthFacilityLabel(hf) {
-  return !!hf ? `${hf.code} ${hf.name}` : "";
+  if (!hf || (!hf.code && !hf.name)) return "";
+  return `${hf.code || ""} ${hf.name || ""}`.trim();
 }
 
 export function locationLabel(l) {
-  return !!l ? `${l.code} ${l.name}` : "";
+  if (!l || (!l.code && !l.name)) return "";
+  return `${l.code || ""} ${l.name || ""}`.trim();
 }
 
 export const LOCATION_SUMMARY_PROJECTION = ["id", "uuid", "code", "name", "type"];

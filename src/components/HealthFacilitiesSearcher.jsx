@@ -3,7 +3,6 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import _ from "lodash";
-import DeleteIcon from "@material-ui/icons/Delete";
 import {
   withModulesManager,
   formatMessage,
@@ -13,11 +12,13 @@ import {
   journalize,
   coreConfirm,
   Searcher,
+  GetIconComponent,
 } from "@openimis/fe-core";
 import HealthFacilityFilter from "./HealthFacilityFilter";
 import { fetchHealthFacilitySummaries, deleteHealthFacility } from "../actions";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import { RIGHT_HEALTH_FACILITY_DELETE } from "../constants";
+const DeleteIcon = GetIconComponent("Delete")
 
 class HealthFacilitiesSearcher extends Component {
   state = { reset: 0, confirmedAction: null };
@@ -88,15 +89,7 @@ class HealthFacilitiesSearcher extends Component {
           ? formatMessage(this.props.intl, "location", `healthFacilityLegalForm.${hf.legalForm.code}`)
           : null,
       (hf) => (!!hf.level ? formatMessage(this.props.intl, "location", `healthFacilityLevel.${hf.level}`) : null),
-      (hf) => (
-        <PublishedComponent
-          readOnly={true}
-          nullLabel="empty"
-          pubRef="medical.CareTypePicker"
-          withLabel={false}
-          value={hf.careType}
-        />
-      ),
+      (hf) => formatMessage(this.props.intl, "medical", `careType.${hf.careType}`),
       (hf) => hf.phone,
       (hf) => hf.fax,
       (hf) => hf.email,
@@ -204,4 +197,5 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ fetchHealthFacilitySummaries, deleteHealthFacility, coreConfirm, journalize }, dispatch);
 };
 
+export { HealthFacilitiesSearcher };
 export default withModulesManager(injectIntl(connect(mapStateToProps, mapDispatchToProps)(HealthFacilitiesSearcher)));

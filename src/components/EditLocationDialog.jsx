@@ -12,7 +12,8 @@ import {
   DialogTitle,
   Divider,
   Grid,
-} from "@material-ui/core";
+  Box,
+} from "@mui/material";
 
 import { withModulesManager, formatMessage, TextInput, ValidatedTextInput, NumberInput } from "@openimis/fe-core";
 import { locationCodeValidationCheck, locationCodeValidationClear, locationCodeSetValid } from "../actions";
@@ -112,7 +113,7 @@ class EditLocationDialog extends Component {
           <DialogTitle>{title}</DialogTitle>
           <Divider />
           <DialogContent>
-            <DialogContentText>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
               <ValidatedTextInput
                 action={locationCodeValidationCheck}
                 clearAction={locationCodeValidationClear}
@@ -128,7 +129,7 @@ class EditLocationDialog extends Component {
                 autoFocus={true}
                 value={!!this.state.data ? this.state.data.code : null}
                 inputProps={{
-                  "maxLength": this.codeMaxLength,
+                  maxLength: this.codeMaxLength,
                 }}
               />
               <TextInput
@@ -138,8 +139,8 @@ class EditLocationDialog extends Component {
                 onChange={(v) => this.changeData("name", v)}
               />
               {withCaptation && (
-                <Grid container>
-                  <Grid item xs={6}>
+                <Grid container spacing={2}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.male"
@@ -148,7 +149,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("malePopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.female"
@@ -157,7 +158,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("femalePopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.other"
@@ -166,7 +167,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("otherPopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.family"
@@ -177,7 +178,7 @@ class EditLocationDialog extends Component {
                   </Grid>
                 </Grid>
               )}
-            </DialogContentText>
+            </Box>
           </DialogContent>
           <Divider />
           <DialogActions>
@@ -194,7 +195,7 @@ class EditLocationDialog extends Component {
           <DialogTitle>{title}</DialogTitle>
           <Divider />
           <DialogContent>
-            <DialogContentText>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
               <ValidatedTextInput
                 action={locationCodeValidationCheck}
                 clearAction={locationCodeValidationClear}
@@ -221,8 +222,8 @@ class EditLocationDialog extends Component {
                 onChange={(v) => this.changeData("name", v)}
               />
               {withCaptation && (
-                <Grid container>
-                  <Grid item xs={6}>
+                <Grid container spacing={2}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.male"
@@ -231,7 +232,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("malePopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.female"
@@ -240,7 +241,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("femalePopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.other"
@@ -249,7 +250,7 @@ class EditLocationDialog extends Component {
                       onChange={(v) => this.changeData("otherPopulation", v)}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <NumberInput
                       module="location"
                       label="EditDialog.family"
@@ -260,7 +261,7 @@ class EditLocationDialog extends Component {
                   </Grid>
                 </Grid>
               )}
-            </DialogContentText>
+            </Box>
           </DialogContent>
           <Divider />
           <DialogActions>
@@ -281,4 +282,5 @@ const mapStateToProps = (store) => ({
   codeValidationError: store.loc.validationFields?.locationCode?.validationError,
 });
 
+export { EditLocationDialog };
 export default withModulesManager(injectIntl(connect(mapStateToProps)(EditLocationDialog)));
