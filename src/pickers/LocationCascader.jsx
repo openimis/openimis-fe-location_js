@@ -1,20 +1,40 @@
 
 import React, { useEffect, useState, useRef } from "react";
+import { injectIntl } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
 import Cascader from "rc-cascader";
-import { TextField } from "@mui/material";
+import { TextField, Chip } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { GetIconComponent, useModulesManager, useTranslations } from "@openimis/fe-core";
-import { fetchLocationsStr } from "../actions";
 import { locationLabel } from "../utils";
+import { fetchLocationsStr, fetchLocationsByUuids } from "../actions";
+import _ from "lodash";
+
 const ArrowDropDownIcon = GetIconComponent("ArrowDropDown")
 const KeyboardArrowRightIcon = GetIconComponent("KeyboardArrowRight");
 const AutorenewIcon = GetIconComponent("Autorenew");
 const StyledLocationCascader = styled('div')(({ theme }) => ({
   '& .root': {
     width: "100%",
+   '.chipsContainer': {
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "4px",
+      flex: 1,
+      minWidth: 0,
+      margin: "3px",
+    },
+    '.inputRoot': {
+      flexWrap: "wrap",
+      "& input": {
+        width: 0,
+        minWidth: 0,
+      },
+    },
   },
 }));
+
+
 
 const extractPathFromValue = (location) => {
   const names = [];
@@ -38,6 +58,7 @@ const LocationCascader = ({
   onChange,
   readOnly,
   value,
+  multiple = false,
 }) => {
   const modulesManager = useModulesManager();
   const { formatMessage } = useTranslations("location", modulesManager);
@@ -48,7 +69,7 @@ const LocationCascader = ({
   );
 
   const [options, setOptions] = useState([]);
-  const [inputValue, setInputValue] = useState("");
+  const [locations, setLocations] = useState(multiple ? [] : "");
   const [defaultValue, setDefaultValue] = useState([]);
 
   const locationCache = useRef({}); // { [parentUuid]: [childLocations] }
@@ -111,17 +132,53 @@ const LocationCascader = ({
     if (value?.uuid) {
       const { names, uuids } = extractPathFromValue(value);
       setDefaultValue(uuids);
-      setInputValue(locationLabel(value));
+      setLocations(locationLabel(value));
+    } else if (multiple && value?.length) {
+      if(!_.isEqual(_.sortBy(value.map(v => v.uuid)), _.sortBy((locations || []).map(v => v.uuid)))) {
+        const hasPartialLocations = value.some(loc => loc.uuid && !loc.name);
+        if (hasPartialLocations) {
+          const uuidsToFetch = value.filter(loc => loc.uuid && !loc.name).map(loc => loc.uuid);
+          if (uuidsToFetch.length > 0) {
+            dispatch(fetchLocationsByUuids(uuidsToFetch, maxLevel));
+          }
+        } else {
+          setDefaultValue(value.map(v => v.uuid));
+          setLocations(value)
+        }
+      }
     } else {
       setDefaultValue([]);
-      setInputValue("");
+      setLocations("");
     }
-  }, [value]);
+  }, [value, multiple]);
+
+  useEffect(() => {
+    if (locState.fetchedLocationsByUuids && locState.locationsByUuids?.length > 0) {
+      const fetchedLocationsMap = new Map(
+        locState.locationsByUuids.map(loc => [loc.uuid, loc])
+      );
+
+      if (multiple && Array.isArray(value) && value.length > 0) {
+        const enrichedLocations = value.map(loc => {
+          if (loc.uuid && !loc.name) {
+            return fetchedLocationsMap.get(loc.uuid) || loc;
+          }
+          return loc;
+        });
+
+        setDefaultValue(enrichedLocations.map(v => v.uuid));
+        setLocations(enrichedLocations);
+      }
+    }
+  }, [locState.fetchedLocationsByUuids, locState.locationsByUuids]);
 
   const handleCascaderChange = (uuids, selectedOptions) => {
-    const selected = selectedOptions[selectedOptions.length - 1];
-    setInputValue(selected?.label || "");
-    onChange?.(selected.raw, locationLabel(selected.raw));
+    // selectedOptions contains the selected location and all its parent levels for each selection
+    // unwrap to keep only the lowest level for each selection
+    const unnestedOptions = (multiple ? selectedOptions : [selectedOptions]).map(opts => opts[opts.length - 1])
+    const rawVals = unnestedOptions.map(selected => selected.raw)
+    setLocations(rawVals);
+    onChange?.(multiple ? rawVals : rawVals[0]);
   };
 
   return (
@@ -139,12 +196,26 @@ const LocationCascader = ({
         >
           <TextField
             label={label || formatMessage("LocationPicker.label")}
-            value={inputValue}
+            value={multiple ? "" : locations}
             fullWidth
             disabled={readOnly}
             InputProps={{
               readOnly: true,
-              endAdornment: (<ArrowDropDownIcon 
+              classes: multiple && Array.isArray(locations) && locations.length > 0 ? {
+                root: "inputRoot",
+              } : undefined,
+              startAdornment: multiple && Array.isArray(locations) && locations.length > 0 ? (
+                <div className="chipsContainer">
+                  {locations.map((location) => (
+                    <Chip
+                      key={location.uuid}
+                      label={locationLabel(location)}
+                      disabled={readOnly}
+                    />
+                  ))}
+                </div>
+              ) : null,
+              endAdornment: (<ArrowDropDownIcon
                 style={{ color: "rgba(0, 0, 0, 0.54)" }}
               />),
             }}
@@ -155,4 +226,4 @@ const LocationCascader = ({
   );
 };
 
-export default LocationCascader;
+export default injectIntl(LocationCascader);

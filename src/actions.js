@@ -202,6 +202,28 @@ export function fetchLocationsStr(mm, level, regions = null, districts = null, p
   );
 }
 
+export function fetchLocationsByUuids(uuids, maxLevel = 4) {
+  if (!uuids || uuids.length === 0) {
+    return { type: "LOCATION_LOCATIONS_BY_UUIDS_EMPTY" };
+  }
+
+  const uuidFilters = uuids.map(uuid => `"${uuid}"`).join(',');
+  const projections = ["id", "uuid", "type", "code", "name", nestParentsProjections(maxLevel - 1)];
+
+  return graphqlWithVariables(
+    `
+      {
+        locationsStr(uuid_In: [${uuidFilters}])
+        {
+          ${_pageAndEdges(projections)}
+        }
+      }
+      `,
+    {},
+    `LOCATION_LOCATIONS_BY_UUIDS`,
+  );
+}
+
 export function fetchParentLocationsStr(
   modulesManager,
   level,
