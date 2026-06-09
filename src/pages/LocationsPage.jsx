@@ -62,10 +62,10 @@ class LocationsPage extends Component {
     if (!_.isEqual(prevProps.l0s, this.props.l0s)) {
       this.setState((state, props) => ({
         l0: props.l0s[0],
-        l0s: props.l0s,
-        l1s: props.l1s,
-        l2s: props.l2s,
-        l3s: props.l3s,
+        l0s: props.l0s ? [...props.l0s] : [],
+        l1s: props.l1s ? [...props.l1s] : [],
+        l2s: props.l2s ? [...props.l2s] : [],
+        l3s: props.l3s ? [...props.l3s] : [],
       }));
     } else if (prevState.l0 !== this.state.l0) {
       if (!this.state.l0) {
@@ -76,9 +76,9 @@ class LocationsPage extends Component {
     } else if (!_.isEqual(prevProps.l1s, this.props.l1s)) {
       this.setState((state, props) => ({
         l1: !!props.l1s ? props.l1s[0] : null,
-        l1s: props.l1s,
-        l2s: props.l2s,
-        l3s: props.l3s,
+        l1s: props.l1s ? [...props.l1s] : [],
+        l2s: props.l2s ? [...props.l2s] : [],
+        l3s: props.l3s ? [...props.l3s] : [],
       }));
     } else if (prevState.l1 !== this.state.l1) {
       if (!this.state.l1) {
@@ -89,8 +89,8 @@ class LocationsPage extends Component {
     } else if (!_.isEqual(prevProps.l2s, this.props.l2s)) {
       this.setState((state, props) => ({
         l2: !!props.l2s ? props.l2s[0] : null,
-        l2s: props.l2s,
-        l3s: props.l3s,
+        l2s: props.l2s ? [...props.l2s] : [],
+        l3s: props.l3s ? [...props.l3s] : [],
       }));
     } else if (prevState.l2 !== this.state.l2) {
       if (!this.state.l2) {
@@ -101,36 +101,38 @@ class LocationsPage extends Component {
     } else if (!_.isEqual(prevProps.l3s, this.props.l3s)) {
       this.setState((state, props) => ({
         l3: !!props.l3s ? props.l3s[0] : null,
-        l3s: props.l3s,
+        l3s: props.l3s ? [...props.l3s] : [],
       }));
     } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
-      this.props.journalize(this.props.mutation);
+      this.props.journalize(this.props.mutation ? { ...this.props.mutation } : null);
       let state = { ...this.state };
-      let ls = state[`l${this.locationTypes.indexOf(state.location.type)}s`];
+      if (!state.action || !state.location) {
+        return;
+      }
+      const listKey = `l${this.locationTypes.indexOf(state.location.type)}s`;
+      let ls = [...(state[listKey] || [])];
       switch (state.action) {
         case ACTION_SAVE:
           if (!state.location.uuid) {
-            ls.push(state.location);
+            ls = [...ls, { ...state.location }];
           } else {
-            delete ls.filter((l) => l.uuid == state.location.uuid)[0]["uuid"];
+            ls = ls.map((l) => (l.uuid == state.location.uuid ? (({ uuid, ...rest }) => rest)(l) : l));
           }
           state.editOpen = null;
           break;
         case ACTION_MOVE:
-          let displayed = ls.filter((l) => l.uuid == state.location.uuid);
-          if (!!displayed.length) {
-            delete displayed[0]["uuid"];
-          }
+          ls = ls.map((l) => (l.uuid == state.location.uuid ? (({ uuid, ...rest }) => rest)(l) : l));
           state.moveOpen = null;
           break;
         case ACTION_DELETE:
-          delete ls[state.index]["uuid"];
+          ls = ls.map((l, i) => (i === state.index ? (({ uuid, ...rest }) => rest)(l) : l));
           state.delOpen = null;
           break;
         default:
           //noop
           return;
       }
+      state[listKey] = ls;
       this.setState({ ...state });
     }
   }

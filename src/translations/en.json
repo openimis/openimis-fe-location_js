@@ -71,6 +71,7 @@
   "location.UpdateLocation.mutationLabel": "Update location {code} - {name}",
   "location.MoveLocation.mutationLabel": "Move location {code} - {name} to {newParentCode} - {newParentName}",
   "location.DeleteLocation.mutationLabel": "Delete location {code} - {name}",
+  "location.addLocation": "Add Location",
   "location.AddDialog.title": "New {type}",
   "location.EditDialog.title": "Modify {type}",
   "location.EditDialog.title.of": " of {code} - {name}",
