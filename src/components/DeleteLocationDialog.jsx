@@ -24,7 +24,7 @@ const ACTION_REASSIGN = "reassign";
 
 class DeleteLocationDialog extends Component {
   state = {
-    newParent: null,
+    newParent: "",
     action: ACTION_DROP,
   };
 
@@ -46,7 +46,17 @@ class DeleteLocationDialog extends Component {
     document.removeEventListener("keydown", this.keysFunction, false);
   }
 
-  handleChange = (k, v) => this.setState({ [k]: v });
+  handleChange = (k, v) => {
+    if (k === "action" && v === ACTION_REASSIGN) {
+      const first = this.props.reassignLocations && this.props.reassignLocations[0];
+      this.setState({
+        action: v,
+        newParent: first ? first.uuid : "",
+      });
+      return;
+    }
+    this.setState({ [k]: v });
+  };
 
   render() {
     const { intl, open, type, title, confirm, drop, reassign, reassignLocations, onDelete, onCancel } = this.props;
@@ -76,7 +86,7 @@ class DeleteLocationDialog extends Component {
                     <Select
                       labelId="reassign-to-label"
                       id="reassign-to"
-                      value={this.state.newParent}
+                      value={this.state.newParent || ""}
                       onChange={(e) => this.handleChange("newParent", e.target.value)}
                     >
                       {reassignLocations.map((l, idx) => (

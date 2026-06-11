@@ -8,6 +8,17 @@ export function locationLabel(l) {
   return `${l.code || ""} ${l.name || ""}`.trim();
 }
 
+export function getLocationLevel(location) {
+  if (!location) return -1;
+  let level = 0;
+  let current = location.parent;
+  while (current) {
+    level += 1;
+    current = current.parent || null;
+  }
+  return level;
+}
+
 export const LOCATION_SUMMARY_PROJECTION = ["id", "uuid", "code", "name", "type"];
 
 export const nestParentsProjections = (i) => {

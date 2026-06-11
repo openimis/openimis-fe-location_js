@@ -24,9 +24,9 @@ import { fetchLocations, clearLocations } from "../actions";
 class MoveLocationDialog extends Component {
   state = {
     currentParent: null,
-    l0: null,
-    l1: null,
-    l2: null,
+    l0: "",
+    l1: "",
+    l2: "",
   };
 
   constructor(props) {
@@ -56,19 +56,19 @@ class MoveLocationDialog extends Component {
     if (!_.isEqual(prevProps.currentParents, this.props.currentParents)) {
       let parents = this.props.currentParents;
       this.setState({
-        l0: !!parents ? parents[0] : null,
-        l1: !!parents && parents.length > 1 ? parents[1] : null,
-        l2: !!parents && parents.length > 2 ? parents[2] : null,
+        l0: !!parents && parents[0] ? parents[0] : "",
+        l1: !!parents && parents[1] ? parents[1] : "",
+        l2: !!parents && parents[2] ? parents[2] : "",
       });
     } else if (!_.isEqual(prevProps.l1s, this.props.l1s)) {
       this.setState((state, props) => ({
-        l1: null,
+        l1: "",
         l1s: props.l1s,
         l2s: props.l2s,
       }));
     } else if (!_.isEqual(prevProps.l2s, this.props.l2s)) {
       this.setState((state, props) => ({
-        l2: null,
+        l2: "",
         l2s: props.l2s,
       }));
     }
@@ -78,13 +78,13 @@ class MoveLocationDialog extends Component {
     let state = { ...this.state };
     state[`l${i}`] = v;
     for (let j = i + 1; j < 3; j++) {
-      state[`l${j}`] = null;
+      state[`l${j}`] = "";
     }
     this.setState({ ...state }, (e) => this.props.changeState({ [`l${i}`]: v }));
   };
 
   _move = () => {
-    let newParent = !!this.state.l2 ? this.state.l2 : !!this.state.l1 ? this.state.l1 : this.state.l0;
+    let newParent = this.state.l2 || this.state.l1 || this.state.l0 || null;
     this.props.onMove(newParent);
   };
 
@@ -130,10 +130,18 @@ class MoveLocationDialog extends Component {
                         <Select
                           labelId={`reassign-to-label-${i}`}
                           id={`reassign-to-${i}`}
-                          value={this.state[`l${i}`]}
+                          value={(() => {
+                            const val = this.state[`l${i}`];
+                            const list = this.props[`l${i}s`] || [];
+                            if (val && typeof val === "object" && val.uuid) {
+                              const match = list.find((l) => l.uuid === val.uuid);
+                              return match || val;
+                            }
+                            return val || "";
+                          })()}
                           onChange={(e) => this.handleChange(i, e.target.value)}
                         >
-                          <MenuItem key={`pick-null`} value={null}>
+                          <MenuItem key={`pick-null`} value="">
                             {formatMessage(intl, "location", "MoveDialog.Parent.None")}
                           </MenuItem>
                           {!!this.props[`l${i}s`] &&
