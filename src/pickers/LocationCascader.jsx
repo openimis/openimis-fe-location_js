@@ -15,39 +15,6 @@ const ArrowDropDownIcon = GetIconComponent("ArrowDropDown")
 const KeyboardArrowRightIcon = GetIconComponent("KeyboardArrowRight");
 const AutorenewIcon = GetIconComponent("Autorenew");
 
-const CASCADER_OVERFLOW = {
-  adjustX: true,
-  adjustY: true,
-  shiftX: true,
-  shiftY: true,
-};
-
-const CASCADER_BUILT_IN_PLACEMENTS = {
-  bottomLeft: {
-    points: ["tl", "bl"],
-    offset: [0, 4],
-    overflow: CASCADER_OVERFLOW,
-    htmlRegion: "scroll",
-  },
-  bottomRight: {
-    points: ["tr", "br"],
-    offset: [0, 4],
-    overflow: CASCADER_OVERFLOW,
-    htmlRegion: "scroll",
-  },
-  topLeft: {
-    points: ["bl", "tl"],
-    offset: [0, -4],
-    overflow: CASCADER_OVERFLOW,
-    htmlRegion: "scroll",
-  },
-  topRight: {
-    points: ["br", "tr"],
-    offset: [0, -4],
-    overflow: CASCADER_OVERFLOW,
-    htmlRegion: "scroll",
-  },
-};
 
 const StyledLocationCascader = styled('div')(({ theme }) => ({
   width: "100%",
@@ -104,7 +71,9 @@ const LocationCascader = ({
   requiredLevel,
 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isNarrowViewport = useMediaQuery(theme.breakpoints.down("sm"), { noSsr: true });
+  const isCoarsePointer = useMediaQuery("(pointer: coarse)", { noSsr: true });
+  const isMobile = isNarrowViewport || isCoarsePointer;
   const modulesManager = useModulesManager();
   const { formatMessage, formatMessageWithValues } = useTranslations("location", modulesManager);
   const dispatch = useDispatch();
@@ -125,7 +94,6 @@ const LocationCascader = ({
   const pendingExpansion = useRef(null);
   const rootRef = useRef(null);
   const [placement, setPlacement] = useState("bottomLeft");
-  const [columnWidth, setColumnWidth] = useState(200);
 
   const isLevelValid = (location) => {
     if (multiple || minRequiredLevel === null || minRequiredLevel === undefined) return true;
@@ -145,22 +113,6 @@ const LocationCascader = ({
     }
   };
 
-  const updatePlacement = () => {
-    if (!rootRef.current) return;
-    const rect = rootRef.current.getBoundingClientRect();
-    const viewportPadding = 16;
-    const estimatedDropdownWidth = Math.min(window.innerWidth - viewportPadding * 2, 720);
-    const spaceOnRight = window.innerWidth - rect.left - viewportPadding;
-    const spaceOnLeft = rect.right - viewportPadding;
-    setPlacement(
-      spaceOnRight < estimatedDropdownWidth && spaceOnLeft > spaceOnRight ? "bottomRight" : "bottomLeft",
-    );
-    setColumnWidth(Math.min(220, Math.max(140, Math.floor(window.innerWidth * 0.34))));
-  };
-
-  const handleOpenChange = (open) => {
-    if (open) updatePlacement();
-  };
 
   useEffect(() => {
     dispatch(fetchLocationsStr(modulesManager, 0));
@@ -312,18 +264,11 @@ const LocationCascader = ({
           defaultValue={defaultValue}
           loadData={loadData}
           onChange={handleCascaderChange}
-          onOpenChange={handleOpenChange}
           changeOnSelect={true}
           disabled={readOnly}
           placement={placement}
-          builtinPlacements={CASCADER_BUILT_IN_PLACEMENTS}
           dropdownClassName="openimis-location-cascader-dropdown"
           dropdownStyle={{ maxWidth: "calc(100vw - 16px)" }}
-          dropdownMenuColumnStyle={{
-            minWidth: Math.min(160, columnWidth),
-            maxWidth: columnWidth,
-            width: columnWidth,
-          }}
           expandIcon={<KeyboardArrowRightIcon fontSize="small" />}
           loadingIcon={<AutorenewIcon fontSize="small" className="spin" />}
         >

@@ -29,12 +29,16 @@ const StyledMobilePicker = styled("div")({
 
 const StyledDrawerPaper = styled(Drawer)({
   "& .MuiDrawer-paper": {
-    height: "min(85dvh, 640px)",
-    maxHeight: "85dvh",
+    height: "85vh",
+    maxHeight: "85vh",
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     display: "flex",
     flexDirection: "column",
+    "@supports (height: 85dvh)": {
+      height: "min(85dvh, 640px)",
+      maxHeight: "85dvh",
+    },
   },
 });
 
@@ -122,24 +126,53 @@ const LocationCascaderMobile = ({
 
   const currentLevelLabel = formatMessage(`locationType.${Math.min(viewLevel, maxLevel - 1)}`);
 
+  const handleActivate = (event) => {
+    if (readOnly) return;
+    event.preventDefault();
+    openDrawer();
+  };
+
   return (
     <StyledMobilePicker>
-      <TextField
-        label={label || formatMessage("LocationPicker.label")}
-        value={displayValue}
-        fullWidth
-        disabled={readOnly}
-        required={required}
-        error={levelError}
-        helperText={levelError ? levelErrorMessage : undefined}
-        onClick={openDrawer}
-        InputProps={{
-          readOnly: true,
-          endAdornment: <ArrowDropDownIcon style={{ color: "rgba(0, 0, 0, 0.54)" }} />,
+      <Box
+        role={readOnly ? undefined : "button"}
+        tabIndex={readOnly ? -1 : 0}
+        onClick={handleActivate}
+        onKeyDown={(event) => {
+          if (readOnly) return;
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openDrawer();
+          }
         }}
-      />
+        sx={{
+          width: "100%",
+          cursor: readOnly ? "default" : "pointer",
+          WebkitTapHighlightColor: "transparent",
+        }}
+      >
+        <TextField
+          label={label || formatMessage("LocationPicker.label")}
+          value={displayValue}
+          fullWidth
+          disabled={readOnly}
+          required={required}
+          error={levelError}
+          helperText={levelError ? levelErrorMessage : undefined}
+          sx={{ pointerEvents: "none" }}
+          InputProps={{
+            readOnly: true,
+            endAdornment: <ArrowDropDownIcon style={{ color: "rgba(0, 0, 0, 0.54)" }} />,
+          }}
+        />
+      </Box>
 
-      <StyledDrawerPaper anchor="bottom" open={open} onClose={closeDrawer}>
+      <StyledDrawerPaper
+        anchor="bottom"
+        open={open}
+        onClose={closeDrawer}
+        ModalProps={{ keepMounted: true }}
+      >
         <Box
           sx={{
             display: "flex",
