@@ -19,6 +19,25 @@ export function getLocationLevel(location) {
   return level;
 }
 
+export function buildSelectedLocation(path) {
+  if (!path?.length) return null;
+  const nodes = path.map((item) => ({ ...item, parent: null }));
+  for (let i = 1; i < nodes.length; i++) {
+    nodes[i].parent = nodes[i - 1];
+  }
+  return nodes[nodes.length - 1];
+}
+
+export function locationPathFromValue(location) {
+  const path = [];
+  let current = location;
+  while (current) {
+    path.unshift(current);
+    current = current.parent || null;
+  }
+  return path;
+}
+
 export const LOCATION_SUMMARY_PROJECTION = ["id", "uuid", "code", "name", "type"];
 
 export const nestParentsProjections = (i) => {

@@ -3,16 +3,52 @@ import React, { useEffect, useState, useRef } from "react";
 import { injectIntl } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
 import Cascader from "rc-cascader";
-import { TextField, Chip } from "@mui/material";
+import { TextField, Chip, useMediaQuery, useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { GetIconComponent, useModulesManager, useTranslations } from "@openimis/fe-core";
 import { getLocationLevel, locationLabel } from "../utils";
 import { fetchLocationsStr, fetchLocationsByUuids } from "../actions";
+import LocationCascaderMobile from "./LocationCascaderMobile";
 import _ from "lodash";
 
 const ArrowDropDownIcon = GetIconComponent("ArrowDropDown")
 const KeyboardArrowRightIcon = GetIconComponent("KeyboardArrowRight");
 const AutorenewIcon = GetIconComponent("Autorenew");
+
+const CASCADER_OVERFLOW = {
+  adjustX: true,
+  adjustY: true,
+  shiftX: true,
+  shiftY: true,
+};
+
+const CASCADER_BUILT_IN_PLACEMENTS = {
+  bottomLeft: {
+    points: ["tl", "bl"],
+    offset: [0, 4],
+    overflow: CASCADER_OVERFLOW,
+    htmlRegion: "scroll",
+  },
+  bottomRight: {
+    points: ["tr", "br"],
+    offset: [0, 4],
+    overflow: CASCADER_OVERFLOW,
+    htmlRegion: "scroll",
+  },
+  topLeft: {
+    points: ["bl", "tl"],
+    offset: [0, -4],
+    overflow: CASCADER_OVERFLOW,
+    htmlRegion: "scroll",
+  },
+  topRight: {
+    points: ["br", "tr"],
+    offset: [0, -4],
+    overflow: CASCADER_OVERFLOW,
+    htmlRegion: "scroll",
+  },
+};
+
 const StyledLocationCascader = styled('div')(({ theme }) => ({
   width: "100%",
   maxWidth: "100%",
@@ -48,23 +84,14 @@ const StyledLocationCascader = styled('div')(({ theme }) => ({
   },
 }));
 
-
-
 const extractPathFromValue = (location) => {
-  const names = [];
   const uuids = [];
-
   let current = location;
   while (current) {
-    names.unshift(current.name);
     uuids.unshift(current.uuid);
     current = current.parent;
   }
-
-  return {
-    names,
-    uuids,
-  };
+  return { uuids };
 };
 
 const LocationCascader = ({
@@ -76,6 +103,8 @@ const LocationCascader = ({
   required = false,
   requiredLevel,
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const modulesManager = useModulesManager();
   const { formatMessage, formatMessageWithValues } = useTranslations("location", modulesManager);
   const dispatch = useDispatch();
@@ -92,10 +121,47 @@ const LocationCascader = ({
   const [levelError, setLevelError] = useState(false);
   const [invalidSelection, setInvalidSelection] = useState(null);
 
-  const locationCache = useRef({}); // { [parentUuid]: [childLocations] }
+  const locationCache = useRef({});
   const pendingExpansion = useRef(null);
+  const rootRef = useRef(null);
+  const [placement, setPlacement] = useState("bottomLeft");
+  const [columnWidth, setColumnWidth] = useState(200);
 
-  // Load top-level locations on mount
+  const isLevelValid = (location) => {
+    if (multiple || minRequiredLevel === null || minRequiredLevel === undefined) return true;
+    return getLocationLevel(location) >= minRequiredLevel;
+  };
+
+  const getLevelErrorMessage = () =>
+    formatMessageWithValues("LocationCascader.requiredLevel", {
+      level: formatMessage(`locationType.${minRequiredLevel}`),
+    });
+
+  const handleLevelErrorChange = (hasError, selection) => {
+    setLevelError(hasError);
+    setInvalidSelection(hasError ? selection : null);
+    if (hasError && selection) {
+      setLocations(locationLabel(selection));
+    }
+  };
+
+  const updatePlacement = () => {
+    if (!rootRef.current) return;
+    const rect = rootRef.current.getBoundingClientRect();
+    const viewportPadding = 16;
+    const estimatedDropdownWidth = Math.min(window.innerWidth - viewportPadding * 2, 720);
+    const spaceOnRight = window.innerWidth - rect.left - viewportPadding;
+    const spaceOnLeft = rect.right - viewportPadding;
+    setPlacement(
+      spaceOnRight < estimatedDropdownWidth && spaceOnLeft > spaceOnRight ? "bottomRight" : "bottomLeft",
+    );
+    setColumnWidth(Math.min(220, Math.max(140, Math.floor(window.innerWidth * 0.34))));
+  };
+
+  const handleOpenChange = (open) => {
+    if (open) updatePlacement();
+  };
+
   useEffect(() => {
     dispatch(fetchLocationsStr(modulesManager, 0));
   }, []);
@@ -144,19 +210,9 @@ const LocationCascader = ({
     targetOption.children = children;
     locationCache.current[targetOption.value] = children;
 
-    setOptions([...options]); // trigger re-render
+    setOptions([...options]);
     pendingExpansion.current = null;
   }, [locState]);
-
-  const isLevelValid = (location) => {
-    if (multiple || minRequiredLevel === null || minRequiredLevel === undefined) return true;
-    return getLocationLevel(location) >= minRequiredLevel;
-  };
-
-  const getLevelErrorMessage = () =>
-    formatMessageWithValues("LocationCascader.requiredLevel", {
-      level: formatMessage(`locationType.${minRequiredLevel}`),
-    });
 
   useEffect(() => {
     if (value?.uuid) {
@@ -206,8 +262,6 @@ const LocationCascader = ({
   }, [locState.fetchedLocationsByUuids, locState.locationsByUuids]);
 
   const handleCascaderChange = (uuids, selectedOptions) => {
-    // selectedOptions contains the selected location and all its parent levels for each selection
-    // unwrap to keep only the lowest level for each selection
     const unnestedOptions = (multiple ? selectedOptions : [selectedOptions]).map((opts) => opts[opts.length - 1]);
     const rawVals = unnestedOptions.map((selected) => selected.raw);
     setLocations(multiple ? rawVals : locationLabel(rawVals[0]));
@@ -231,22 +285,51 @@ const LocationCascader = ({
     onChange?.(selected);
   };
 
+  const displayValue = multiple ? "" : locations;
+
+  if (isMobile && !multiple) {
+    return (
+      <LocationCascaderMobile
+        label={label}
+        onChange={onChange}
+        readOnly={readOnly}
+        value={value}
+        required={required}
+        minRequiredLevel={minRequiredLevel}
+        displayValue={displayValue}
+        levelError={levelError}
+        levelErrorMessage={getLevelErrorMessage()}
+        onLevelErrorChange={handleLevelErrorChange}
+      />
+    );
+  }
+
   return (
     <StyledLocationCascader>
-      <div className="root">
+      <div className="root" ref={rootRef}>
         <Cascader
           options={options}
           defaultValue={defaultValue}
           loadData={loadData}
           onChange={handleCascaderChange}
+          onOpenChange={handleOpenChange}
           changeOnSelect={true}
           disabled={readOnly}
+          placement={placement}
+          builtinPlacements={CASCADER_BUILT_IN_PLACEMENTS}
+          dropdownClassName="openimis-location-cascader-dropdown"
+          dropdownStyle={{ maxWidth: "calc(100vw - 16px)" }}
+          dropdownMenuColumnStyle={{
+            minWidth: Math.min(160, columnWidth),
+            maxWidth: columnWidth,
+            width: columnWidth,
+          }}
           expandIcon={<KeyboardArrowRightIcon fontSize="small" />}
           loadingIcon={<AutorenewIcon fontSize="small" className="spin" />}
         >
           <TextField
             label={label || formatMessage("LocationPicker.label")}
-            value={multiple ? "" : locations}
+            value={displayValue}
             fullWidth
             disabled={readOnly}
             required={required}
