@@ -6,7 +6,7 @@ import Cascader from "rc-cascader";
 import { TextField, Chip } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { GetIconComponent, useModulesManager, useTranslations } from "@openimis/fe-core";
-import { locationLabel } from "../utils";
+import { getLocationLevel, locationLabel } from "../utils";
 import { fetchLocationsStr, fetchLocationsByUuids } from "../actions";
 import _ from "lodash";
 
@@ -14,9 +14,14 @@ const ArrowDropDownIcon = GetIconComponent("ArrowDropDown")
 const KeyboardArrowRightIcon = GetIconComponent("KeyboardArrowRight");
 const AutorenewIcon = GetIconComponent("Autorenew");
 const StyledLocationCascader = styled('div')(({ theme }) => ({
+  width: "100%",
+  maxWidth: "100%",
+  boxSizing: "border-box",
   '& .root': {
     width: "100%",
-   '.chipsContainer': {
+    maxWidth: "100%",
+    boxSizing: "border-box",
+    '& .chipsContainer': {
       display: "flex",
       flexWrap: "wrap",
       gap: "4px",
@@ -24,13 +29,22 @@ const StyledLocationCascader = styled('div')(({ theme }) => ({
       minWidth: 0,
       margin: "3px",
     },
-    '.inputRoot': {
+    '& .inputRoot': {
       flexWrap: "wrap",
       "& input": {
         width: 0,
         minWidth: 0,
       },
     },
+  },
+  '& .rc-cascader': {
+    width: "100%",
+    maxWidth: "100%",
+    display: "block",
+  },
+  '& .MuiFormControl-root': {
+    width: "100%",
+    maxWidth: "100%",
   },
 }));
 
@@ -59,18 +73,24 @@ const LocationCascader = ({
   readOnly,
   value,
   multiple = false,
+  required = false,
+  requiredLevel,
 }) => {
   const modulesManager = useModulesManager();
-  const { formatMessage } = useTranslations("location", modulesManager);
+  const { formatMessage, formatMessageWithValues } = useTranslations("location", modulesManager);
   const dispatch = useDispatch();
   const locState = useSelector((state) => state.loc);
   const maxLevel = parseInt(
     modulesManager.getConf("location", "Location.MaxLevels", 4)
   );
+  const minRequiredLevel =
+    requiredLevel ?? (required ? Math.max(maxLevel - 1, 0) : null);
 
   const [options, setOptions] = useState([]);
   const [locations, setLocations] = useState(multiple ? [] : "");
   const [defaultValue, setDefaultValue] = useState([]);
+  const [levelError, setLevelError] = useState(false);
+  const [invalidSelection, setInvalidSelection] = useState(null);
 
   const locationCache = useRef({}); // { [parentUuid]: [childLocations] }
   const pendingExpansion = useRef(null);
@@ -128,11 +148,23 @@ const LocationCascader = ({
     pendingExpansion.current = null;
   }, [locState]);
 
+  const isLevelValid = (location) => {
+    if (multiple || minRequiredLevel === null || minRequiredLevel === undefined) return true;
+    return getLocationLevel(location) >= minRequiredLevel;
+  };
+
+  const getLevelErrorMessage = () =>
+    formatMessageWithValues("LocationCascader.requiredLevel", {
+      level: formatMessage(`locationType.${minRequiredLevel}`),
+    });
+
   useEffect(() => {
     if (value?.uuid) {
-      const { names, uuids } = extractPathFromValue(value);
+      const { uuids } = extractPathFromValue(value);
       setDefaultValue(uuids);
       setLocations(locationLabel(value));
+      setInvalidSelection(null);
+      setLevelError(!isLevelValid(value));
     } else if (multiple && value?.length) {
       if(!_.isEqual(_.sortBy(value.map(v => v.uuid)), _.sortBy((locations || []).map(v => v.uuid)))) {
         const hasPartialLocations = value.some(loc => loc.uuid && !loc.name);
@@ -146,11 +178,12 @@ const LocationCascader = ({
           setLocations(value)
         }
       }
-    } else {
+    } else if (!invalidSelection) {
       setDefaultValue([]);
       setLocations("");
+      setLevelError(false);
     }
-  }, [value, multiple]);
+  }, [value, multiple, minRequiredLevel, invalidSelection]);
 
   useEffect(() => {
     if (locState.fetchedLocationsByUuids && locState.locationsByUuids?.length > 0) {
@@ -175,10 +208,27 @@ const LocationCascader = ({
   const handleCascaderChange = (uuids, selectedOptions) => {
     // selectedOptions contains the selected location and all its parent levels for each selection
     // unwrap to keep only the lowest level for each selection
-    const unnestedOptions = (multiple ? selectedOptions : [selectedOptions]).map(opts => opts[opts.length - 1])
-    const rawVals = unnestedOptions.map(selected => selected.raw)
-    setLocations(rawVals);
-    onChange?.(multiple ? rawVals : rawVals[0]);
+    const unnestedOptions = (multiple ? selectedOptions : [selectedOptions]).map((opts) => opts[opts.length - 1]);
+    const rawVals = unnestedOptions.map((selected) => selected.raw);
+    setLocations(multiple ? rawVals : locationLabel(rawVals[0]));
+
+    if (multiple) {
+      setLevelError(false);
+      onChange?.(rawVals);
+      return;
+    }
+
+    const selected = rawVals[0];
+    if (!isLevelValid(selected)) {
+      setInvalidSelection(selected);
+      setLevelError(true);
+      onChange?.(null);
+      return;
+    }
+
+    setInvalidSelection(null);
+    setLevelError(false);
+    onChange?.(selected);
   };
 
   return (
@@ -199,6 +249,9 @@ const LocationCascader = ({
             value={multiple ? "" : locations}
             fullWidth
             disabled={readOnly}
+            required={required}
+            error={levelError}
+            helperText={levelError ? getLevelErrorMessage() : undefined}
             InputProps={{
               readOnly: true,
               classes: multiple && Array.isArray(locations) && locations.length > 0 ? {
