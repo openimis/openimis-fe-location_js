@@ -39,6 +39,7 @@ class MicroCatchmentFilter extends Component {
 
   render() {
     const { classes, intl } = this.props;
+    const selectedDistrict = this._filterValue("district_Uuid");
 
     return (
       <Grid container className={classes.form}>
@@ -61,8 +62,13 @@ class MicroCatchmentFilter extends Component {
         <Grid item xs={2} className={classes.item}>
           <PublishedComponent
             pubRef="location.DistrictPicker"
-            value={this._filterValue("district")}
-            onChange={(v) => this._onChangeFilter("district_Uuid", v, v ? `district_Uuid: "${v?.uuid}"` : null)}
+            value={selectedDistrict}
+            onChange={(v) => {
+              this._onChangeFilter("district_Uuid", v, v ? `district_Uuid: "${v?.uuid}"` : null);
+              if (this.props.onDistrictChange) {
+                this.props.onDistrictChange(v || null);
+              }
+            }}
           />
         </Grid>
         <Grid item xs={2} className={classes.item}>
@@ -71,7 +77,7 @@ class MicroCatchmentFilter extends Component {
             locationLevel={2}
             label={formatMessage(intl, "location", "microCatchment.ta")}
             value={this._filterValue("ta")}
-            parentLocation={this._filterValue("district")}
+            parentLocation={selectedDistrict}
             onChange={(v) =>
               this._onChangeFilter(
                 "traditional_authorities_Location_Uuid",

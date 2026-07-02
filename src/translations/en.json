@@ -173,5 +173,11 @@
   "microCatchment.delete.button": "Delete",
   "microCatchment.delete.confirm.title": "Delete Micro Catchment",
   "microCatchment.delete.confirm.message": "Are you sure you want to delete Micro Catchment {code} - {name}?",
-  "microCatchment.delete.mutationLabel": "Delete Micro Catchment {code}"
+  "microCatchment.delete.mutationLabel": "Delete Micro Catchment {code}",
+  "microCatchment.download.button": "Download",
+  "microCatchment.download.error": "Micro Catchments download failed.",
+  "microCatchment.upload.button": "Upload",
+  "microCatchment.upload.success": "Micro Catchments uploaded successfully.",
+  "microCatchment.upload.error": "Micro Catchments upload failed.",
+  "microCatchment.uploadDownload.missingDistrict": "Please select a district first."
 }

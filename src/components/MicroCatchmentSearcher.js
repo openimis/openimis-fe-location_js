@@ -10,6 +10,7 @@ import {
   formatMessage,
   formatMessageWithValues,
   formatDateFromISO,
+  baseApiUrl,
   withModulesManager,
   withHistory,
   historyPush,
@@ -18,7 +19,11 @@ import {
 } from "@openimis/fe-core";
 import { fetchMicroCatchments, deleteMicroCatchment } from "../actions";
 import MicroCatchmentFilter from "./MicroCatchmentFilter";
-import { RIGHT_MICRO_CATCHMENT_DELETE } from "../constants";
+import {
+  RIGHT_MICRO_CATCHMENT_DELETE,
+  RIGHT_MICRO_CATCHMENT_IMPORT,
+  RIGHT_MICRO_CATCHMENT_EXPORT,
+} from "../constants";
 
 const styles = (theme) => ({
   page: theme.page,
@@ -29,14 +34,29 @@ const styles = (theme) => ({
       paddingTop: theme.spacing(1.5),
       paddingBottom: theme.spacing(1.5),
     },
+    "& .MuiButton-containedPrimary": {
+      backgroundColor: "transparent",
+      boxShadow: "none",
+      color: theme.palette.primary.main,
+      minWidth: "auto",
+      padding: theme.spacing(0.75, 1.25),
+    },
+    "& .MuiButton-containedPrimary:hover": {
+      backgroundColor: theme.palette.action.hover,
+      boxShadow: "none",
+    },
+    "& .MuiButton-containedPrimary .MuiTypography-body2": {
+      fontSize: 14,
+    },
   },
 });
 
 class MicroCatchmentSearcher extends Component {
-  state = { reset: 0, confirmedAction: null };
+  state = { reset: 0, confirmedAction: null, uploading: false, district: null };
 
   constructor(props) {
     super(props);
+    this.fileInputRef = React.createRef();
     this.rowsPerPageOptions = props.modulesManager.getConf(
       "fe-location",
       "microCatchmentFilter.rowsPerPageOptions",
@@ -46,6 +66,7 @@ class MicroCatchmentSearcher extends Component {
   }
 
   fetch = (params) => {
+    this.lastQueryParams = params;
     this.props.fetchMicroCatchments(params);
   };
 
@@ -57,7 +78,27 @@ class MicroCatchmentSearcher extends Component {
       this.state.confirmedAction();
       this.setState({ confirmedAction: null });
     }
+
+    if (prevProps.userDistricts !== this.props.userDistricts && !this.state.district) {
+      const firstDistrict = this.props.userDistricts?.[0] || null;
+      if (firstDistrict) {
+        this.setState({ district: firstDistrict });
+      }
+    }
   }
+
+  onFiltersApplied = (filters) => {
+    const districtFromFilter = filters?.district_Uuid?.value || null;
+    if (districtFromFilter?.uuid !== this.state.district?.uuid) {
+      this.setState({ district: districtFromFilter });
+    }
+  };
+
+  onDistrictFilterChange = (district) => {
+    if ((district?.uuid || null) !== (this.state.district?.uuid || null)) {
+      this.setState({ district: district || null });
+    }
+  };
 
   hasRight = (right) => this.props.rights.includes(right) || this.props.rights.includes(String(right));
 
@@ -172,6 +213,98 @@ class MicroCatchmentSearcher extends Component {
     historyPush(this.props.modulesManager, this.props.history, "location.route.microCatchment", [mc.uuid], newTab);
   };
 
+  showMessage = (key, fallback) => {
+    window.alert(formatMessage(this.props.intl, "location", key) || fallback);
+  };
+
+  onDownload = async () => {
+    if (!this.state.district?.uuid) {
+      this.showMessage("microCatchment.uploadDownload.missingDistrict", "Please select a district first.");
+      return;
+    }
+
+    try {
+      const url = new URL(`${window.location.origin}${baseApiUrl}/location/micro-catchments/export/`);
+      const queryParams = new URLSearchParams({ district_uuid: this.state.district.uuid });
+      url.search = queryParams.toString();
+
+      const response = await fetch(url.toString(), { credentials: "same-origin" });
+      if (!response.ok) {
+        throw new Error(formatMessage(this.props.intl, "location", "microCatchment.download.error") || "Download failed.");
+      }
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `micro_catchments_${this.state.district.code || "district"}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      this.showMessage("microCatchment.download.error", error?.message || "Download failed.");
+    }
+  };
+
+  onUploadClick = () => {
+    if (!this.state.district?.uuid) {
+      this.showMessage("microCatchment.uploadDownload.missingDistrict", "Please select a district first.");
+      return;
+    }
+    this.fileInputRef.current?.click();
+  };
+
+  onUploadFileSelected = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    this.setState({ uploading: true });
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("district_uuid", this.state.district.uuid);
+
+      const response = await fetch(`${baseApiUrl}/location/micro-catchments/import/`, {
+        method: "POST",
+        credentials: "same-origin",
+        body: formData,
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || payload?.success === false) {
+        const errors = Array.isArray(payload?.errors) ? payload.errors.join("\n") : "Upload failed.";
+        throw new Error(errors);
+      }
+
+      this.showMessage("microCatchment.upload.success", "Micro Catchments uploaded successfully.");
+      this.fetch(this.lastQueryParams || []);
+    } catch (error) {
+      this.showMessage("microCatchment.upload.error", error?.message || "Micro Catchments upload failed.");
+    } finally {
+      if (this.fileInputRef.current) this.fileInputRef.current.value = "";
+      this.setState({ uploading: false });
+    }
+  };
+
+  searcherActions = () => {
+    const canImport = this.hasRight(RIGHT_MICRO_CATCHMENT_IMPORT);
+    const canExport = this.hasRight(RIGHT_MICRO_CATCHMENT_EXPORT);
+    return [
+      {
+        authorized: canExport,
+        label: formatMessage(this.props.intl, "location", "microCatchment.download.button"),
+        icon: null,
+        onClick: this.onDownload,
+      },
+      {
+        authorized: canImport,
+        label: formatMessage(this.props.intl, "location", "microCatchment.upload.button"),
+        icon: null,
+        onClick: this.onUploadClick,
+      },
+    ];
+  };
+
+  renderFilterPane = (props) => <MicroCatchmentFilter {...props} onDistrictChange={this.onDistrictFilterChange} />;
+
   render() {
     const {
       intl,
@@ -188,7 +321,7 @@ class MicroCatchmentSearcher extends Component {
       <div className={classes.searchResults}>
         <Searcher
           module="location"
-          FilterPane={MicroCatchmentFilter}
+          FilterPane={this.renderFilterPane}
           fetch={this.fetch}
           reset={this.state.reset}
           items={microCatchments}
@@ -209,6 +342,17 @@ class MicroCatchmentSearcher extends Component {
           sorts={this.sorts}
           rowDisabled={this.rowDisabled}
           rowLocked={this.rowLocked}
+          onFiltersApplied={this.onFiltersApplied}
+          enableActionButtons={true}
+          searcherActionsPosition="header-right"
+          searcherActions={this.searcherActions()}
+        />
+        <input
+          ref={this.fileInputRef}
+          type="file"
+          accept=".xlsx"
+          onChange={this.onUploadFileSelected}
+          style={{ display: "none" }}
         />
       </div>
     );
@@ -217,6 +361,7 @@ class MicroCatchmentSearcher extends Component {
 
 const mapStateToProps = (state) => ({
   rights: state.core?.user?.i_user?.rights || [],
+  userDistricts: state.loc.userL1s || [],
   submittingMutation: state.loc.submittingMutation,
   mutation: state.loc.mutation,
   confirmed: state.core.confirmed,
