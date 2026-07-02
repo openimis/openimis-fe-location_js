@@ -151,7 +151,7 @@
   "location.gql_mutation_delete_micro_catchments_perms": "Location | Mutation Delete Micro Catchments",
   "location.deleteHealthFacility.buttonText": "Delete",
   "microCatchments.page.title": "Micro Catchments",
-  "microCatchments.searcher.title": "{count} Micro Catchments",
+  "microCatchments.searcher.title": "{count} Micro Catchments Found",
   "microCatchment.code": "Code",
   "microCatchment.name": "Name",
   "microCatchment.type": "Type",

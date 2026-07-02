@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import { bindActionCreators } from "redux";
@@ -23,6 +23,13 @@ import { RIGHT_MICRO_CATCHMENT_DELETE } from "../constants";
 const styles = (theme) => ({
   page: theme.page,
   table: theme.table,
+  searchResults: {
+    "& .MuiTableHead-root .MuiTableCell-root": {
+      fontSize: 16,
+      paddingTop: theme.spacing(1.5),
+      paddingBottom: theme.spacing(1.5),
+    },
+  },
 });
 
 class MicroCatchmentSearcher extends Component {
@@ -140,6 +147,23 @@ class MicroCatchmentSearcher extends Component {
     );
   };
 
+  sorts = () => {
+    let result = [
+      ["code", true],
+      ["name", true],
+      ["district", true],
+      null,
+      null,
+      ["type", true],
+      ["dateFrom", true],
+      ["dateTo", true],
+    ];
+    if (this.hasRight(RIGHT_MICRO_CATCHMENT_DELETE)) {
+      result.push(null);
+    }
+    return result;
+  };
+
   rowDisabled = (selection, i) => !!i.validityTo;
 
   rowLocked = (selection, i) => !!i.clientMutationId;
@@ -157,10 +181,11 @@ class MicroCatchmentSearcher extends Component {
       microCatchments,
       microCatchmentsPageInfo,
       microCatchmentsTotalCount,
+      classes,
     } = this.props;
 
     return (
-      <Fragment>
+      <div className={classes.searchResults}>
         <Searcher
           module="location"
           FilterPane={MicroCatchmentFilter}
@@ -181,10 +206,11 @@ class MicroCatchmentSearcher extends Component {
           defaultPageSize={this.defaultPageSize}
           rowIdentifier={this.rowIdentifier}
           onDoubleClick={this.onDoubleClick}
+          sorts={this.sorts}
           rowDisabled={this.rowDisabled}
           rowLocked={this.rowLocked}
         />
-      </Fragment>
+      </div>
     );
   }
 }
