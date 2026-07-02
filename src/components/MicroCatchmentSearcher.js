@@ -217,15 +217,38 @@ class MicroCatchmentSearcher extends Component {
     window.alert(formatMessage(this.props.intl, "location", key) || fallback);
   };
 
+  getActiveDistrict = () => {
+    if (this.state.district?.uuid) {
+      return this.state.district;
+    }
+
+    const resultDistricts = (this.props.microCatchments || [])
+      .map((mc) => mc.district)
+      .filter((district) => !!district?.uuid);
+    const uniqueResultDistricts = resultDistricts.filter(
+      (district, index, districts) => districts.findIndex((item) => item.uuid === district.uuid) === index,
+    );
+    if (uniqueResultDistricts.length === 1) {
+      return uniqueResultDistricts[0];
+    }
+
+    if ((this.props.userDistricts || []).length === 1) {
+      return this.props.userDistricts[0];
+    }
+
+    return null;
+  };
+
   onDownload = async () => {
-    if (!this.state.district?.uuid) {
+    const district = this.getActiveDistrict();
+    if (!district?.uuid) {
       this.showMessage("microCatchment.uploadDownload.missingDistrict", "Please select a district first.");
       return;
     }
 
     try {
       const url = new URL(`${window.location.origin}${baseApiUrl}/location/micro-catchments/export/`);
-      const queryParams = new URLSearchParams({ district_uuid: this.state.district.uuid });
+      const queryParams = new URLSearchParams({ district_uuid: district.uuid });
       url.search = queryParams.toString();
 
       const response = await fetch(url.toString(), { credentials: "same-origin" });
@@ -235,7 +258,7 @@ class MicroCatchmentSearcher extends Component {
       const blob = await response.blob();
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `micro_catchments_${this.state.district.code || "district"}.xlsx`;
+      link.download = `micro_catchments_${district.code || "district"}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -246,7 +269,7 @@ class MicroCatchmentSearcher extends Component {
   };
 
   onUploadClick = () => {
-    if (!this.state.district?.uuid) {
+    if (!this.getActiveDistrict()?.uuid) {
       this.showMessage("microCatchment.uploadDownload.missingDistrict", "Please select a district first.");
       return;
     }
@@ -257,11 +280,17 @@ class MicroCatchmentSearcher extends Component {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    const district = this.getActiveDistrict();
+    if (!district?.uuid) {
+      this.showMessage("microCatchment.uploadDownload.missingDistrict", "Please select a district first.");
+      return;
+    }
+
     this.setState({ uploading: true });
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("district_uuid", this.state.district.uuid);
+      formData.append("district_uuid", district.uuid);
 
       const response = await fetch(`${baseApiUrl}/location/micro-catchments/import/`, {
         method: "POST",
