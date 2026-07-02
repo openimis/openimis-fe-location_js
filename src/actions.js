@@ -466,3 +466,125 @@ export function locationCodeSetValid() {
     dispatch({ type: `LOCATION_CODE_SET_VALID` });
   };
 }
+
+export function fetchMicroCatchments(filters) {
+  var projections = [
+    "id",
+    "uuid",
+    "code",
+    "name",
+    "type",
+    "dateFrom",
+    "dateTo",
+    "district{id,uuid,code,name}",
+    "traditionalAuthorities{id,location{id,uuid,code,name}}",
+    "gvhs{id,location{id,uuid,code,name}}",
+    "validityFrom",
+    "validityTo",
+    "clientMutationId",
+  ];
+  const payload = formatPageQueryWithCount("microCatchments", filters, projections);
+  return graphql(payload, "LOCATION_MICRO_CATCHMENT_SEARCHER");
+}
+
+export function fetchMicroCatchment(uuid) {
+  var projections = [
+    "id",
+    "uuid",
+    "code",
+    "name",
+    "type",
+    "dateFrom",
+    "dateTo",
+    "district{id,uuid,code,name}",
+    "traditionalAuthorities{id,location{id,uuid,code,name}}",
+    "gvhs{id,location{id,uuid,code,name}}",
+    "validityFrom",
+    "validityTo",
+    "clientMutationId",
+  ];
+  const filters = [`uuid: "${uuid}"`, "showHistory: false"];
+  const payload = formatPageQueryWithCount("microCatchments", filters, projections);
+  return graphql(payload, "LOCATION_MICRO_CATCHMENT");
+}
+
+export function clearMicroCatchment() {
+  return (dispatch) => {
+    dispatch({ type: "LOCATION_MICRO_CATCHMENT_CLEAR" });
+  };
+}
+
+function toDbId(id) {
+  if (id === undefined || id === null || id === "") return null;
+  if (typeof id === "number") return id;
+  const asNumber = Number(id);
+  if (Number.isInteger(asNumber)) return asNumber;
+  try {
+    const decoded = decodeId(id);
+    const decodedNumber = Number(decoded);
+    return Number.isInteger(decodedNumber) ? decodedNumber : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function formatMicroCatchmentGQL(mc) {
+  const districtId = toDbId(mc.district?.id);
+  const taIds = (mc.taIds || []).map((id) => toDbId(id)).filter((id) => id !== null);
+  const gvhIds = (mc.gvhIds || []).map((id) => toDbId(id)).filter((id) => id !== null);
+  return `
+    ${mc.uuid !== undefined && mc.uuid !== null ? `uuid: "${mc.uuid}"` : ""}
+    code: "${formatGQLString(mc.code)}"
+    name: "${formatGQLString(mc.name)}"
+    ${mc.type !== undefined && mc.type !== null ? `type: "${formatGQLString(mc.type)}"` : ""}
+    ${districtId !== null ? `districtId: ${districtId}` : ""}
+    ${mc.dateFrom !== undefined && mc.dateFrom !== null ? `dateFrom: "${mc.dateFrom}"` : ""}
+    ${mc.dateTo !== undefined && mc.dateTo !== null ? `dateTo: "${mc.dateTo}"` : ""}
+    ${taIds.length > 0 ? `taIds: [${taIds.join(",")}]` : ""}
+    ${gvhIds.length > 0 ? `gvhIds: [${gvhIds.join(",")}]` : ""}
+  `;
+}
+
+export function createMicroCatchment(mc, clientMutationLabel) {
+  let mutation = formatMutation("createMicroCatchment", formatMicroCatchmentGQL(mc), clientMutationLabel);
+  var requestedDateTime = new Date();
+  return graphql(
+    mutation.payload,
+    ["LOCATION_MUTATION_REQ", "LOCATION_CREATE_MICRO_CATCHMENT_RESP", "LOCATION_MUTATION_ERR"],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime,
+    },
+  );
+}
+
+export function updateMicroCatchment(mc, clientMutationLabel) {
+  let mutation = formatMutation("updateMicroCatchment", formatMicroCatchmentGQL(mc), clientMutationLabel);
+  var requestedDateTime = new Date();
+  return graphql(
+    mutation.payload,
+    ["LOCATION_MUTATION_REQ", "LOCATION_UPDATE_MICRO_CATCHMENT_RESP", "LOCATION_MUTATION_ERR"],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime,
+    },
+  );
+}
+
+export function deleteMicroCatchment(mc, clientMutationLabel) {
+  let payload = `uuid: "${mc.uuid}" code: "${mc.code}"`;
+  let mutation = formatMutation("deleteMicroCatchment", payload, clientMutationLabel);
+  var requestedDateTime = new Date();
+  return graphql(
+    mutation.payload,
+    ["LOCATION_MUTATION_REQ", "LOCATION_DELETE_MICRO_CATCHMENT_RESP", "LOCATION_MUTATION_ERR"],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime,
+    },
+  );
+}
+

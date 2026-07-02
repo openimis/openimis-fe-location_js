@@ -1,6 +1,11 @@
+import React from "react";
+import { FormattedMessage } from "react-intl";
+import LocationOnIcon from "@material-ui/icons/LocationOn";
 import LocationsPage from "./pages/LocationsPage";
 import HealthFacilitiesPage from "./pages/HealthFacilitiesPage";
 import HealthFacilityEditPage from "./pages/HealthFacilityEditPage";
+import MicroCatchmentsPage from "./pages/MicroCatchmentsPage";
+import MicroCatchmentEditPage from "./pages/MicroCatchmentEditPage";
 import UserHealthFacilityLoader from "./components/UserHealthFacilityLoader";
 import UserDistrictsLoader from "./components/UserDistrictsLoader";
 import HealthFacilityFullPath from "./components/HealthFacilityFullPath";
@@ -25,6 +30,11 @@ import FSPLocationPicker from "./pickers/FSPLocationPicker";
 import LocationTypePicker from "./pickers/LocationTypePicker";
 import messages_en from "./translations/en.json";
 import reducer from "./reducer";
+import {
+  RIGHT_MICRO_CATCHMENT_ADD,
+  RIGHT_MICRO_CATCHMENT_EDIT,
+  RIGHT_MICRO_CATCHMENT_DELETE,
+} from "./constants";
 
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
 import { HEALTH_FACILITY_PICKER_PROJECTION, HEALTH_FACILITY_REFER_PICKER_PROJECTION } from "./actions";
@@ -32,6 +42,14 @@ import { HEALTH_FACILITY_PICKER_PROJECTION, HEALTH_FACILITY_REFER_PICKER_PROJECT
 const ROUTE_LOCATIONS = "location/locations";
 const ROUTE_HEALTH_FACILITIES = "location/healthFacilities";
 const ROUTE_HEALTH_FACILITY_EDIT = "location/healthFacility";
+const ROUTE_MICRO_CATCHMENTS = "location/microCatchments";
+const ROUTE_MICRO_CATCHMENT_EDIT = "location/microCatchment";
+
+const hasRight = (rights, right) => rights.includes(right) || rights.includes(String(right));
+const hasMicroCatchmentAccess = (rights = []) =>
+  [RIGHT_MICRO_CATCHMENT_ADD, RIGHT_MICRO_CATCHMENT_EDIT, RIGHT_MICRO_CATCHMENT_DELETE].some((right) =>
+    hasRight(rights, right)
+  );
 
 const DEFAULT_CONFIG = {
   "translations": [{ key: "en", messages: messages_en }],
@@ -39,6 +57,8 @@ const DEFAULT_CONFIG = {
   "refs": [
     { key: "location.route.healthFacilities", ref: ROUTE_HEALTH_FACILITIES },
     { key: "location.route.healthFacilityEdit", ref: ROUTE_HEALTH_FACILITY_EDIT },
+    { key: "location.route.microCatchments", ref: ROUTE_MICRO_CATCHMENTS },
+    { key: "location.route.microCatchment", ref: ROUTE_MICRO_CATCHMENT_EDIT },
     { key: "location.HealthFacilityFullPath", ref: HealthFacilityFullPath },
     { key: "location.HealthFacilityPicker", ref: HealthFacilityPicker },
     { key: "location.HealthFacilityPicker.projection", ref: HEALTH_FACILITY_PICKER_PROJECTION },
@@ -78,8 +98,20 @@ const DEFAULT_CONFIG = {
     { path: ROUTE_HEALTH_FACILITIES, component: HealthFacilitiesPage },
     { path: ROUTE_HEALTH_FACILITY_EDIT, component: HealthFacilityEditPage },
     { path: ROUTE_HEALTH_FACILITY_EDIT + "/:healthFacility_uuid?", component: HealthFacilityEditPage },
+    { path: ROUTE_MICRO_CATCHMENTS, component: MicroCatchmentsPage },
+    { path: ROUTE_MICRO_CATCHMENT_EDIT, component: MicroCatchmentEditPage },
+    { path: ROUTE_MICRO_CATCHMENT_EDIT + "/:microCatchment_uuid?", component: MicroCatchmentEditPage },
   ],
   "core.Boot": [UserHealthFacilityLoader, UserDistrictsLoader],
+  "admin.MainMenu": [
+    {
+      text: <FormattedMessage module="location" id="menu.microCatchments" />,
+      icon: <LocationOnIcon />,
+      route: `/${ROUTE_MICRO_CATCHMENTS}`,
+      id: "location.microCatchments",
+      filter: (rights) => hasMicroCatchmentAccess(rights),
+    },
+  ],
   "invoice.SubjectAndThirdpartyPicker": [
     {
       type: "health facility",

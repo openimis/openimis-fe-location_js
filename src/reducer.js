@@ -61,6 +61,16 @@ function reducer(
     fetchingLocationsByUuids: false,
     fetchedLocationsByUuids: false,
     errorLocationsByUuids: null,
+    fetchingMicroCatchments: false,
+    fetchedMicroCatchments: false,
+    microCatchments: [],
+    microCatchmentsPageInfo: {},
+    microCatchmentsTotalCount: 0,
+    errorMicroCatchments: null,
+    fetchingMicroCatchment: false,
+    fetchedMicroCatchment: false,
+    microCatchment: null,
+    errorMicroCatchment: null,
   },
   action,
 ) {
@@ -549,6 +559,69 @@ function reducer(
         locationsByUuids: [],
         errorLocationsByUuids: null,
       };
+    case "LOCATION_MICRO_CATCHMENT_SEARCHER_REQ":
+      return {
+        ...state,
+        fetchingMicroCatchments: true,
+        fetchedMicroCatchments: false,
+        microCatchments: [],
+        microCatchmentsPageInfo: {},
+        microCatchmentsTotalCount: 0,
+        errorMicroCatchments: null,
+      };
+    case "LOCATION_MICRO_CATCHMENT_SEARCHER_RESP":
+      return {
+        ...state,
+        fetchingMicroCatchments: false,
+        fetchedMicroCatchments: true,
+        microCatchments: parseData(action.payload.data.microCatchments),
+        microCatchmentsPageInfo: pageInfo(action.payload.data.microCatchments),
+        microCatchmentsTotalCount: action.payload.data.microCatchments?.totalCount || 0,
+        errorMicroCatchments: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_MICRO_CATCHMENT_SEARCHER_ERR":
+      return {
+        ...state,
+        fetchingMicroCatchments: false,
+        errorMicroCatchments: formatServerError(action.payload),
+      };
+    case "LOCATION_MICRO_CATCHMENT_REQ":
+      return {
+        ...state,
+        fetchingMicroCatchment: true,
+        fetchedMicroCatchment: false,
+        microCatchment: null,
+        errorMicroCatchment: null,
+      };
+    case "LOCATION_MICRO_CATCHMENT_RESP":
+      const mcs = parseData(action.payload.data.microCatchments);
+      return {
+        ...state,
+        fetchingMicroCatchment: false,
+        fetchedMicroCatchment: true,
+        microCatchment: !!mcs && mcs.length > 0 ? mcs[0] : null,
+        errorMicroCatchment: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_MICRO_CATCHMENT_ERR":
+      return {
+        ...state,
+        fetchingMicroCatchment: false,
+        errorMicroCatchment: formatServerError(action.payload),
+      };
+    case "LOCATION_MICRO_CATCHMENT_CLEAR":
+      return {
+        ...state,
+        fetchingMicroCatchment: false,
+        fetchedMicroCatchment: false,
+        microCatchment: null,
+        errorMicroCatchment: null,
+      };
+    case "LOCATION_CREATE_MICRO_CATCHMENT_RESP":
+      return dispatchMutationResp(state, "createMicroCatchment", action);
+    case "LOCATION_UPDATE_MICRO_CATCHMENT_RESP":
+      return dispatchMutationResp(state, "updateMicroCatchment", action);
+    case "LOCATION_DELETE_MICRO_CATCHMENT_RESP":
+      return dispatchMutationResp(state, "deleteMicroCatchment", action);
     case "CORE_AUTH_LOGOUT":
       return {
         ...state,
