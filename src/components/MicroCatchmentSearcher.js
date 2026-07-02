@@ -128,7 +128,6 @@ class MicroCatchmentSearcher extends Component {
       "microCatchment.district",
       "microCatchment.ta",
       "microCatchment.gvh",
-      "microCatchment.type",
       "microCatchment.dateFrom",
       "microCatchment.dateTo",
     ];
@@ -154,7 +153,6 @@ class MicroCatchmentSearcher extends Component {
           .map((gvh) => gvh?.location?.name)
           .filter(Boolean)
           .join(", "),
-      (mc) => mc.type,
       (mc) => formatDateFromISO(modulesManager, intl, mc.dateFrom),
       (mc) => formatDateFromISO(modulesManager, intl, mc.dateTo),
     ];
@@ -195,7 +193,6 @@ class MicroCatchmentSearcher extends Component {
       ["district", true],
       null,
       null,
-      ["type", true],
       ["dateFrom", true],
       ["dateTo", true],
     ];
