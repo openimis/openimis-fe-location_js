@@ -1,6 +1,11 @@
 import LocationsPage from "./pages/LocationsPage";
+import React from "react";
 import HealthFacilitiesPage from "./pages/HealthFacilitiesPage";
 import HealthFacilityEditPage from "./pages/HealthFacilityEditPage";
+import HotspotsPage from "./pages/HotspotsPage";
+import HotspotEditPage from "./pages/HotspotEditPage";
+import { FormattedMessage } from "@openimis/fe-core";
+import { LocalHospital, LocationOn, PinDrop } from "@material-ui/icons";
 import UserHealthFacilityLoader from "./components/UserHealthFacilityLoader";
 import UserDistrictsLoader from "./components/UserDistrictsLoader";
 import HealthFacilityFullPath from "./components/HealthFacilityFullPath";
@@ -25,6 +30,13 @@ import FSPLocationPicker from "./pickers/FSPLocationPicker";
 import LocationTypePicker from "./pickers/LocationTypePicker";
 import messages_en from "./translations/en.json";
 import reducer from "./reducer";
+import {
+  RIGHT_LOCATIONS,
+  RIGHT_LOCATION_ADD,
+  RIGHT_LOCATION_EDIT,
+  RIGHT_HEALTH_FACILITY_ADD,
+  RIGHT_HEALTH_FACILITIES,
+} from "./constants";
 
 import { LOCATION_SUMMARY_PROJECTION, nestParentsProjections } from "./utils";
 import { HEALTH_FACILITY_PICKER_PROJECTION, HEALTH_FACILITY_REFER_PICKER_PROJECTION } from "./actions";
@@ -32,6 +44,8 @@ import { HEALTH_FACILITY_PICKER_PROJECTION, HEALTH_FACILITY_REFER_PICKER_PROJECT
 const ROUTE_LOCATIONS = "location/locations";
 const ROUTE_HEALTH_FACILITIES = "location/healthFacilities";
 const ROUTE_HEALTH_FACILITY_EDIT = "location/healthFacility";
+const ROUTE_HOTSPOTS = "location/hotspots";
+const ROUTE_HOTSPOT_EDIT = "location/hotspot";
 
 const DEFAULT_CONFIG = {
   "translations": [{ key: "en", messages: messages_en }],
@@ -39,6 +53,8 @@ const DEFAULT_CONFIG = {
   "refs": [
     { key: "location.route.healthFacilities", ref: ROUTE_HEALTH_FACILITIES },
     { key: "location.route.healthFacilityEdit", ref: ROUTE_HEALTH_FACILITY_EDIT },
+    { key: "location.route.hotspots", ref: ROUTE_HOTSPOTS },
+    { key: "location.route.hotspotEdit", ref: ROUTE_HOTSPOT_EDIT },
     { key: "location.HealthFacilityFullPath", ref: HealthFacilityFullPath },
     { key: "location.HealthFacilityPicker", ref: HealthFacilityPicker },
     { key: "location.HealthFacilityPicker.projection", ref: HEALTH_FACILITY_PICKER_PROJECTION },
@@ -64,6 +80,7 @@ const DEFAULT_CONFIG = {
     { key: "location.Location.MaxLevels", ref: "4" },
     { key: "location.LocationsPage", ref: LocationsPage },
     { key: "location.HealthFacilitiesPage", ref: HealthFacilitiesPage },
+    { key: "location.HotspotsPage", ref: HotspotsPage },
     { key: "location.CoarseLocationFilter", ref: CoarseLocationFilter },
     { key: "location.DetailedLocationFilter", ref: DetailedLocationFilter },
     { key: "location.CoarseLocation", ref: CoarseLocation },
@@ -72,12 +89,80 @@ const DEFAULT_CONFIG = {
     { key: "location.DetailedHealthFacility", ref: DetailedHealthFacility },
     
     { key: "location.route.healthFacility", ref: ROUTE_HEALTH_FACILITY_EDIT },
+    { key: "location.route.hotspot", ref: ROUTE_HOTSPOT_EDIT },
   ],
   "core.Router": [
-    { path: ROUTE_LOCATIONS, component: LocationsPage },
-    { path: ROUTE_HEALTH_FACILITIES, component: HealthFacilitiesPage },
-    { path: ROUTE_HEALTH_FACILITY_EDIT, component: HealthFacilityEditPage },
-    { path: ROUTE_HEALTH_FACILITY_EDIT + "/:healthFacility_uuid?", component: HealthFacilityEditPage },
+    {
+      path: ROUTE_LOCATIONS,
+      component: LocationsPage,
+      rights: [RIGHT_LOCATIONS],
+      icon: "LocationOn",
+      text: "location.locations.page.title",
+    },
+    {
+      path: ROUTE_HOTSPOTS,
+      component: HotspotsPage,
+      rights: [RIGHT_LOCATIONS],
+      icon: "LocationOn",
+      text: "location.hotspots.page.title",
+    },
+    {
+      path: ROUTE_HOTSPOT_EDIT,
+      component: HotspotEditPage,
+      rights: [RIGHT_LOCATION_ADD],
+      icon: "LocationOn",
+    },
+    {
+      path: ROUTE_HOTSPOT_EDIT + "/:hotspot_uuid?",
+      component: HotspotEditPage,
+      rights: [RIGHT_LOCATION_EDIT],
+      icon: "LocationOn",
+    },
+    {
+      path: ROUTE_HEALTH_FACILITIES,
+      component: HealthFacilitiesPage,
+      rights: [RIGHT_HEALTH_FACILITIES],
+      icon: "LocalHospital",
+      text: "location.healthFacilities.page.title",
+    },
+    {
+      path: ROUTE_HEALTH_FACILITY_EDIT,
+      component: HealthFacilityEditPage,
+      rights: [RIGHT_HEALTH_FACILITY_ADD],
+      icon: "LocalHospital",
+    },
+    {
+      path: ROUTE_HEALTH_FACILITY_EDIT + "/:healthFacility_uuid?",
+      component: HealthFacilityEditPage,
+      rights: [RIGHT_LOCATIONS],
+      icon: "LocalHospital",
+    },
+  ],
+  "admin.MainMenu": [
+    {
+      text: <FormattedMessage module="admin" id="menu.locations" />,
+      icon: <PinDrop />,
+      route: ROUTE_LOCATIONS,
+      id: "admin.locations",
+      filter: (rights) => rights.includes(RIGHT_LOCATIONS),
+      withDivider: true,
+    },
+    {
+      text: <FormattedMessage module="location" id="hotspots.page.title" />,
+      icon: <LocationOn />,
+      route: ROUTE_HOTSPOTS,
+      id: "admin.hotspots",
+      filter: (rights) => rights.includes(RIGHT_LOCATIONS),
+      withDivider: true,
+    },
+    {
+      text: <FormattedMessage module="admin" id="menu.healthFacilities" />,
+      icon: <LocalHospital />,
+      route: ROUTE_HEALTH_FACILITIES,
+      id: "admin.healthFacilities",
+      filter: (rights) => rights.includes(RIGHT_HEALTH_FACILITIES),
+      withDivider: true,
+    },
   ],
   "core.Boot": [UserHealthFacilityLoader, UserDistrictsLoader],
   "invoice.SubjectAndThirdpartyPicker": [
