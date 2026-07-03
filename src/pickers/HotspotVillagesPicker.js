@@ -58,6 +58,9 @@ const HotspotVillagesPicker = (props) => {
       onChange={(options) => onChange(options)}
       filterOptions={filterOptions}
       filterSelectedOptions={filterSelectedOptions}
+      // Eligible villages are fully fetched per micro-catchment; MUI filters them
+      // client-side, so no server-side search callback is needed (but the prop is required).
+      onInputChange={() => {}}
     />
   );
 };
