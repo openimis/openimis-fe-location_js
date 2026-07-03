@@ -46,7 +46,7 @@ const HotspotVillagesPicker = (props) => {
       multiple
       required={required}
       placeholder={placeholder ?? formatMessage("HotspotVillagesPicker.placeholder")}
-      label={label ?? formatMessage("HotspotVillagesPicker.label")}
+      label={formatMessage(label ?? "HotspotVillagesPicker.label")}
       error={error}
       withLabel={withLabel}
       withPlaceholder={withPlaceholder}
