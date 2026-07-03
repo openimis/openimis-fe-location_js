@@ -167,7 +167,7 @@ const DEFAULT_CONFIG = {
     {
       text: <FormattedMessage module="admin" id="menu.locations" />,
       icon: <PinDrop />,
-      route: ROUTE_LOCATIONS,
+      route: `/${ROUTE_LOCATIONS}`,
       id: "admin.locations",
       filter: (rights) => rights.includes(RIGHT_LOCATIONS),
       withDivider: true,
@@ -175,7 +175,7 @@ const DEFAULT_CONFIG = {
     {
       text: <FormattedMessage module="location" id="hotspots.page.title" />,
       icon: <LocationOn />,
-      route: ROUTE_HOTSPOTS,
+      route: `/${ROUTE_HOTSPOTS}`,
       id: "admin.hotspots",
       filter: (rights) => rights.includes(RIGHT_LOCATIONS),
       withDivider: true,
@@ -183,7 +183,7 @@ const DEFAULT_CONFIG = {
     {
       text: <FormattedMessage module="admin" id="menu.healthFacilities" />,
       icon: <LocalHospital />,
-      route: ROUTE_HEALTH_FACILITIES,
+      route: `/${ROUTE_HEALTH_FACILITIES}`,
       id: "admin.healthFacilities",
       filter: (rights) => rights.includes(RIGHT_HEALTH_FACILITIES),
       withDivider: true,
