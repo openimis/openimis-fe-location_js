@@ -13,6 +13,7 @@ const MicroCatchmentPicker = (props) => {
     value,
     label,
     placeholder,
+    district,
     filterOptions,
     filterSelectedOptions,
   } = props;
@@ -23,8 +24,8 @@ const MicroCatchmentPicker = (props) => {
 
   const { data, isLoading, error } = useGraphqlQuery(
     `
-    query MicroCatchmentPicker ($search: String) {
-      microCatchments(first: 20, name_Icontains: $search, orderBy: ["name"]) {
+    query MicroCatchmentPicker ($search: String, $district: String) {
+      microCatchments(first: 20, name_Icontains: $search, district_Uuid: $district, orderBy: ["name"]) {
         edges {
           node {
             id
@@ -39,14 +40,14 @@ const MicroCatchmentPicker = (props) => {
       }
     }
   `,
-    { search: searchString },
+    { search: searchString, district: district?.uuid },
   );
 
   return (
     <Autocomplete
       required={required}
       placeholder={placeholder ?? formatMessage("MicroCatchmentPicker.placeholder")}
-      label={label ?? formatMessage("MicroCatchmentPicker.label")}
+      label={formatMessage(label ?? "MicroCatchmentPicker.label")}
       error={error}
       withLabel={withLabel}
       withPlaceholder={withPlaceholder}

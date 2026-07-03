@@ -3,6 +3,7 @@ import _debounce from "lodash/debounce";
 import { Grid } from "@material-ui/core";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { withModulesManager, TextInput, PublishedComponent } from "@openimis/fe-core";
+import MicroCatchmentPicker from "../pickers/MicroCatchmentPicker";
 
 const styles = (theme) => ({
   form: {
@@ -29,16 +30,12 @@ class HotspotFilter extends Component {
     return !!filters && !!filters[key] ? filters[key].value : "";
   };
 
-  _filterPayload = ({ catchment, district, microCatchment, hotspot } = {}) => [
-    {
-      id: "catchment",
-      value: catchment,
-      filter: !!catchment ? `microCatchment_Parent_Parent_Uuid: "${catchment.uuid}"` : null,
-    },
+  // District = top level of the Malawi hierarchy (Location type R), held on the micro-catchment.
+  _filterPayload = ({ district, microCatchment, code, name } = {}) => [
     {
       id: "district",
       value: district,
-      filter: !!district ? `microCatchment_Parent_Uuid: "${district.uuid}"` : null,
+      filter: !!district ? `microCatchment_District_Uuid: "${district.uuid}"` : null,
     },
     {
       id: "microCatchment",
@@ -46,77 +43,65 @@ class HotspotFilter extends Component {
       filter: !!microCatchment ? `microCatchment_Uuid: "${microCatchment.uuid}"` : null,
     },
     {
-      id: "hotspot",
-      value: hotspot,
-      filter: !!hotspot ? `name_Icontains: "${hotspot}"` : null,
+      id: "code",
+      value: code,
+      filter: !!code ? `code_Icontains: "${code}"` : null,
+    },
+    {
+      id: "name",
+      value: name,
+      filter: !!name ? `name_Icontains: "${name}"` : null,
     },
   ];
 
-  _onChangeCatchment = (catchment) => {
-    this.props.onChangeFilters(this._filterPayload({
-      catchment,
-      district: null,
-      microCatchment: null,
-      hotspot: this._filterTextFieldValue("hotspot"),
-    }));
-  };
+  _currentFilters = (overrides) =>
+    this._filterPayload({
+      district: this._filterValue("district"),
+      microCatchment: this._filterValue("microCatchment"),
+      code: this._filterTextFieldValue("code"),
+      name: this._filterTextFieldValue("name"),
+      ...overrides,
+    });
 
-  _onChangeDistrict = (v) => {
-    this.props.onChangeFilters(this._filterPayload({
-      catchment: v?.parent || this._filterValue("catchment"),
-      district: v,
-      microCatchment: null,
-      hotspot: this._filterTextFieldValue("hotspot"),
-    }));
+  _onChangeDistrict = (district) => {
+    // Changing district clears the micro-catchment (it must belong to the district).
+    this.props.onChangeFilters(this._currentFilters({ district, microCatchment: null }));
   };
 
   _onChangeMicroCatchment = (microCatchment) => {
-    this.props.onChangeFilters(this._filterPayload({
-      catchment: microCatchment?.parent?.parent || this._filterValue("catchment"),
-      district: microCatchment?.parent || this._filterValue("district"),
-      microCatchment,
-      hotspot: this._filterTextFieldValue("hotspot"),
-    }));
+    this.props.onChangeFilters(
+      this._currentFilters({
+        microCatchment,
+        district: microCatchment?.district || this._filterValue("district"),
+      }),
+    );
   };
 
-  _onChangeHotspot = (v) => {
-    this.debouncedOnChangeFilter(this._filterPayload({
-      catchment: this._filterValue("catchment"),
-      district: this._filterValue("district"),
-      microCatchment: this._filterValue("microCatchment"),
-      hotspot: v,
-    }));
+  _onChangeCode = (code) => {
+    this.debouncedOnChangeFilter(this._currentFilters({ code }));
+  };
+
+  _onChangeName = (name) => {
+    this.debouncedOnChangeFilter(this._currentFilters({ name }));
   };
 
   render() {
     const { classes } = this.props;
+    const district = this._filterValue("district");
     return (
       <Grid container className={classes.form}>
         <Grid item xs={3} className={classes.item}>
           <PublishedComponent
             pubRef="location.RegionPicker"
-            value={this._filterValue("catchment")}
-            label="HotspotFilter.catchment"
-            withNull={true}
-            onChange={this._onChangeCatchment}
-          />
-        </Grid>
-        <Grid item xs={3} className={classes.item}>
-          <PublishedComponent
-            pubRef="location.DistrictPicker"
-            value={this._filterValue("district")}
-            region={this._filterValue("catchment")}
-            label="HotspotFilter.district"
+            value={district}
             withNull={true}
             onChange={this._onChangeDistrict}
           />
         </Grid>
         <Grid item xs={3} className={classes.item}>
-          <PublishedComponent
-            pubRef="location.LocationPicker"
-            locationLevel={2}
-            parentLocation={this._filterValue("district")}
+          <MicroCatchmentPicker
             value={this._filterValue("microCatchment")}
+            district={district}
             label="HotspotFilter.microCatchment"
             onChange={this._onChangeMicroCatchment}
           />
@@ -124,10 +109,19 @@ class HotspotFilter extends Component {
         <Grid item xs={3} className={classes.item}>
           <TextInput
             module="location"
-            label="HotspotFilter.hotspot"
-            name="hotspot"
-            value={this._filterTextFieldValue("hotspot")}
-            onChange={this._onChangeHotspot}
+            label="HotspotFilter.code"
+            name="code"
+            value={this._filterTextFieldValue("code")}
+            onChange={this._onChangeCode}
+          />
+        </Grid>
+        <Grid item xs={3} className={classes.item}>
+          <TextInput
+            module="location"
+            label="HotspotFilter.name"
+            name="name"
+            value={this._filterTextFieldValue("name")}
+            onChange={this._onChangeName}
           />
         </Grid>
       </Grid>
