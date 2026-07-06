@@ -19,23 +19,15 @@ const StyledDistrictPicker = styled('div')(({ theme }) => ({
     fontSize: '1rem',
     fontWeight: 500,
   },
-  '& .MuiTextField-root': {
-    minHeight: '56px',
-    '& .MuiInputBase-root': {
-      minHeight: '56px',
-      fontSize: '1rem',
-      padding: theme.spacing(0.5, 1),
-    },
-    '& .MuiInputBase-input': {
-      padding: theme.spacing(1.5, 1),
-      fontSize: '1rem',
-    },
-  },
   '& .MuiAutocomplete-root': {
-    minWidth: '200px',
+    width: '100%',
     '& .MuiInputBase-root': {
-      minHeight: '56px',
+      minHeight: '40px',        // hauteur normale, pas 56px
       padding: theme.spacing(0.5, 1),
+      fontSize: '1rem',
+    },
+    '& .MuiAutocomplete-input': {
+      padding: theme.spacing(0.5, 1), // pas 1.5 en plus
     },
   },
 }));
