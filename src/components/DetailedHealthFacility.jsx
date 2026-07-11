@@ -36,7 +36,7 @@ const DetailedHealthFacility = (props) => {
           module="location"
           id="DetailedHealthFacility.Level"
           field={
-            <Box flexGrow={1} className="item">
+            <Box flexGrow={1} minWidth="200px" className="item">
               <PublishedComponent
                 pubRef="location.HealthFacilityLevelPicker"
                 value={level}
@@ -51,7 +51,7 @@ const DetailedHealthFacility = (props) => {
           module="location"
           id="DetailedHealthFacility.HF"
           field={
-            <Box flexGrow={2} className="item">
+            <Box flexGrow={2} minWidth="400px" className="item">
               <PublishedComponent
                 pubRef="location.HealthFacilityPicker"
                 district={district}
