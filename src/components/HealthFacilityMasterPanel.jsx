@@ -234,8 +234,7 @@ class HealthFacilityMasterPanel extends FormPanel {
               module="location"
               label="HealthFacilityForm.address"
               value={edited.address}
-              minRows="1"
-              maxRows="3"
+              rows="1"
               readOnly={readOnly}
               onChange={(v, s) => this.updateAttribute("address", v)}
             />
