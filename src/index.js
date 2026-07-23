@@ -27,6 +27,10 @@ import DetailedHealthFacility from "./components/DetailedHealthFacility";
 import RegionPicker from "./pickers/RegionPicker";
 import DistrictPicker from "./pickers/DistrictPicker";
 import LocationPicker from "./pickers/LocationPicker";
+import MwDistrictPicker from "./pickers/MwDistrictPicker";
+import MwTAPicker from "./pickers/MwTAPicker";
+import MwGVHPicker from "./pickers/MwGVHPicker";
+import MwVillagePicker from "./pickers/MwVillagePicker";
 import LocationCascader from "./pickers/LocationCascader";
 import FSPLocationPicker from "./pickers/FSPLocationPicker";
 import LocationTypePicker from "./pickers/LocationTypePicker";
@@ -86,6 +90,10 @@ const DEFAULT_CONFIG = {
     { key: "location.RegionPicker", ref: RegionPicker },
     { key: "location.DistrictPicker", ref: DistrictPicker },
     { key: "location.LocationPicker", ref: LocationPicker },
+    { key: "location.MwDistrictPicker", ref: MwDistrictPicker },
+    { key: "location.MwTAPicker", ref: MwTAPicker },
+    { key: "location.MwGVHPicker", ref: MwGVHPicker },
+    { key: "location.MwVillagePicker", ref: MwVillagePicker },
     { key: "location.LocationCascader", ref: LocationCascader },
     { key: "location.FSPLocationPicker", ref: FSPLocationPicker },
     { key: "location.HealthFacilityGQLType", ref: "HealthFacilityGQLType" },
