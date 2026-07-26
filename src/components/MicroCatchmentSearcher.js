@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
+import { Button, IconButton, Tooltip } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import {
   Searcher,
@@ -157,13 +157,23 @@ class MicroCatchmentSearcher extends Component {
       (mc) => formatDateFromISO(modulesManager, intl, mc.dateTo),
     ];
     if (this.hasRight(RIGHT_MICRO_CATCHMENT_DELETE)) {
-      result.push((mc) =>
-        mc.validityTo ? null : (
-          <Button startIcon={<DeleteIcon />} disabled={!!mc.clientMutationId} onClick={() => this.onDelete(mc)}>
-            {formatMessage(intl, "location", "microCatchment.delete.button")}
-          </Button>
-        ),
-      );
+      result.push((mc) => {
+        if (mc.validityTo) return null;
+        const deleteLabel = formatMessage(intl, "location", "microCatchment.delete.button");
+        return (
+          <Tooltip title={deleteLabel}>
+            <span>
+              <IconButton
+                aria-label={deleteLabel}
+                disabled={!!mc.clientMutationId}
+                onClick={() => this.onDelete(mc)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+        );
+      });
     }
     return result;
   };
