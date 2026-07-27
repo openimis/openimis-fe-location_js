@@ -80,8 +80,7 @@ class MicroCatchmentFilter extends Component {
         </Grid>
         <Grid item xs={12} sm={6} md={3} className={classes.item}>
           <PublishedComponent
-            pubRef="location.LocationPicker"
-            locationLevel={0}
+            pubRef="location.MwDistrictPicker"
             label={formatMessage(intl, "location", "microCatchment.district")}
             value={selectedDistrict}
             onChange={this._onChangeDistrict}
@@ -89,8 +88,7 @@ class MicroCatchmentFilter extends Component {
         </Grid>
         <Grid item xs={12} sm={6} md={3} className={classes.item}>
           <PublishedComponent
-            pubRef="location.LocationPicker"
-            locationLevel={1}
+            pubRef="location.MwTAPicker"
             label={formatMessage(intl, "location", "microCatchment.ta")}
             value={selectedTraditionalAuthority}
             parentLocation={selectedDistrict}
