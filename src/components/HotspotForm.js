@@ -60,7 +60,11 @@ class HotspotForm extends Component {
       this.setState({ hotspot: this._newHotspot(), lockNew: false, hotspot_uuid: null });
     } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
       this.props.journalize(this.props.mutation);
-      this.setState((state) => ({ reset: state.reset + 1 }));
+      if (this.state.lockNew) {
+        historyPush(this.props.modulesManager, this.props.history, "location.route.hotspots");
+      } else {
+        this.setState((state) => ({ reset: state.reset + 1 }));
+      }
     }
   }
 
