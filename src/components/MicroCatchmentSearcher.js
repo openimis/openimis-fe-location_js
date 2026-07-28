@@ -224,7 +224,7 @@ class MicroCatchmentSearcher extends Component {
       ["dateFrom", true],
       ["dateTo", true],
     ];
-    if (this.hasRight(RIGHT_MICRO_CATCHMENT_DELETE)) {
+    if (this.hasRight(RIGHT_MICRO_CATCHMENT_EDIT) || this.hasRight(RIGHT_MICRO_CATCHMENT_DELETE)) {
       result.push(null);
     }
     return result;
