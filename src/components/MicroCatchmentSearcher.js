@@ -316,7 +316,7 @@ class MicroCatchmentSearcher extends Component {
       url.search = new URLSearchParams({ district_uuid: district.uuid }).toString();
       const response = await fetch(url.toString(), { credentials: "same-origin" });
       if (!response.ok) {
-        throw new Error("Template download failed.");
+        throw new Error(formatMessage(this.props.intl, "location", "microCatchment.downloadTemplate.error") || "Template download failed.");
       }
       const blob = await response.blob();
       const link = document.createElement("a");
