@@ -238,8 +238,11 @@ class MicroCatchmentSearcher extends Component {
     historyPush(this.props.modulesManager, this.props.history, "location.route.microCatchment", [mc.uuid], newTab);
   };
 
-  showMessage = (key, fallback) => {
-    window.alert(formatMessage(this.props.intl, "location", key) || fallback);
+  showMessage = (key, detail) => {
+    const message = formatMessage(this.props.intl, "location", key) || detail;
+    // Append the detail (e.g. the backend's per-row import errors) when it adds
+    // information beyond the generic translated message.
+    window.alert(detail && detail !== message ? `${message}\n\n${detail}` : message);
   };
 
   getActiveDistrict = () => {
