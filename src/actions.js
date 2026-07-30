@@ -105,9 +105,9 @@ export function fetchHealthFacility(mm, healthFacilityUuid, healthFacilityCode) 
     "phone",
     "fax",
     "email",
-    "legalForm{code}",
+    "legalForm{code, legalForm}",
     "level",
-    "subLevel{code}",
+    "subLevel{code, healthFacilitySubLevel}",
     "location{id, uuid, code, name, parent{id, uuid, code, name}}",
     "servicesPricelist{id, uuid, name}",
     "itemsPricelist{id, uuid, name}",
@@ -140,7 +140,7 @@ export function fetchHealthFacilitySummaries(filters) {
     "fax",
     "email",
     "level",
-    "legalForm{code}",
+    "legalForm{code, legalForm}",
     "location{code,name, parent{code, name}}",
     "validityFrom",
     "validityTo",
@@ -150,17 +150,20 @@ export function fetchHealthFacilitySummaries(filters) {
   return graphql(payload, "LOCATION_HEALTH_FACILITY_SEARCHER");
 }
 
-export function fetchLocations(levels, type, parent) {
-  let filters = [
+export function fetchLocations(levels, type, parent, filters = {}) {
+  let filtersArray = [
     `
     type: "${levels[type]}",
     orderBy: "code"
   `,
   ];
   if (!!parent) {
-    filters.push(`parent_Uuid: "${parent.uuid}"`);
+    filtersArray.push(`parent_Uuid: "${parent.uuid}"`);
   }
-  let payload = formatPageQuery("locations", filters, [
+  if (!!filters) {
+    filtersArray.push(...Object.entries(filters).map(([key, value]) => `${key}: "${value}"`));
+  }
+  let payload = formatPageQuery("locations", filtersArray, [
     "id",
     "uuid",
     "type",

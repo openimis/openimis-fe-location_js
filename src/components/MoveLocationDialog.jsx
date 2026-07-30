@@ -1,0 +1,201 @@
+import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { injectIntl } from "react-intl";
+import _ from "lodash";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box,
+} from "@mui/material";
+import { formatMessage, withModulesManager, TextInput } from "@openimis/fe-core";
+import { fetchLocations, clearLocations } from "../actions";
+
+class MoveLocationDialog extends Component {
+  state = {
+    currentParent: null,
+    l0: "",
+    l1: "",
+    l2: "",
+  };
+
+  constructor(props) {
+    super(props);
+    this.locationTypes = props.modulesManager.getConf("fe-location", "Location.types", ["R", "D", "W", "V"]);
+  }
+
+  keysFunction = (event) => {
+    if (!!this.props.open) {
+      if (event.keyCode === 13) {
+        this.props.move(this.state);
+      } else if (event.keyCode === 27) {
+        this.props.onCancel();
+      }
+    }
+  };
+
+  componentDidMount() {
+    document.addEventListener("keydown", this.keysFunction, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.keysFunction, false);
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (!_.isEqual(prevProps.currentParents, this.props.currentParents)) {
+      let parents = this.props.currentParents;
+      this.setState({
+        l0: !!parents && parents[0] ? parents[0] : "",
+        l1: !!parents && parents[1] ? parents[1] : "",
+        l2: !!parents && parents[2] ? parents[2] : "",
+      });
+    } else if (!_.isEqual(prevProps.l1s, this.props.l1s)) {
+      this.setState((state, props) => ({
+        l1: "",
+        l1s: props.l1s,
+        l2s: props.l2s,
+      }));
+    } else if (!_.isEqual(prevProps.l2s, this.props.l2s)) {
+      this.setState((state, props) => ({
+        l2: "",
+        l2s: props.l2s,
+      }));
+    }
+  }
+
+  handleChange = (i, v) => {
+    let state = { ...this.state };
+    state[`l${i}`] = v;
+    for (let j = i + 1; j < 3; j++) {
+      state[`l${j}`] = "";
+    }
+    this.setState({ ...state }, (e) => this.props.changeState({ [`l${i}`]: v }));
+  };
+
+  _move = () => {
+    let newParent = this.state.l2 || this.state.l1 || this.state.l0 || null;
+    this.props.onMove(newParent);
+  };
+
+  render() {
+    const { intl, open, title, onCancel, location, currentParents } = this.props;
+    if (!location) return null;
+    let parent = !!currentParents ? currentParents[currentParents.length - 1] : null;
+    return (
+      <Dialog open={open} onClose={onCancel}>
+        <DialogTitle>{title}</DialogTitle>
+        <Divider />
+        {!!parent && (
+          <Fragment>
+            <DialogContent>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
+                <TextInput
+                  readOnly
+                  module="location"
+                  label="MoveDialog.current"
+                  value={`${parent.code} - ${parent.name}`}
+                />
+              </Box>
+            </DialogContent>
+            <Divider />
+          </Fragment>
+        )}
+        <DialogContent>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
+            <Grid container spacing={2}>
+              <Grid size={12}>
+                <Box sx={{ mb: 1 }}>
+                  {formatMessage(intl, "location", "MoveDialog.new")}
+                </Box>
+              </Grid>
+              {[0, 1, 2].map((i) => {
+                return (
+                  (i === 0 || !!this.state[`l${i - 1}`]) && (
+                    <Grid key={`select-${i}`} size={12}>
+                      <FormControl fullWidth>
+                        <InputLabel id={`reassign-to-label-${i}`}>
+                          {formatMessage(intl, "location", `location.locationType.${i}`)}
+                        </InputLabel>
+                        <Select
+                          labelId={`reassign-to-label-${i}`}
+                          id={`reassign-to-${i}`}
+                          value={(() => {
+                            const val = this.state[`l${i}`];
+                            const list = this.props[`l${i}s`] || [];
+                            if (val && typeof val === "object" && val.uuid) {
+                              const match = list.find((l) => l.uuid === val.uuid);
+                              return match || val;
+                            }
+                            return val || "";
+                          })()}
+                          onChange={(e) => this.handleChange(i, e.target.value)}
+                        >
+                          <MenuItem key={`pick-null`} value="">
+                            {formatMessage(intl, "location", "MoveDialog.Parent.None")}
+                          </MenuItem>
+                          {!!this.props[`l${i}s`] &&
+                            this.props[`l${i}s`]
+                              .filter((l) => l.uuid !== location.uuid)
+                              .map((l, idx) => (
+                                <MenuItem key={`pick-${idx}`} value={l}>
+                                  {l.code} - {l.name}
+                                </MenuItem>
+                              ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  )
+                );
+              })}
+            </Grid>
+          </Box>
+        </DialogContent>
+        <Divider />
+        <DialogActions>
+          <Button onClick={onCancel}>{formatMessage(intl, "location", "MoveDialog.cancel")}</Button>
+          <Button onClick={this._move} color="primary" autoFocus>
+            {formatMessage(intl, "location", "MoveDialog.move")}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+}
+
+const mapStateToProps = (state) => ({
+  l0s: state.loc.l0s,
+  fetchingL1s: state.loc.fetchingL1s,
+  fetchedL1s: state.loc.fetchedL1s,
+  l1s: state.loc.l1s,
+  errorL1s: state.loc.errorL1s,
+  fetchingL2s: state.loc.fetchingL2s,
+  fetchedL2s: state.loc.fetchedL2s,
+  l2s: state.loc.l2s,
+  errorL2s: state.loc.errorL2s,
+  submittingMutation: state.loc.submittingMutation,
+  mutation: state.loc.mutation,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(
+    {
+      fetchLocations,
+      clearLocations,
+    },
+    dispatch,
+  );
+};
+
+export { MoveLocationDialog };
+export default withModulesManager(injectIntl(connect(mapStateToProps, mapDispatchToProps)(MoveLocationDialog)));

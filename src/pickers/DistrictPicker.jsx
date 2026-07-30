@@ -1,0 +1,124 @@
+import React, { Component } from "react";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { injectIntl } from "react-intl";
+import _debounce from "lodash/debounce";
+import { styled } from "@mui/material/styles";
+import { withModulesManager, formatMessage, AutoSuggestion } from "@openimis/fe-core";
+import { selectDistrictLocation, clearLocations } from "../actions.js";
+import { locationLabel } from "../utils";
+
+const StyledDistrictPicker = styled('div')(({ theme }) => ({
+  '& .textField': {
+    width: "100%",
+  },
+  '& .MuiFormControl-root': {
+    width: '100%',
+  },
+  '& .MuiInputLabel-root': {
+    fontSize: '1rem',
+    fontWeight: 500,
+  },
+  '& .MuiAutocomplete-root': {
+    width: '100%',
+    '& .MuiInputBase-root': {
+      minHeight: '40px',        // hauteur normale, pas 56px
+      padding: theme.spacing(0.5, 1),
+      fontSize: '1rem',
+    },
+    '& .MuiAutocomplete-input': {
+      padding: theme.spacing(0.5, 1), // pas 1.5 en plus
+    },
+  },
+}));
+
+class DistrictPicker extends Component {
+  constructor(props) {
+    super(props);
+    this.selectThreshold = props.modulesManager.getConf("fe-location", "DistrictPicker.selectThreshold", 10);
+  }
+
+  onSuggestionSelected = (v) => {
+    if (this.props.value !== v) this.props.selectDistrictLocation(v ?? null);
+    this.props.onChange(v, locationLabel(v));
+  };
+
+  componentWillUnmount() {
+    this.props.clearLocations(1);
+  }
+
+  render() {
+    const {
+      intl,
+      userHealthFacilityFullPath,
+      reset,
+      value,
+      withLabel = true,
+      label,
+      withNull = false,
+      nullLabel = null,
+      filterLabels = true,
+      region,
+      districts,
+      readOnly = false,
+      required = false,
+      title,
+      inputProps
+    } = this.props;
+
+    let items = userHealthFacilityFullPath && [userHealthFacilityFullPath.location] || districts || [];
+    
+    if (!!region) {
+      items = items.filter((d) => {
+        return d.parent.uuid === region.uuid;
+      });
+    }
+
+    return (
+      <StyledDistrictPicker>
+        <AutoSuggestion
+          module="location"
+          items={items}
+          label={!!withLabel && (label || formatMessage(intl, "location", "DistrictPicker.label"))}
+          lookup={locationLabel}
+          getSuggestionValue={locationLabel}
+          renderSuggestion={(a) => <span>{locationLabel(a)}</span>}
+          onSuggestionSelected={this.onSuggestionSelected}
+          onClear={() => this.onSuggestionSelected(null)}
+          value={value}
+          reset={reset}
+          readOnly={readOnly}
+          required={required}
+          selectThreshold={this.selectThreshold}
+          withNull={withNull}
+          nullLabel={
+            nullLabel || filterLabels
+              ? formatMessage(intl, "location", "location.DistrictPicker.null")
+              : formatMessage(intl, "location", "location.DistrictPicker.none")
+          }
+          title={title}
+          inputProps={inputProps}
+        />
+      </StyledDistrictPicker>
+    );
+  }
+}
+
+const mapStateToProps = (state) => ({
+  districts: state.loc.userL1s,
+  userHealthFacilityFullPath: state.loc.userHealthFacilityFullPath,
+});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      selectDistrictLocation,
+      clearLocations,
+    },
+    dispatch,
+  );
+
+export { StyledDistrictPicker };
+export default withModulesManager(
+  connect(mapStateToProps, mapDispatchToProps)(injectIntl(DistrictPicker)),
+);
