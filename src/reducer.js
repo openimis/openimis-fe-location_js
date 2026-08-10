@@ -25,6 +25,15 @@ function reducer(
     fetchedHealthFacility: false,
     healthFacility: null,
     errorHealthFacility: null,
+    fetchingHotspots: false,
+    fetchedHotspots: false,
+    hotspots: null,
+    hotspotsPageInfo: {},
+    errorHotspots: null,
+    fetchingHotspot: false,
+    fetchedHotspot: false,
+    hotspot: null,
+    errorHotspot: null,
     fetchingL0s: false,
     fetchedL0s: false,
     l0s: [],
@@ -61,6 +70,26 @@ function reducer(
     fetchingLocationsByUuids: false,
     fetchedLocationsByUuids: false,
     errorLocationsByUuids: null,
+    fetchingMicroCatchments: false,
+    fetchedMicroCatchments: false,
+    microCatchments: [],
+    microCatchmentsPageInfo: {},
+    microCatchmentsTotalCount: 0,
+    errorMicroCatchments: null,
+    fetchingMicroCatchment: false,
+    fetchedMicroCatchment: false,
+    microCatchment: null,
+    errorMicroCatchment: null,
+    fetchingCatchments: false,
+    fetchedCatchments: false,
+    catchments: [],
+    catchmentsPageInfo: {},
+    catchmentsTotalCount: 0,
+    errorCatchments: null,
+    fetchingCatchment: false,
+    fetchedCatchment: false,
+    catchment: null,
+    errorCatchment: null,
   },
   action,
 ) {
@@ -185,6 +214,61 @@ function reducer(
         fetchedHealthFacility: false,
         healthFacility: null,
         errorHealthFacility: null,
+      };
+    case "LOCATION_HOTSPOT_SEARCHER_REQ":
+      return {
+        ...state,
+        fetchingHotspots: true,
+        fetchedHotspots: false,
+        hotspots: null,
+        hotspotsPageInfo: { totalCount: 0 },
+        errorHotspots: null,
+      };
+    case "LOCATION_HOTSPOT_SEARCHER_RESP":
+      return {
+        ...state,
+        fetchingHotspots: false,
+        fetchedHotspots: true,
+        hotspots: parseData(action.payload.data.hotspots),
+        hotspotsPageInfo: pageInfo(action.payload.data.hotspots),
+        errorHotspots: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_HOTSPOT_SEARCHER_ERR":
+      return {
+        ...state,
+        fetchingHotspots: false,
+        errorHotspots: formatServerError(action.payload),
+      };
+    case "LOCATION_HOTSPOT_REQ":
+      return {
+        ...state,
+        fetchingHotspot: true,
+        fetchedHotspot: false,
+        hotspot: null,
+        errorHotspot: null,
+      };
+    case "LOCATION_HOTSPOT_RESP":
+      const hotspots = parseData(action.payload.data.hotspots);
+      return {
+        ...state,
+        fetchingHotspot: false,
+        fetchedHotspot: true,
+        hotspot: !!hotspots && hotspots.length > 0 ? hotspots[0] : null,
+        errorHotspot: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_HOTSPOT_ERR":
+      return {
+        ...state,
+        fetchingHotspot: false,
+        errorHotspot: formatServerError(action.payload),
+      };
+    case "LOCATION_HOTSPOT_CLEAR":
+      return {
+        ...state,
+        fetchingHotspot: false,
+        fetchedHotspot: false,
+        hotspot: null,
+        errorHotspot: null,
       };
     case "LOCATION_LOCATIONS_0_REQ":
       return {
@@ -518,6 +602,12 @@ function reducer(
       return dispatchMutationResp(state, "updateHealthFacility", action);
     case "LOCATION_DELETE_HEALTH_FACILITY_RESP":
       return dispatchMutationResp(state, "deleteHealthFacility", action);
+    case "LOCATION_CREATE_HOTSPOT_RESP":
+      return dispatchMutationResp(state, "createHotspot", action);
+    case "LOCATION_UPDATE_HOTSPOT_RESP":
+      return dispatchMutationResp(state, "createHotspot", action);
+    case "LOCATION_DELETE_HOTSPOT_RESP":
+      return dispatchMutationResp(state, "deleteHotspot", action);
     case "LOCATION_LOCATIONS_BY_UUIDS_REQ":
       return {
         ...state,
@@ -549,6 +639,133 @@ function reducer(
         locationsByUuids: [],
         errorLocationsByUuids: null,
       };
+    case "LOCATION_MICRO_CATCHMENT_SEARCHER_REQ":
+      return {
+        ...state,
+        fetchingMicroCatchments: true,
+        fetchedMicroCatchments: false,
+        microCatchments: [],
+        microCatchmentsPageInfo: {},
+        microCatchmentsTotalCount: 0,
+        errorMicroCatchments: null,
+      };
+    case "LOCATION_MICRO_CATCHMENT_SEARCHER_RESP":
+      return {
+        ...state,
+        fetchingMicroCatchments: false,
+        fetchedMicroCatchments: true,
+        microCatchments: parseData(action.payload.data.microCatchments),
+        microCatchmentsPageInfo: pageInfo(action.payload.data.microCatchments),
+        microCatchmentsTotalCount: action.payload.data.microCatchments?.totalCount || 0,
+        errorMicroCatchments: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_MICRO_CATCHMENT_SEARCHER_ERR":
+      return {
+        ...state,
+        fetchingMicroCatchments: false,
+        errorMicroCatchments: formatServerError(action.payload),
+      };
+    case "LOCATION_MICRO_CATCHMENT_REQ":
+      return {
+        ...state,
+        fetchingMicroCatchment: true,
+        fetchedMicroCatchment: false,
+        microCatchment: null,
+        errorMicroCatchment: null,
+      };
+    case "LOCATION_MICRO_CATCHMENT_RESP":
+      const mcs = parseData(action.payload.data.microCatchments);
+      return {
+        ...state,
+        fetchingMicroCatchment: false,
+        fetchedMicroCatchment: true,
+        microCatchment: !!mcs && mcs.length > 0 ? mcs[0] : null,
+        errorMicroCatchment: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_MICRO_CATCHMENT_ERR":
+      return {
+        ...state,
+        fetchingMicroCatchment: false,
+        errorMicroCatchment: formatServerError(action.payload),
+      };
+    case "LOCATION_MICRO_CATCHMENT_CLEAR":
+      return {
+        ...state,
+        fetchingMicroCatchment: false,
+        fetchedMicroCatchment: false,
+        microCatchment: null,
+        errorMicroCatchment: null,
+      };
+    case "LOCATION_CREATE_MICRO_CATCHMENT_RESP":
+      return dispatchMutationResp(state, "createMicroCatchment", action);
+    case "LOCATION_UPDATE_MICRO_CATCHMENT_RESP":
+      return dispatchMutationResp(state, "updateMicroCatchment", action);
+    case "LOCATION_DELETE_MICRO_CATCHMENT_RESP":
+      return dispatchMutationResp(state, "deleteMicroCatchment", action);
+    case "LOCATION_CATCHMENT_SEARCHER_REQ":
+      return {
+        ...state,
+        fetchingCatchments: true,
+        fetchedCatchments: false,
+        catchments: [],
+        catchmentsPageInfo: {},
+        catchmentsTotalCount: 0,
+        errorCatchments: null,
+      };
+    case "LOCATION_CATCHMENT_SEARCHER_RESP":
+      return {
+        ...state,
+        fetchingCatchments: false,
+        fetchedCatchments: true,
+        catchments: parseData(action.payload.data.catchments),
+        catchmentsPageInfo: pageInfo(action.payload.data.catchments),
+        catchmentsTotalCount: action.payload.data.catchments?.totalCount || 0,
+        errorCatchments: formatGraphQLError(action.payload),
+      };
+    case "LOCATION_CATCHMENT_SEARCHER_ERR":
+      return {
+        ...state,
+        fetchingCatchments: false,
+        errorCatchments: formatServerError(action.payload),
+      };
+    case "LOCATION_CATCHMENT_REQ":
+      return {
+        ...state,
+        fetchingCatchment: true,
+        fetchedCatchment: false,
+        catchment: null,
+        errorCatchment: null,
+      };
+    case "LOCATION_CATCHMENT_RESP": {
+      const records = parseData(action.payload.data.catchments);
+      return {
+        ...state,
+        fetchingCatchment: false,
+        fetchedCatchment: true,
+        catchment: records?.[0] || null,
+        errorCatchment: formatGraphQLError(action.payload),
+      };
+    }
+    case "LOCATION_CATCHMENT_ERR":
+      return {
+        ...state,
+        fetchingCatchment: false,
+        errorCatchment: formatServerError(action.payload),
+      };
+    case "LOCATION_CATCHMENT_CLEAR":
+      return {
+        ...state,
+        fetchingCatchment: false,
+        fetchedCatchment: false,
+        catchment: null,
+        errorCatchment: null,
+      };
+    case "LOCATION_CREATE_CATCHMENT_RESP":
+       return dispatchMutationResp(state, "createCatchment", action);
+    case "LOCATION_UPDATE_CATCHMENT_RESP":
+      return dispatchMutationResp(state, "updateCatchment", action);
+    case "LOCATION_DELETE_CATCHMENT_RESP":
+      return dispatchMutationResp(state, "deleteCatchment", action);
     case "CORE_AUTH_LOGOUT":
       return {
         ...state,
@@ -565,6 +782,15 @@ function reducer(
         fetchedHealthFacility: false,
         healthFacility: null,
         errorHealthFacility: null,
+        fetchingHotspots: false,
+        fetchedHotspots: false,
+        hotspots: null,
+        hotspotsPageInfo: {},
+        errorHotspots: null,
+        fetchingHotspot: false,
+        fetchedHotspot: false,
+        hotspot: null,
+        errorHotspot: null,
         fetchingL0s: false,
         fetchedL0s: false,
         l0s: [],
