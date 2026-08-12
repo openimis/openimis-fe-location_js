@@ -13,10 +13,10 @@ import {
   coreConfirm,
   Searcher,
   GetIconComponent,
+  ActionMenu,
 } from "@openimis/fe-core";
 import HealthFacilityFilter from "./HealthFacilityFilter";
 import { fetchHealthFacilitySummaries, deleteHealthFacility } from "../actions";
-import { Button } from "@mui/material";
 import { RIGHT_HEALTH_FACILITY_DELETE } from "../constants";
 const DeleteIcon = GetIconComponent("Delete")
 
@@ -107,12 +107,16 @@ class HealthFacilitiesSearcher extends Component {
     if (this.props.rights.includes(RIGHT_HEALTH_FACILITY_DELETE)) {
       formatters.push((hf) =>
         hf.validityTo ? null : (
-          <Button 
-            startIcon={<DeleteIcon />}
-            disabled={!!hf.clientMutationId}
-            onClick={(e) => this.onDelete(hf)}>
-            {formatMessage(this.props.intl, "location", "deleteHealthFacility.buttonText")}
-          </Button>
+          <ActionMenu 
+            actions={[
+              {
+                icon: <DeleteIcon />,
+                label: formatMessage(this.props.intl, "location", "deleteHealthFacility.buttonText"),
+                onClick: () => this.onDelete(hf),
+                disabled: !!hf.clientMutationId
+              }
+            ]}
+          />
         ),
       );
     }
