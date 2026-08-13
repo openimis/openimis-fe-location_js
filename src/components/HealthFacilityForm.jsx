@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import _ from "lodash";
 
 import { styled } from "@mui/material/styles";
 
@@ -115,6 +116,7 @@ class HealthFacilityForm extends Component {
   canSave = () => {
     // TODO - after such component is available, add contract dates as date range, not two separate dates
     if (this.state.isSaved) return false;
+    if (_.isEqual(this.props.healthFacility, _.omit(this.state.healthFacility, "parentLocation"))) return false;
     if (!this.state.healthFacility.code) return false;
     if (this.props.isHFCodeValid === false) return false;
     if (!this.state.healthFacility.name) return false;
