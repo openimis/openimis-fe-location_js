@@ -119,7 +119,7 @@ const LocationCascader = ({
   }, []);
 
   useEffect(() => {
-    const l0s = (locState.l0s || []).map((loc) => ({
+    const l0s = (locState.l0s || []).filter(Boolean).map((loc) => ({
       label: locationLabel(loc),
       value: loc.uuid,
       isLeaf: false,
@@ -149,7 +149,8 @@ const LocationCascader = ({
     const { targetOption, level } = pendingExpansion.current;
     if (!locState[`fetchedL${level}s`]) return;
 
-    const children = locState[`l${level}s`]
+    const children = (locState[`l${level}s`] || [])
+      .filter(Boolean)
       .map((loc) => ({
         label: locationLabel(loc),
         value: loc.uuid,
