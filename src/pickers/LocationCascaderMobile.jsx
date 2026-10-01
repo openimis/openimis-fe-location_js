@@ -15,7 +15,7 @@ import {
 import { styled } from "@mui/material/styles";
 import { GetIconComponent, useModulesManager, useTranslations } from "@openimis/fe-core";
 import { fetchLocationsStr } from "../actions";
-import { buildSelectedLocation, getLocationLevel, locationLabel } from "../utils";
+import { buildSelectedLocation, getLocationLevel, getLocationMaxLevels, locationLabel } from "../utils";
 
 const ArrowDropDownIcon = GetIconComponent("ArrowDropDown");
 const ArrowBackIcon = GetIconComponent("ArrowBack");
@@ -58,7 +58,7 @@ const LocationCascaderMobile = ({
   const { formatMessage } = useTranslations("location", modulesManager);
   const dispatch = useDispatch();
   const locState = useSelector((state) => state.loc);
-  const maxLevel = parseInt(modulesManager.getConf("location", "Location.MaxLevels", 4));
+  const maxLevel = getLocationMaxLevels(modulesManager);
 
   const [open, setOpen] = useState(false);
   const [path, setPath] = useState([]);

@@ -6,7 +6,7 @@ import Cascader from "rc-cascader";
 import { TextField, Chip, useMediaQuery, useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { GetIconComponent, useModulesManager, useTranslations } from "@openimis/fe-core";
-import { getLocationLevel, locationLabel } from "../utils";
+import { getLocationLevel, getLocationMaxLevels, locationLabel } from "../utils";
 import { fetchLocationsStr, fetchLocationsByUuids } from "../actions";
 import LocationCascaderMobile from "./LocationCascaderMobile";
 import _ from "lodash";
@@ -78,9 +78,7 @@ const LocationCascader = ({
   const { formatMessage, formatMessageWithValues } = useTranslations("location", modulesManager);
   const dispatch = useDispatch();
   const locState = useSelector((state) => state.loc);
-  const maxLevel = parseInt(
-    modulesManager.getConf("location", "Location.MaxLevels", 4)
-  );
+  const maxLevel = getLocationMaxLevels(modulesManager);
   const minRequiredLevel =
     requiredLevel ?? (required ? Math.max(maxLevel - 1, 0) : null);
 
