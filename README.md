@@ -35,6 +35,7 @@ None
 * `state.core.user`, to access user info (rights,...)
 
 ## Configurations Options
+* `location.Location.MaxLevels`: number of location levels (e.g. Region, District, Municipality, Village) shown and fetched by the module (`location.Location.FlatProjection`, `location.LocationCascader`). The `location.Location.MaxLevels` ref is set to the same value. Other modules can read it with `getLocationMaxLevels(modulesManager)`. Default: 4
 * `healthFacilitiesMinCharLookup`: minimum characters to type before triggering search in `location.HealthFacilityPicker`, Default: 2
 * `debounceTime`: debounce time to wait before triggering search in `location.HealthFacilityPicker`, Default: 800 ms
 * `RegionPicker.selectThreshold`: region suggestions count threshold under which the AutoSuggestion switch to a SelectInut (drop down list), default: 10
