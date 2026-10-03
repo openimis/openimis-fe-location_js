@@ -112,9 +112,7 @@ class DetailedLocation extends Component {
     const levels = Array.from({ length: count }, (_, l) => (l < level ? parents[l] || current[l] || null : null));
     levels[level] = v;
     this.setState({ levels }, () => {
-      if (level === count - 1) {
-        this.props.onChange(v);
-      }
+      this.props.onChange(v ?? (level > 0 ? levels[level - 1] : null) ?? null);
       this.props.selectLocation(v, level, count);
     });
   };

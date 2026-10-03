@@ -127,7 +127,7 @@ test("with 3 levels a location of an upper level leaves the lower pickers empty"
   assert.deepEqual(rendered.map((f) => name(f.value)), ["Kayanza", "Butaganzwa K", null]);
 });
 
-test("with 3 levels choosing the last level sets the value, an upper level clears the levels below", () => {
+test("with 3 levels the value is the deepest chosen location, an upper level clears the levels below", () => {
   const changes = [];
   const selections = [];
   const component = mount({
@@ -146,11 +146,18 @@ test("with 3 levels choosing the last level sets the value, an upper level clear
 
   const ngozi = { id: "200", uuid: "u-09", code: "09", name: "Ngozi", type: "D" };
   picker(0).onChange(ngozi);
-  assert.deepEqual(changes, ["Gatwe"]);
+  assert.deepEqual(changes, ["Gatwe", "Ngozi"]);
   assert.deepEqual(fields(component.render()).map((f) => name(f.value)), ["Ngozi", null, null]);
+
+  const muhanga = { id: "300", uuid: "u-0901", code: "0901", name: "Muhanga", type: "W", parent: ngozi };
+  picker(1).onChange(muhanga);
+  picker(1).onChange(null);
+  assert.deepEqual(changes, ["Gatwe", "Ngozi", "Muhanga", "Ngozi"]);
   assert.deepEqual(selections, [
     ["Gatwe", 2, 3],
     ["Ngozi", 0, 3],
+    ["Muhanga", 1, 3],
+    [null, 1, 3],
   ]);
 });
 
