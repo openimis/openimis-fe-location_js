@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { injectIntl } from "react-intl";
 import _debounce from "lodash/debounce";
 import { styled } from "@mui/material/styles";
 import _ from "lodash";
 import { Grid } from "@mui/material";
-import { withModulesManager, ControlledField, PublishedComponent } from "@openimis/fe-core";
+import { withModulesManager, ControlledField, PublishedComponent, formatMessage } from "@openimis/fe-core";
 import { selectLocation } from "../actions";
 import { DEFAULT_LOCATION_TYPES } from "../constants";
+import { getLocationMaxLevels, locationLevelSlots, locationsByLevel } from "../utils";
 import CoarseLocation from "./CoarseLocation";
 
 const StyledDetailedLocation = styled('div')(({ theme }) => ({
@@ -28,10 +30,16 @@ class DetailedLocation extends Component {
   constructor(props) {
     super(props);
     this.locationTypes = props.modulesManager.getConf("fe-location", "Location.types", DEFAULT_LOCATION_TYPES);
+    // One location picker per level, or null for the region/district layout of 4 levels.
+    this.levelSlots = locationLevelSlots(getLocationMaxLevels(props.modulesManager), this.locationTypes);
   }
 
   computeState = () => {
     const { value } = this.props;
+    if (this.levelSlots) {
+      this.setState({ levels: locationsByLevel(value, this.locationTypes, this.levelSlots.length) });
+      return;
+    }
     const lineage = [];
     let current = value || null;
     while (current) {
@@ -97,7 +105,59 @@ class DetailedLocation extends Component {
     });
   };
 
+  onLevelChange = (level, v) => {
+    const count = this.levelSlots.length;
+    const parents = locationsByLevel(v, this.locationTypes, count);
+    const current = this.state.levels || [];
+    const levels = Array.from({ length: count }, (_, l) => (l < level ? parents[l] || current[l] || null : null));
+    levels[level] = v;
+    this.setState({ levels }, () => {
+      if (level === count - 1) {
+        this.props.onChange(v);
+      }
+      this.props.selectLocation(v, level, count);
+    });
+  };
+
+  renderLevels() {
+    const { intl, split = false, readOnly, required = false, filterLabels = true, title = "" } = this.props;
+    const levels = this.state.levels || [];
+    const grid = split ? 12 : Math.max(1, Math.floor(12 / this.levelSlots.length));
+    return (
+      <StyledDetailedLocation>
+        <Grid container className="form">
+          {this.levelSlots.map(({ level, type, labelKey }) => (
+            <ControlledField
+              module="location"
+              id={`DetailedLocation.location_${level}`}
+              key={`location_${level}`}
+              field={
+                <Grid size={grid} className="item">
+                  <PublishedComponent
+                    pubRef="location.LocationPicker"
+                    value={levels[level] || null}
+                    parentLocation={level > 0 ? levels[level - 1] || null : null}
+                    readOnly={readOnly}
+                    required={required}
+                    withNull={true}
+                    filterLabels={filterLabels}
+                    label={formatMessage(intl, "location", labelKey)}
+                    locationLevel={level}
+                    onChange={(v) => this.onLevelChange(level, v)}
+                    title={title}
+                    dataCy={`location-${type}-picker`}
+                  />
+                </Grid>
+              }
+            />
+          ))}
+        </Grid>
+      </StyledDetailedLocation>
+    );
+  }
+
   render() {
+    if (this.levelSlots) return this.renderLevels();
     const {
       split = false,
       readOnly,
@@ -160,5 +220,5 @@ const mapDispatchToProps = (dispatch) => {
 
 export { StyledDetailedLocation };
 export default withModulesManager(
-  connect(mapStateToProps, mapDispatchToProps)(DetailedLocation),
+  injectIntl(connect(mapStateToProps, mapDispatchToProps)(DetailedLocation)),
 );
