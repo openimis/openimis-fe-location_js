@@ -267,6 +267,7 @@ const LocationCascader = ({
           onChange={handleCascaderChange}
           changeOnSelect={true}
           disabled={readOnly}
+          checkable={multiple}
           placement={placement}
           dropdownClassName="openimis-location-cascader-dropdown"
           dropdownStyle={{ maxWidth: "calc(100vw - 16px)" }}
