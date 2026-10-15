@@ -66,11 +66,28 @@ const LocationPicker = (props) => {
   const options = useSelector((state) => state.loc[`l${locationLevel}s`] ?? []);
 
   const restricted = useSelector((state) => state.loc[`userL${locationLevel}s`]);
+  // A superuser administers the whole tree, so the restriction must not apply to them: the
+  // list it narrows to is built from the parents of the user's own assigned districts, which
+  // can never contain a region created moments ago, nor any location they do not hold
+  // themselves. Everyone else keeps the narrowed list for now - the backend's own rule
+  // (Location.get_queryset exempts anyone holding location.createRegion from row security)
+  // is wider than this form should be, and narrowing it is the proper fix. See OP-3188.
+  const isSuperuser = useSelector((state) => Boolean(state.core?.user?.is_superuser));
+  const sourceOptions = restrictedOptions && !isSuperuser ? restricted ?? [] : options;
 
   const regions = useSelector((state) => state.loc[`l0s`]);
   const districts = useSelector((state) => state.loc[`l1s`]);
-  const activeRegion = regionLocation || regions?.[0] || null;
-  const activeDistrict = districtLocation || districts?.[0] || null;
+  // `l0s`/`l1s` carry two different things: the *results* of a level-0/1 lookup, and - when a
+  // RegionPicker or DistrictPicker makes a selection - the single location that was chosen
+  // (LOCATION_FILTER_REGION_SELECTED replaces the slice with `[location]`). Only the second is
+  // an ancestor to narrow by. Taking the first entry of a result list treated an arbitrary
+  // region as "the" region, and since this value is also passed to fetchLocationsStr below it
+  // narrowed the query itself, not just the dropdown: on the user form the Districts picker
+  // only ever offered the districts of whichever region happened to come back first (OP-3186).
+  const selectedRegion = regions?.length === 1 ? regions[0] : null;
+  const selectedDistrict = districts?.length === 1 ? districts[0] : null;
+  const activeRegion = regionLocation || selectedRegion;
+  const activeDistrict = districtLocation || selectedDistrict;
 
   const hasAncestor = (node, targetUuid) => {
     let current = node;
@@ -81,11 +98,16 @@ const LocationPicker = (props) => {
     return false;
   };
 
-  const filteredOptions = (restrictedOptions ? restricted : options).filter((option) => {
+  const filteredOptions = sourceOptions.filter((option) => {
     if (parentLocation?.uuid) return hasAncestor(option, parentLocation.uuid);
     if (parentLocations?.length) return parentLocations.some((uuid) => hasAncestor(option, uuid));
-    if (activeDistrict?.uuid) return hasAncestor(option, activeDistrict.uuid);
-    if (activeRegion?.uuid) return hasAncestor(option, activeRegion.uuid);
+    // `activeRegion`/`activeDistrict` narrow a picker to a chosen ancestor, so they
+    // only mean anything strictly below that ancestor's own level. They are read from
+    // `l0s`/`l1s`, which at level 0 and 1 is the option list itself: without the level
+    // guard a region was kept only if it descended from `l0s[0]`, which no region does
+    // but itself, leaving exactly one region selectable (OP-3186).
+    if (locationLevel > 1 && activeDistrict?.uuid) return hasAncestor(option, activeDistrict.uuid);
+    if (locationLevel > 0 && activeRegion?.uuid) return hasAncestor(option, activeRegion.uuid);
     return true;
   });
 
