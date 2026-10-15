@@ -66,8 +66,17 @@ const LocationPicker = (props) => {
 
   const regions = useSelector((state) => state.loc[`l0s`]);
   const districts = useSelector((state) => state.loc[`l1s`]);
-  const activeRegion = regionLocation || regions?.[0] || null;
-  const activeDistrict = districtLocation || districts?.[0] || null;
+  // `l0s`/`l1s` carry two different things: the *results* of a level-0/1 lookup, and - when a
+  // RegionPicker or DistrictPicker makes a selection - the single location that was chosen
+  // (LOCATION_FILTER_REGION_SELECTED replaces the slice with `[location]`). Only the second is
+  // an ancestor to narrow by. Taking the first entry of a result list treated an arbitrary
+  // region as "the" region, and since this value is also passed to fetchLocationsStr below it
+  // narrowed the query itself, not just the dropdown: on the user form the Districts picker
+  // only ever offered the districts of whichever region happened to come back first (OP-3186).
+  const selectedRegion = regions?.length === 1 ? regions[0] : null;
+  const selectedDistrict = districts?.length === 1 ? districts[0] : null;
+  const activeRegion = regionLocation || selectedRegion;
+  const activeDistrict = districtLocation || selectedDistrict;
 
   const hasAncestor = (node, targetUuid) => {
     let current = node;
