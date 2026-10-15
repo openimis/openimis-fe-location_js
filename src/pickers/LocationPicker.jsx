@@ -85,8 +85,13 @@ const LocationPicker = (props) => {
   const filteredOptions = options.filter((option) => {
     if (parentLocation?.uuid) return hasAncestor(option, parentLocation.uuid);
     if (parentLocations?.length) return parentLocations.some((uuid) => hasAncestor(option, uuid));
-    if (activeDistrict?.uuid) return hasAncestor(option, activeDistrict.uuid);
-    if (activeRegion?.uuid) return hasAncestor(option, activeRegion.uuid);
+    // `activeRegion`/`activeDistrict` narrow a picker to a chosen ancestor, so they
+    // only mean anything strictly below that ancestor's own level. They are read from
+    // `l0s`/`l1s`, which at level 0 and 1 is the option list itself: without the level
+    // guard a region was kept only if it descended from `l0s[0]`, which no region does
+    // but itself, leaving exactly one region selectable (OP-3186).
+    if (locationLevel > 1 && activeDistrict?.uuid) return hasAncestor(option, activeDistrict.uuid);
+    if (locationLevel > 0 && activeRegion?.uuid) return hasAncestor(option, activeRegion.uuid);
     return true;
   });
 
