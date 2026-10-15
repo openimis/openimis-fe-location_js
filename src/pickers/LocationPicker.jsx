@@ -52,6 +52,7 @@ const LocationPicker = (props) => {
     required,
     filterSelectedOptions = true,
     withPlaceholder,
+    restrictedOptions,
     title = '',
     dataCy
   } = props;
@@ -63,6 +64,16 @@ const LocationPicker = (props) => {
 
   const isLoading = useSelector((state) => state.loc[`fetchingL${locationLevel}s`]);
   const options = useSelector((state) => state.loc[`l${locationLevel}s`] ?? []);
+
+  const restricted = useSelector((state) => state.loc[`userL${locationLevel}s`]);
+  // A superuser administers the whole tree, so the restriction must not apply to them: the
+  // list it narrows to is built from the parents of the user's own assigned districts, which
+  // can never contain a region created moments ago, nor any location they do not hold
+  // themselves. Everyone else keeps the narrowed list for now - the backend's own rule
+  // (Location.get_queryset exempts anyone holding location.createRegion from row security)
+  // is wider than this form should be, and narrowing it is the proper fix. See OP-3188.
+  const isSuperuser = useSelector((state) => Boolean(state.core?.user?.is_superuser));
+  const sourceOptions = restrictedOptions && !isSuperuser ? restricted ?? [] : options;
 
   const regions = useSelector((state) => state.loc[`l0s`]);
   const districts = useSelector((state) => state.loc[`l1s`]);
@@ -87,11 +98,7 @@ const LocationPicker = (props) => {
     return false;
   };
 
-  // Options come from `locationsStr`, which the backend already narrows with
-  // Location.get_queryset - the same rule the location list uses. Filtering again
-  // here against the user's own districts answered the question a second way and
-  // hid locations the user is entitled to administer (OP-3186).
-  const filteredOptions = options.filter((option) => {
+  const filteredOptions = sourceOptions.filter((option) => {
     if (parentLocation?.uuid) return hasAncestor(option, parentLocation.uuid);
     if (parentLocations?.length) return parentLocations.some((uuid) => hasAncestor(option, uuid));
     // `activeRegion`/`activeDistrict` narrow a picker to a chosen ancestor, so they
