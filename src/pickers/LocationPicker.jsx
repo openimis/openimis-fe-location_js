@@ -52,7 +52,6 @@ const LocationPicker = (props) => {
     required,
     filterSelectedOptions = true,
     withPlaceholder,
-    restrictedOptions,
     title = '',
     dataCy
   } = props;
@@ -64,8 +63,6 @@ const LocationPicker = (props) => {
 
   const isLoading = useSelector((state) => state.loc[`fetchingL${locationLevel}s`]);
   const options = useSelector((state) => state.loc[`l${locationLevel}s`] ?? []);
-
-  const restricted = useSelector((state) => state.loc[`userL${locationLevel}s`]);
 
   const regions = useSelector((state) => state.loc[`l0s`]);
   const districts = useSelector((state) => state.loc[`l1s`]);
@@ -81,7 +78,11 @@ const LocationPicker = (props) => {
     return false;
   };
 
-  const filteredOptions = (restrictedOptions ? restricted : options).filter((option) => {
+  // Options come from `locationsStr`, which the backend already narrows with
+  // Location.get_queryset - the same rule the location list uses. Filtering again
+  // here against the user's own districts answered the question a second way and
+  // hid locations the user is entitled to administer (OP-3186).
+  const filteredOptions = options.filter((option) => {
     if (parentLocation?.uuid) return hasAncestor(option, parentLocation.uuid);
     if (parentLocations?.length) return parentLocations.some((uuid) => hasAncestor(option, uuid));
     if (activeDistrict?.uuid) return hasAncestor(option, activeDistrict.uuid);
