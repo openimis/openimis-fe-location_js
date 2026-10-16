@@ -21,7 +21,7 @@ import { RIGHT_HEALTH_FACILITY_DELETE } from "../constants";
 const DeleteIcon = GetIconComponent("Delete")
 
 class HealthFacilitiesSearcher extends Component {
-  state = { reset: 0, confirmedAction: null };
+  state = { reset: 0 };
 
   constructor(props) {
     super(props);
@@ -37,8 +37,6 @@ class HealthFacilitiesSearcher extends Component {
     if (prevProps.submittingMutation && !this.props.submittingMutation) {
       this.props.journalize(this.props.mutation);
       this.setState((prevState) => ({ ...prevState, reset: prevState.reset + 1 }));
-    } else if (prevProps.confirmed !== this.props.confirmed && !!this.props.confirmed && !!this.state.confirmedAction) {
-      this.state.confirmedAction();
     }
   }
 
@@ -133,13 +131,14 @@ class HealthFacilitiesSearcher extends Component {
           code: hf.code,
           name: hf.name,
         }),
+        { onConfirm: confirmedAction },
       );
     let confirmedAction = () =>
       this.props.deleteHealthFacility(
         hf,
         formatMessageWithValues(this.props.intl, "location", "DeleteHealthFacility.mutationLabel", { code: hf.code }),
       );
-    this.setState({ confirmedAction }, confirm);
+    confirm();
   };
 
   rowLocked = (selection, hf) => hf.clientMutationId;
