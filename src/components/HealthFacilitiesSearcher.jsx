@@ -188,7 +188,6 @@ const mapStateToProps = (state) => ({
   userHealthFacilityFullPath: state.loc.userHealthFacilityFullPath,
   submittingMutation: state.loc.submittingMutation,
   mutation: state.loc.mutation,
-  confirmed: state.core.confirmed,
   healthFacilities: state.loc.healthFacilities,
   healthFacilitiesPageInfo: state.loc.healthFacilitiesPageInfo,
   fetchingHealthFacilities: state.loc.fetchingHealthFacilities,
