@@ -81,8 +81,9 @@ const LocationCascader = ({
   const maxLevel = parseInt(
     modulesManager.getConf("location", "Location.MaxLevels", 4)
   );
-  const minRequiredLevel =
-    requiredLevel ?? (required ? Math.max(maxLevel - 1, 0) : null);
+  // `required` only means a location must be chosen; a minimum level (0-based: 0 is the
+  // top level) is the caller's choice through `requiredLevel`.
+  const minRequiredLevel = requiredLevel ?? null;
 
   const [options, setOptions] = useState([]);
   const [locations, setLocations] = useState(multiple ? [] : "");
