@@ -10,6 +10,13 @@ import {
 import _ from "lodash";
 import { locationLabel } from "./utils";
 
+// A level's children are fetched per parent. When the user picks another parent
+// before the first fetch returns, both responses arrive and the slower one would
+// win; a response or error for a parent other than the latest requested one is
+// therefore dropped. Requests that carry no parent (fetchLocationsStr) are kept.
+const isStale = (action, requestedParentUuid) =>
+  !!action.meta && "parentUuid" in action.meta && action.meta.parentUuid !== requestedParentUuid;
+
 function reducer(
   state = {
     fetchingHealthFacilityFullPath: false,
@@ -214,6 +221,7 @@ function reducer(
     case "LOCATION_LOCATIONS_1_REQ":
       return {
         ...state,
+        l1sParentUuid: action.meta?.parentUuid,
         fetchingL1s: true,
         fetchedL1s: false,
         l1s: [],
@@ -222,6 +230,7 @@ function reducer(
         errorL1s: null,
       };
     case "LOCATION_LOCATIONS_1_RESP":
+      if (isStale(action, state.l1sParentUuid)) return state;
       return {
         ...state,
         fetchingL1s: false,
@@ -230,6 +239,7 @@ function reducer(
         errorL1s: formatGraphQLError(action.payload),
       };
     case "LOCATION_LOCATIONS_1_ERR":
+      if (isStale(action, state.l1sParentUuid)) return state;
       return {
         ...state,
         fetchingL1s: false,
@@ -245,6 +255,7 @@ function reducer(
     case "LOCATION_LOCATIONS_2_REQ":
       return {
         ...state,
+        l2sParentUuid: action.meta?.parentUuid,
         fetchingL2s: true,
         fetchedL2s: false,
         l2s: [],
@@ -252,6 +263,7 @@ function reducer(
         errorL2s: null,
       };
     case "LOCATION_LOCATIONS_2_RESP":
+      if (isStale(action, state.l2sParentUuid)) return state;
       return {
         ...state,
         fetchingL2s: false,
@@ -260,6 +272,7 @@ function reducer(
         errorL2s: formatGraphQLError(action.payload),
       };
     case "LOCATION_LOCATIONS_2_ERR":
+      if (isStale(action, state.l2sParentUuid)) return state;
       return {
         ...state,
         fetchingL2s: false,
@@ -274,12 +287,14 @@ function reducer(
     case "LOCATION_LOCATIONS_3_REQ":
       return {
         ...state,
+        l3sParentUuid: action.meta?.parentUuid,
         fetchingL3s: true,
         fetchedL3s: false,
         l3s: [],
         errorL3s: null,
       };
     case "LOCATION_LOCATIONS_3_RESP":
+      if (isStale(action, state.l3sParentUuid)) return state;
       return {
         ...state,
         fetchingL3s: false,
@@ -288,6 +303,7 @@ function reducer(
         errorL3s: formatGraphQLError(action.payload),
       };
     case "LOCATION_LOCATIONS_3_ERR":
+      if (isStale(action, state.l3sParentUuid)) return state;
       return {
         ...state,
         fetchingL3s: false,
