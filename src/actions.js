@@ -176,7 +176,8 @@ export function fetchLocations(levels, type, parent, filters = {}) {
     "clientMutationId",
   ]);
 
-  return graphql(payload, `LOCATION_LOCATIONS_${type}`);
+  // The parent travels in the meta so the reducer can drop a superseded response.
+  return graphql(payload, `LOCATION_LOCATIONS_${type}`, { parentUuid: parent?.uuid ?? null });
 }
 
 export function fetchLocationsStr(mm, level, regions = null, districts = null, parent, str='', first) {
