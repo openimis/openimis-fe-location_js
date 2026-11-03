@@ -11,6 +11,8 @@
   "location.DistrictPicker.label": "District",
   "location.DistrictPicker.null": "Any",
   "location.DistrictPicker.none": "None",
+  "location.LocationCascader.requiredLevel": "Please select down to {level} level",
+  "location.LocationCascader.confirmSelection": "Use this location",
   "location.LocationPicker.loadingText": "Loading...",
   "location.LocationPicker.clearText": "Clear",
   "location.LocationPicker.openText": "Open",

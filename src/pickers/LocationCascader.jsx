@@ -81,8 +81,9 @@ const LocationCascader = ({
   const maxLevel = parseInt(
     modulesManager.getConf("location", "Location.MaxLevels", 4)
   );
-  const minRequiredLevel =
-    requiredLevel ?? (required ? Math.max(maxLevel - 1, 0) : null);
+  // `required` only means a location must be chosen; a minimum level (0-based: 0 is the
+  // top level) is the caller's choice through `requiredLevel`.
+  const minRequiredLevel = requiredLevel ?? null;
 
   const [options, setOptions] = useState([]);
   const [locations, setLocations] = useState(multiple ? [] : "");
@@ -119,7 +120,7 @@ const LocationCascader = ({
   }, []);
 
   useEffect(() => {
-    const l0s = (locState.l0s || []).map((loc) => ({
+    const l0s = (locState.l0s || []).filter(Boolean).map((loc) => ({
       label: locationLabel(loc),
       value: loc.uuid,
       isLeaf: false,
@@ -149,7 +150,8 @@ const LocationCascader = ({
     const { targetOption, level } = pendingExpansion.current;
     if (!locState[`fetchedL${level}s`]) return;
 
-    const children = locState[`l${level}s`]
+    const children = (locState[`l${level}s`] || [])
+      .filter(Boolean)
       .map((loc) => ({
         label: locationLabel(loc),
         value: loc.uuid,
@@ -266,6 +268,7 @@ const LocationCascader = ({
           onChange={handleCascaderChange}
           changeOnSelect={true}
           disabled={readOnly}
+          checkable={multiple}
           placement={placement}
           dropdownClassName="openimis-location-cascader-dropdown"
           dropdownStyle={{ maxWidth: "calc(100vw - 16px)" }}
