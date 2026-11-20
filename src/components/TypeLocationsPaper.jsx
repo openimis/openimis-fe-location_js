@@ -1,10 +1,9 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 import { styled } from "@mui/material/styles";
 import { Paper, List, ListItem, ListItemText, ListItemButton, IconButton, Box, Tooltip } from "@mui/material";
 
-import { GetIconComponent, formatMessage, formatMessageWithValues, SearcherPane, ProgressOrError } from "@openimis/fe-core";
+import { GetIconComponent, formatMessage, formatMessageWithValues, SearcherPane, ProgressOrError, injectIntl } from "@openimis/fe-core";
 import EditLocationDialog from "./EditLocationDialog";
 import MoveLocationDialog from "./MoveLocationDialog";
 import DeleteLocationDialog from "../components/DeleteLocationDialog";

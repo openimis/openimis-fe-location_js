@@ -188,7 +188,6 @@ const LocationPicker = (props) => {
         filterOptions={filterOptions}
         filterSelectedOptions={filterSelectedOptions}
         onInputChange={(__, searchString) => onInputChange(searchString)}
-        PopperComponent={LocationDropdownPopper}
         data-cy={dataCy}
         renderInput={(inputProps) => (
           <TextField
@@ -202,6 +201,9 @@ const LocationPicker = (props) => {
             title={title}
           />
         )}
+        slots={{
+          popper: LocationDropdownPopper
+        }}
       />
     </StyledLocationPicker>
   );

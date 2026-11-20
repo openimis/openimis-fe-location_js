@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 import _debounce from "lodash/debounce";
 
-import { formatMessage, AutoSuggestion, withModulesManager } from "@openimis/fe-core";
+import { formatMessage, AutoSuggestion, withModulesManager, injectIntl } from "@openimis/fe-core";
 import { styled } from "@mui/material/styles";
 
 import { fetchAllRegions, selectRegionLocation, clearLocations } from "../actions.js";

@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 import { bindActionCreators } from "redux";
 import { Grid } from "@mui/material";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
@@ -16,7 +15,8 @@ import {
   withModulesManager,
   formatMessageWithValues,
   journalize,
-  formatMessage
+  formatMessage,
+  injectIntl
 } from "@openimis/fe-core";
 import { styled } from "@mui/material/styles";
 import { RIGHT_REGION_LOCATION_ADD } from "../constants";

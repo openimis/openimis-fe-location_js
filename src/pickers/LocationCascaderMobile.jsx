@@ -160,9 +160,11 @@ const LocationCascaderMobile = ({
           error={levelError}
           helperText={levelError ? levelErrorMessage : undefined}
           sx={{ pointerEvents: "none" }}
-          InputProps={{
-            readOnly: true,
-            endAdornment: <ArrowDropDownIcon style={{ color: "rgba(0, 0, 0, 0.54)" }} />,
+          slotProps={{
+            input: {
+              readOnly: true,
+              endAdornment: <ArrowDropDownIcon style={{ color: "rgba(0, 0, 0, 0.54)" }} />,
+            }
           }}
         />
       </Box>
@@ -195,7 +197,9 @@ const LocationCascaderMobile = ({
             <Typography variant="subtitle1" noWrap>
               {label || formatMessage("LocationPicker.label")}
             </Typography>
-            <Typography variant="body2" color="text.secondary" noWrap>
+            <Typography variant="body2" noWrap sx={{
+              color: "text.secondary"
+            }}>
               {currentLevelLabel}
             </Typography>
           </Box>
@@ -206,7 +210,12 @@ const LocationCascaderMobile = ({
 
         {path.length > 0 && (
           <Box sx={{ px: 2, py: 1, borderBottom: "1px solid", borderColor: "divider" }}>
-            <Typography variant="body2" color="text.secondary" sx={{ wordBreak: "break-word" }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                wordBreak: "break-word"
+              }}>
               {path.map((item) => locationLabel(item)).join(" / ")}
             </Typography>
           </Box>
@@ -219,7 +228,9 @@ const LocationCascaderMobile = ({
             </Box>
           ) : listItems.length === 0 ? (
             <Box sx={{ px: 2, py: 3 }}>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 No locations found
               </Typography>
             </Box>
@@ -231,7 +242,9 @@ const LocationCascaderMobile = ({
                 <ListItemButton key={location.uuid} onClick={() => handleSelect(location)} divider>
                   <ListItemText
                     primary={locationLabel(location)}
-                    primaryTypographyProps={{ sx: { wordBreak: "break-word" } }}
+                    slotProps={{
+                      primary: { sx: { wordBreak: "break-word" } }
+                    }}
                   />
                   {canDrillDeeper ? <KeyboardArrowRightIcon color="action" /> : null}
                 </ListItemButton>

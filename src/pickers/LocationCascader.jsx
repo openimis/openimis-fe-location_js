@@ -1,11 +1,10 @@
 
 import React, { useEffect, useState, useRef } from "react";
-import { injectIntl } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
 import Cascader from "rc-cascader";
 import { TextField, Chip, useMediaQuery, useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { GetIconComponent, useModulesManager, useTranslations } from "@openimis/fe-core";
+import { GetIconComponent, useModulesManager, useTranslations, injectIntl } from "@openimis/fe-core";
 import { getLocationLevel, locationLabel } from "../utils";
 import { fetchLocationsStr, fetchLocationsByUuids } from "../actions";
 import LocationCascaderMobile from "./LocationCascaderMobile";
@@ -283,25 +282,27 @@ const LocationCascader = ({
             required={required}
             error={levelError}
             helperText={levelError ? getLevelErrorMessage() : undefined}
-            InputProps={{
-              readOnly: true,
-              classes: multiple && Array.isArray(locations) && locations.length > 0 ? {
-                root: "inputRoot",
-              } : undefined,
-              startAdornment: multiple && Array.isArray(locations) && locations.length > 0 ? (
-                <div className="chipsContainer">
-                  {locations.map((location) => (
-                    <Chip
-                      key={location.uuid}
-                      label={locationLabel(location)}
-                      disabled={readOnly}
-                    />
-                  ))}
-                </div>
-              ) : null,
-              endAdornment: (<ArrowDropDownIcon
-                style={{ color: "rgba(0, 0, 0, 0.54)" }}
-              />),
+            slotProps={{
+              input: {
+                readOnly: true,
+                classes: multiple && Array.isArray(locations) && locations.length > 0 ? {
+                  root: "inputRoot",
+                } : undefined,
+                startAdornment: multiple && Array.isArray(locations) && locations.length > 0 ? (
+                  <div className="chipsContainer">
+                    {locations.map((location) => (
+                      <Chip
+                        key={location.uuid}
+                        label={locationLabel(location)}
+                        disabled={readOnly}
+                      />
+                    ))}
+                  </div>
+                ) : null,
+                endAdornment: (<ArrowDropDownIcon
+                  style={{ color: "rgba(0, 0, 0, 0.54)" }}
+                />),
+              }
             }}
           />
         </Cascader>

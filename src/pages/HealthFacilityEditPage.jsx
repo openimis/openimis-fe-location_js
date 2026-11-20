@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { styled } from "@mui/material/styles";
-import { formatMessageWithValues, withModulesManager, withHistory, historyPush } from "@openimis/fe-core";
+import { formatMessageWithValues, withModulesManager, withHistory, historyPush, injectIntl } from "@openimis/fe-core";
 import { createOrUpdateHealthFacility } from "../actions";
 import { RIGHT_HEALTH_FACILITY_ADD, RIGHT_HEALTH_FACILITY_EDIT } from "../constants";
 import HealthFacilityForm from "../components/HealthFacilityForm";

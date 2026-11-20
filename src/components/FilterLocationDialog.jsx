@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { injectIntl } from "react-intl";
 import {
   Dialog,
   DialogActions,
@@ -13,7 +12,7 @@ import {
 import { formatMessage, 
   TextInput, 
   useTranslations, 
-  withModulesManager 
+  withModulesManager, injectIntl 
 } from "@openimis/fe-core";
 
 const FilterLocationDialog = ({ open, title, onCancel, onApply, filters, modulesManager }) => {

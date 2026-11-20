@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 import { bindActionCreators } from "redux";
 import { Grid, InputAdornment } from "@mui/material";
 import TypeLocationsPaper from "../components/TypeLocationsPaper";
 import { fetchLocations, clearLocations } from "../actions";
-import { withModulesManager, FormPanel, NumberInput, GRID_RESPONSIVE_FULL } from "@openimis/fe-core";
+import { withModulesManager, FormPanel, NumberInput, GRID_RESPONSIVE_FULL, injectIntl } from "@openimis/fe-core";
 import { styled } from "@mui/material/styles";
 import _ from "lodash";
 
