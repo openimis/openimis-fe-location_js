@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from "react";
-import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -16,6 +15,7 @@ import {
   parseData,
   historyPush,
   GetIconComponent,
+  injectIntl,
 } from "@openimis/fe-core";
 import { fetchHealthFacility, clearHealthFacility } from "../actions";
 import HealthFacilityMasterPanel from "../components/HealthFacilityMasterPanel";

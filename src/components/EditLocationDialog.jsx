@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 import _ from "lodash";
 
 import {
@@ -15,7 +14,7 @@ import {
   Box,
 } from "@mui/material";
 
-import { withModulesManager, formatMessage, TextInput, ValidatedTextInput, NumberInput } from "@openimis/fe-core";
+import { withModulesManager, formatMessage, TextInput, ValidatedTextInput, NumberInput, injectIntl } from "@openimis/fe-core";
 import { locationCodeValidationCheck, locationCodeValidationClear, locationCodeSetValid } from "../actions";
 import { MAX_INT_NUMBER } from "../constants";
 

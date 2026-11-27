@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { injectIntl } from "react-intl";
 import _ from "lodash";
 import {
   Button,
@@ -18,7 +17,7 @@ import {
   MenuItem,
   Box,
 } from "@mui/material";
-import { formatMessage, withModulesManager, TextInput } from "@openimis/fe-core";
+import { formatMessage, withModulesManager, TextInput, injectIntl } from "@openimis/fe-core";
 import { fetchLocations, clearLocations } from "../actions";
 
 class MoveLocationDialog extends Component {
