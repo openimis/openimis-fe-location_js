@@ -12,7 +12,7 @@ import {
 import { formatMessage, 
   TextInput, 
   useTranslations, 
-  withModulesManager, injectIntl 
+  withModulesManager 
 } from "@openimis/fe-core";
 
 const FilterLocationDialog = ({ open, title, onCancel, onApply, filters, modulesManager }) => {
