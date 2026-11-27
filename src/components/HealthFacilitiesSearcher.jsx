@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 import _ from "lodash";
 import {
   withModulesManager,
@@ -14,6 +13,7 @@ import {
   Searcher,
   GetIconComponent,
   ActionMenu,
+  injectIntl,
 } from "@openimis/fe-core";
 import HealthFacilityFilter from "./HealthFacilityFilter";
 import { fetchHealthFacilitySummaries, deleteHealthFacility } from "../actions";

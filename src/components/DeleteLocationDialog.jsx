@@ -16,8 +16,8 @@ import {
   MenuItem,
   Box,
 } from "@mui/material";
-import { injectIntl } from "react-intl";
-import { formatMessage } from "@openimis/fe-core";
+
+import { formatMessage, injectIntl } from "@openimis/fe-core";
 
 const ACTION_DROP = "drop";
 const ACTION_REASSIGN = "reassign";

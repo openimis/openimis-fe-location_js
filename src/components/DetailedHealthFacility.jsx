@@ -29,14 +29,21 @@ const DetailedHealthFacility = (props) => {
   return (
     <StyledDetailedHealthFacility>
       <Grid container className="form">
-        <Box flexGrow={2}>
+        <Box sx={{
+          flexGrow: 2
+        }}>
           <FSPCoarseLocation region={district?.parent} district={district} readOnly={readOnly} onChange={setDistrict} />
         </Box>
         <ControlledField
           module="location"
           id="DetailedHealthFacility.Level"
           field={
-            <Box flexGrow={1} minWidth="200px" className="item">
+            <Box
+              className="item"
+              sx={{
+                flexGrow: 1,
+                minWidth: "200px"
+              }}>
               <PublishedComponent
                 pubRef="location.HealthFacilityLevelPicker"
                 value={level}
@@ -51,7 +58,12 @@ const DetailedHealthFacility = (props) => {
           module="location"
           id="DetailedHealthFacility.HF"
           field={
-            <Box flexGrow={2} minWidth="400px" className="item">
+            <Box
+              className="item"
+              sx={{
+                flexGrow: 2,
+                minWidth: "400px"
+              }}>
               <PublishedComponent
                 pubRef="location.HealthFacilityPicker"
                 district={district}

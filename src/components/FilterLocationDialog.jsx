@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { injectIntl } from "react-intl";
 import {
   Dialog,
   DialogActions,

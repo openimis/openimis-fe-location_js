@@ -1,11 +1,10 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { injectIntl } from "react-intl";
 import { styled } from "@mui/material/styles";
 import { fetchHealthFacilityFullPath } from "../actions";
 import { Grid } from "@mui/material";
-import { withModulesManager, FieldLabel, ControlledField } from "@openimis/fe-core";
+import { withModulesManager, FieldLabel, ControlledField, injectIntl } from "@openimis/fe-core";
 
 const StyledHealthFacilityFullPath = styled('div')(({ theme }) => ({
   '& .container': {
